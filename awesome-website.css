@@ -1,0 +1,6 @@
+#canvas-container {
+  margin-top: 20px;
+}
+canvas {
+  border: 1px solid black;
+}
