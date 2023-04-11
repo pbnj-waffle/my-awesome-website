@@ -1,7 +1,8 @@
-
-
-
-
+function fileSelected() {
+  const newImage = loadImage(URL.createObjectURL(this.elt.files[0]), () => {
+    imageLoaded(newImage);
+  });
+}
 
 function imageLoaded(image) {
   images.push({

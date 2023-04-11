@@ -18,6 +18,7 @@ function setup() {
 
 function draw() {
     background(255);
+   
   
     for (const imgData of images) {
       if (imgData.isDragging) {
@@ -52,6 +53,7 @@ function draw() {
 
     text(message, 25, 150);//TEXT TEXT TEXT TEXT
   }
+  
   
 
   function windowResized() {

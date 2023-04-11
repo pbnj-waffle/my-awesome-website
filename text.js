@@ -1,7 +1,7 @@
 
 
-
-
 function keyTyped() {
-  message += key;
+
+ 
 }
+
