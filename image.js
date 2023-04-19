@@ -26,6 +26,7 @@ function imageLoaded(image) {
     noiseSeedX: random(1000),
     noiseSeedY: random(1000),
     noiseOffset: 0,
+    framesSinceLastTrail: 0,
   });
 }
 

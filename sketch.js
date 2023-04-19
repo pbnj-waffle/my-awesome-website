@@ -20,6 +20,7 @@ function setup() {
     background(255);
   
     let cursorType = ARROW;
+    const framesBetweenTrail = 20;
   
     for (const imgData of images) {
       if (imgData.isDragging) {
@@ -36,8 +37,13 @@ function setup() {
         imgData.width = newWidth;
         imgData.height = newHeight;
       } else if (imgData.shouldMove && millis() - imgData.startTime > 5000) {
-        //trail
-        imgData.trail.push({ x: imgData.x, y: imgData.y });
+        imgData.framesSinceLastTrail++;
+  
+        if (imgData.framesSinceLastTrail >= framesBetweenTrail) {
+          // Save the current position in the trail array
+          imgData.trail.push({ x: imgData.x, y: imgData.y });
+          imgData.framesSinceLastTrail = 0;
+        }
   
         const speed = 0.001; //speed 
         imgData.noiseOffset += speed;
@@ -60,15 +66,13 @@ function setup() {
       }
     }
   
-    if (activeImage) {
+    if (activeImage && !activeImage.shouldMove) {
       drawHandle(activeImage);
     }
   
     cursor(cursorType);
   }
-  
-  
-  
+   
   
 
   
