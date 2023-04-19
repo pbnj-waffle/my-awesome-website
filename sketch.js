@@ -39,7 +39,8 @@ function setup() {
         //trail
         imgData.trail.push({ x: imgData.x, y: imgData.y });
   
-        imgData.noiseOffset += 0.01;
+        const speed = 0.001; //speed 
+        imgData.noiseOffset += speed;
   
         //perlin noise
         const noiseScale = 100;
