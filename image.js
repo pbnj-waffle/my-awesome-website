@@ -23,8 +23,8 @@ function imageLoaded(image) {
     shouldMove: shouldMove,
     startTime: millis(),
     trail: [],
-    noiseSeedX: random(10000),
-    noiseSeedY: random(10000),
+    noiseSeedX: random(1000),
+    noiseSeedY: random(1000),
     noiseOffset: 0,
   });
 }

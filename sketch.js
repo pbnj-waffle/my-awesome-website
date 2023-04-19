@@ -36,12 +36,12 @@ function setup() {
         imgData.width = newWidth;
         imgData.height = newHeight;
       } else if (imgData.shouldMove && millis() - imgData.startTime > 5000) {
-        
-        //imgData.trail.push({ x: imgData.x, y: imgData.y });
+        //trail
+        imgData.trail.push({ x: imgData.x, y: imgData.y });
   
         imgData.noiseOffset += 0.01;
   
-       //perlin noise
+        //perlin noise
         const noiseScale = 100;
         imgData.x = map(noise(imgData.noiseSeedX + imgData.noiseOffset), 0, 1, 0, windowWidth - imgData.width);
         imgData.y = map(noise(imgData.noiseSeedY + imgData.noiseOffset), 0, 1, 0, windowHeight - imgData.height);
