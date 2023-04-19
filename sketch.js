@@ -16,13 +16,23 @@ function setup() {
     fileInput.input(fileSelected);
   }
 
+  function processImage(imgData) {
+    if (imgData.isNegative && !imgData.processedImg) {
+      const buffer = createGraphics(imgData.img.width, imgData.img.height);
+      buffer.image(imgData.img, 0, 0);
+      buffer.filter(INVERT);
+      imgData.processedImg = buffer;
+    }
+  }
+
   function draw() {
     background(255);
   
     let cursorType = ARROW;
-    const framesBetweenTrail = 20;
+    const framesBetweenTrail = 10;
   
     for (const imgData of images) {
+      processImage(imgData);
       if (imgData.isDragging) {
         imgData.x = mouseX - imgData.offsetX;
         imgData.y = mouseY - imgData.offsetY;
@@ -38,35 +48,48 @@ function setup() {
         imgData.height = newHeight;
       } else if (imgData.shouldMove && millis() - imgData.startTime > 5000) {
         imgData.framesSinceLastTrail++;
-  
+
         if (imgData.framesSinceLastTrail >= framesBetweenTrail) {
-          // Save the current position in the trail array
+          //save the current position in the trail 
           imgData.trail.push({ x: imgData.x, y: imgData.y });
           imgData.framesSinceLastTrail = 0;
         }
+        
   
         const speed = 0.001; //speed 
         imgData.noiseOffset += speed;
   
         //perlin noise
-        const noiseScale = 100;
         imgData.x = map(noise(imgData.noiseSeedX + imgData.noiseOffset), 0, 1, 0, windowWidth - imgData.width);
         imgData.y = map(noise(imgData.noiseSeedY + imgData.noiseOffset), 0, 1, 0, windowHeight - imgData.height);
-      }
-  
-      // Draw the trail
-      for (const position of imgData.trail) {
-        image(imgData.img, position.x, position.y, imgData.width, imgData.height);
-      }
-  
-      image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
-  
-      if (mouseX > imgData.x && mouseX < imgData.x + imgData.width && mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
-        cursorType = MOVE;
-      }
+    }
+
+    
+     if (!imgData.shouldMove && millis() - imgData.startTime > 5000) {
+      imgData.shouldMove = true;
+    }
+
+    if (imgData.shouldMove && millis() - imgData.startTime > imgData.stopAfter) {
+      imgData.shouldMove = false;
     }
   
-    if (activeImage && !activeImage.shouldMove) {
+      //trail
+      for (const trailPosition of imgData.trail) {
+        const imgToDraw = imgData.processedImg || imgData.img;
+        image(imgToDraw, trailPosition.x, trailPosition.y, imgData.width, imgData.height);
+      }
+  
+      //main image
+      const imgToDraw = imgData.processedImg || imgData.img;
+      image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
+  
+
+    if (activeImage === imgData && !imgData.shouldMove && mouseX > imgData.x && mouseX < imgData.x + imgData.width && mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
+      cursorType = MOVE;
+    }
+  }
+  
+    if (activeImage) {
       drawHandle(activeImage);
     }
   

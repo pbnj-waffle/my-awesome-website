@@ -22,11 +22,14 @@ function imageLoaded(image) {
     randomPosition: { x: initialX, y: initialY },
     shouldMove: shouldMove,
     startTime: millis(),
+    stopAfter: random([5, 10, 30, 60, 300, Infinity]) * 1000,
     trail: [],
     noiseSeedX: random(1000),
     noiseSeedY: random(1000),
     noiseOffset: 0,
     framesSinceLastTrail: 0,
+    isNegative: random() < 0.33,//chance of image inverting
+    processedImg: null,
   });
 }
 
