@@ -5,17 +5,33 @@ function fileSelected() {
 }
 
 function imageLoaded(image) {
+  const randomNumber = floor(random(1, 101));
+  const shouldMove = randomNumber >= 1 && randomNumber <= 100;
+  const initialX = random(0, windowWidth - image.width);
+  const initialY = random(0, windowHeight - image.height);
+
   images.push({
     img: image,
-    x: 0,
-    y: 0,
+    x: initialX,
+    y: initialY,
     width: image.width,
     height: image.height,
     aspectRatio: image.width / image.height,
     isDragging: false,
     isResizing: false,
+    randomPosition: { x: initialX, y: initialY },
+    shouldMove: shouldMove,
+    startTime: millis(),
+    trail: [],
+    noiseSeedX: random(1000),
+    noiseSeedY: random(1000),
+    noiseOffset: 0,
   });
 }
+
+
+
+
 
 
 function mousePressed() {
@@ -24,6 +40,8 @@ function mousePressed() {
 
     if (mouseX > imgData.x && mouseX < imgData.x + imgData.width && mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
       imgData.isDragging = true;
+      imgData.offsetX = mouseX - imgData.x;
+      imgData.offsetY = mouseY - imgData.y;
       activeImage = imgData;
       break;
     }
@@ -50,4 +68,3 @@ function drawHandle(imgData) {
   noStroke();
   rect(imgData.x + imgData.width - handleSize / 2, imgData.y + imgData.height - handleSize / 2, handleSize, handleSize);
 }
-
