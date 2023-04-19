@@ -36,13 +36,12 @@ function setup() {
         imgData.width = newWidth;
         imgData.height = newHeight;
       } else if (imgData.shouldMove && millis() - imgData.startTime > 5000) {
-        // Save the current position in the trail array
-        imgData.trail.push({ x: imgData.x, y: imgData.y });
+        
+        //imgData.trail.push({ x: imgData.x, y: imgData.y });
   
-        // Update the noiseOffset
         imgData.noiseOffset += 0.01;
   
-        // Use Perlin noise for more natural movement
+       //perlin noise
         const noiseScale = 100;
         imgData.x = map(noise(imgData.noiseSeedX + imgData.noiseOffset), 0, 1, 0, windowWidth - imgData.width);
         imgData.y = map(noise(imgData.noiseSeedY + imgData.noiseOffset), 0, 1, 0, windowHeight - imgData.height);
