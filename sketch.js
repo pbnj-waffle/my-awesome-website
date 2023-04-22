@@ -16,14 +16,6 @@ function setup() {
     fileInput.input(fileSelected);
   }
 
-  function processImage(imgData) {
-    if (imgData.isNegative && !imgData.processedImg) {
-      const buffer = createGraphics(imgData.img.width, imgData.img.height);
-      buffer.image(imgData.img, 0, 0);
-      buffer.filter(INVERT);
-      imgData.processedImg = buffer;
-    }
-  }
 
   function draw() {
     background(255);
@@ -33,6 +25,7 @@ function setup() {
   
     for (const imgData of images) {
       processImage(imgData);
+      if (imgData.shouldDuplicate) duplicateImage(imgData);
       if (imgData.isDragging) {
         imgData.x = mouseX - imgData.offsetX;
         imgData.y = mouseY - imgData.offsetY;
@@ -46,48 +39,37 @@ function setup() {
   
         imgData.width = newWidth;
         imgData.height = newHeight;
-      } else if (imgData.shouldMove && millis() - imgData.startTime > 5000) {
+      } else if (imgData.shouldMove) {
         imgData.framesSinceLastTrail++;
-
+  
         if (imgData.framesSinceLastTrail >= framesBetweenTrail) {
-          //save the current position in the trail 
+          // Save the current position in the trail
           imgData.trail.push({ x: imgData.x, y: imgData.y });
           imgData.framesSinceLastTrail = 0;
         }
-        
   
-        const speed = 0.001; //speed 
+        const speed = 0.001;
         imgData.noiseOffset += speed;
   
-        //perlin noise
+        // Perlin noise
         imgData.x = map(noise(imgData.noiseSeedX + imgData.noiseOffset), 0, 1, 0, windowWidth - imgData.width);
         imgData.y = map(noise(imgData.noiseSeedY + imgData.noiseOffset), 0, 1, 0, windowHeight - imgData.height);
-    }
-
-    
-     if (!imgData.shouldMove && millis() - imgData.startTime > 5000) {
-      imgData.shouldMove = true;
-    }
-
-    if (imgData.shouldMove && millis() - imgData.startTime > imgData.stopAfter) {
-      imgData.shouldMove = false;
-    }
+      }
   
-      //trail
+      // Trail
       for (const trailPosition of imgData.trail) {
         const imgToDraw = imgData.processedImg || imgData.img;
         image(imgToDraw, trailPosition.x, trailPosition.y, imgData.width, imgData.height);
       }
   
-      //main image
+      // Main image
       const imgToDraw = imgData.processedImg || imgData.img;
       image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
   
-
-    if (activeImage === imgData && !imgData.shouldMove && mouseX > imgData.x && mouseX < imgData.x + imgData.width && mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
-      cursorType = MOVE;
+      if (activeImage === imgData && !imgData.shouldMove && mouseX > imgData.x && mouseX < imgData.x + imgData.width && mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
+        cursorType = MOVE;
+      }
     }
-  }
   
     if (activeImage) {
       drawHandle(activeImage);
@@ -95,9 +77,7 @@ function setup() {
   
     cursor(cursorType);
   }
-   
   
-
   
   function windowResized() {
     resizeCanvas(windowWidth, windowHeight);

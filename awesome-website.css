@@ -5,15 +5,7 @@ body {
     padding: 0;
     text-align: center;
   }
-  
-  #controls {
-    padding: 20px;
-    background-color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-  }
-  
+   
   #canvasContainer {
     display: flex;
     justify-content: center;
@@ -22,4 +14,7 @@ body {
     background-color: #f0f0f0;
   }
 
- 
+ #uploadImage {
+  position: relative;
+  bottom: 600px;
+ }
