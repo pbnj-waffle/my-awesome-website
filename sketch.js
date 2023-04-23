@@ -2,16 +2,20 @@ let canvas;
 let images = [];
 let handleSize = 10;
 let activeImage;
-let maskedBg;
+let maskedBgs = []; // An array to store the masked background images
+let currentBgFrame = 0; // Store the current frame index of the background animation
 let buffer; //IMPORTANT to use to keep browser from crashing
 
 function preload() {
-  bg = loadImage('./images/test1.png', () => {
-    // Create a copy of the original background image to use as the mask
-    maskedBg = bg.get();
-    // Invert the background image so it acts as a mask for the uploaded images
-    maskedBg.filter(INVERT);
-  });
+  for (let i = 1; i <= 22; i++) { // Assuming there are 10 images in the sequence
+    const img = loadImage(`./background/static (${i}).png`, () => {
+      // Create a copy of the original background image to use as the mask
+      const maskedImg = img.get();
+      // Invert the background image so it acts as a mask for the uploaded images
+      maskedImg.filter(INVERT);
+      maskedBgs.push(maskedImg);
+    });
+  }
 }
 
 function setup() {
@@ -31,7 +35,8 @@ function draw() {
   background(255); // Set the background to white, so the transparent areas of the bg image will be filled with white
   buffer.clear(); //IMPORTANT to use to keep browser from crashing
   bgBuffer.clear(); // Clear the bgBuffer
-  bgBuffer.image(maskedBg, 0, 0, windowWidth, windowHeight); // Draw the masked background image onto bgBuffer
+  currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
+  bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, windowWidth, windowHeight);
 
   let cursorType = ARROW;
   const framesBetweenTrail = 10;
