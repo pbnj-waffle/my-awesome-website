@@ -3,11 +3,8 @@ let images = [];
 let handleSize = 10;
 let activeImage;
 
-let message = '';
-
 function setup() {
-    canvas = createCanvas(windowWidth, windowHeight);
-    canvas.parent('canvasContainer');
+    createCanvas(windowWidth, windowHeight);
   
     const uploadImageButton = select('#uploadImage');
     uploadImageButton.mousePressed(() => select('#fileInput').elt.click());
