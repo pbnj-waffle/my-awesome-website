@@ -1,20 +1,21 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-  }
-   
-  #canvasContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 80px);
-    background-color: #f0f0f0;
-  }
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
 
- #uploadImage {
+canvas {
+  display: block;
   position: relative;
-  bottom: 600px;
- }
+  z-index: 1;
+}
+
+#uploadImage {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
