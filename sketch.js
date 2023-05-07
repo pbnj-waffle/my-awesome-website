@@ -11,6 +11,14 @@ let squareTrail = [];
 let squareTrailSpacing = 50;
 let lastTrailSquareTime = 0;
 let differenceBuffer;
+const ARROW = 'default';
+const RESIZE_EW = 'ew-resize';
+const RESIZE_NS = 'ns-resize';
+const RESIZE_NWSE = "nwse-resize";
+const RESIZE_NESW = "nesw-resize";
+
+let cursorType = ARROW;
+let resizeCursorType = ARROW;
 
 function preload() {
   for (let i = 1; i <= 200; i++) { 
@@ -77,7 +85,7 @@ function setup() {
   
     if (!square.lastTrailSquarePosition || dist(square.x, square.y, square.lastTrailSquarePosition.x, square.lastTrailSquarePosition.y) >= squareTrailSpacing) {
       squareTrailBuffer.noStroke();
-      squareTrailBuffer.fill(255,0, 213);
+      squareTrailBuffer.fill(0,0,255);
       squareTrailBuffer.rect(square.x, square.y, square.size, square.size);
       square.lastTrailSquarePosition = { x: square.x, y: square.y }; // Update the last trail square position
     }
@@ -85,13 +93,14 @@ function setup() {
 
 function drawMainSquare() {
   // Draw the main square
-  fill(random(255,0,213));
+  fill(random(0,0,255));
   noStroke();
   rect(square.x, square.y, square.size, square.size);
 }
 
 function draw() {
   background(0); // Set the background to white, so the transparent areas of the bg image will be filled with white
+  topBuffer.clear();
   buffer.clear(); // IMPORTANT to use to keep browser from crashing
   bgBuffer.clear(); // Clear the bgBuffer
   currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
@@ -104,20 +113,78 @@ function draw() {
     processImage(imgData);
     if (imgData.shouldDuplicate) duplicateImage(imgData);
 
-    if (imgData.isDragging) {
+    if (imgData.isDragging) { // DRAGGING
       imgData.x = mouseX - imgData.offsetX;
       imgData.y = mouseY - imgData.offsetY;
-    } else if (imgData.isResizing) {
-      let newWidth = mouseX - imgData.x;
-      let newHeight = mouseY - imgData.y;
+    } 
+
+    if (imgData.isResizingLeft) { // RESIZING
+      imgData.width += imgData.x - mouseX;
+      imgData.x = mouseX;
+    } else if (imgData.isResizingRight) {
+      imgData.width = mouseX - imgData.x;
+    }
+
+    if (imgData.isResizingTop) {
+      imgData.height += imgData.y - mouseY;
+      imgData.y = mouseY;
+    } else if (imgData.isResizingBottom) {
+      imgData.height = mouseY - imgData.y;
+    } 
+
+    if (imgData.isResizingTopLeft) {
+      const prevWidth = imgData.width;
+      const prevHeight = imgData.height;
+      imgData.width += imgData.x - mouseX;
+      imgData.height += imgData.y - mouseY;
 
       if (keyIsDown(SHIFT)) {
-        newHeight = newWidth / imgData.aspectRatio;
+        imgData.height = imgData.width / imgData.aspectRatio;
       }
 
-      imgData.width = newWidth;
-      imgData.height = newHeight;
-    } else if (imgData.shouldMove) {
+      imgData.x -= imgData.width - prevWidth;
+      imgData.y -= imgData.height - prevHeight;
+    } else if (imgData.isResizingTopRight) {
+      const prevHeight = imgData.height;
+      imgData.width = mouseX - imgData.x;
+      imgData.height += imgData.y - mouseY;
+
+      if (keyIsDown(SHIFT)) {
+        imgData.height = imgData.width / imgData.aspectRatio;
+      }
+
+      imgData.y -= imgData.height - prevHeight;
+    } else if (imgData.isResizingBottomLeft) {
+      const prevWidth = imgData.width;
+      imgData.width += imgData.x - mouseX;
+      imgData.height = mouseY - imgData.y;
+
+      if (keyIsDown(SHIFT)) {
+        imgData.width = imgData.height * imgData.aspectRatio;
+      }
+
+      imgData.x -= imgData.width - prevWidth;
+    } else if (imgData.isResizingBottomRight) {
+      imgData.width = mouseX - imgData.x;
+      imgData.height = mouseY - imgData.y;
+
+      if (keyIsDown(SHIFT)) {
+        const currentAspectRatio = imgData.width / imgData.height;
+        if (imgData.isResizingTop || imgData.isResizingBottom) {
+          imgData.width = imgData.height * currentAspectRatio;
+        } else if (imgData.isResizingLeft || imgData.isResizingRight) {
+          imgData.height = imgData.width / currentAspectRatio;
+        } else if (imgData.isResizingTopLeft || imgData.isResizingBottomRight) {
+          imgData.height = imgData.width / currentAspectRatio;
+        } else if (imgData.isResizingTopRight || imgData.isResizingBottomLeft) {
+          imgData.height = imgData.width / currentAspectRatio;
+        }
+      }
+  
+    }
+
+
+     if (imgData.shouldMove) { // MOVE
       imgData.framesSinceLastTrail++;
 
       if (imgData.framesSinceLastTrail >= framesBetweenTrail) {
@@ -159,11 +226,23 @@ function draw() {
   blendMode(DIFFERENCE); // Reset the blend mode to DIFFERENCE for the images
   image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
 
-  cursor(cursorType);
+  if (activeImage) {
+    drawFrame(activeImage);
+  }
+
+  if (activeImage) {
+    updateCursor(activeImage);
+    cursor(resizeCursorType);
+  } else {
+    cursor(ARROW);
+  }
+ 
+ 
   drawMovingSquare();
   drawMainSquare(); // Add this line to draw the main square
   image(topBuffer, 0, 0); // Add this line to draw the topBuffer onto the main canvas
 }
+
 
 
 function windowResized() {

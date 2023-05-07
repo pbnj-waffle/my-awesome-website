@@ -1,3 +1,5 @@
+const EDGE_THRESHOLD = 5;
+
 function fileSelected() {
   const newImage = loadImage(URL.createObjectURL(this.elt.files[0]), () => {
     imageLoaded(newImage);
@@ -7,11 +9,11 @@ function fileSelected() {
 function imageLoaded(image) {
   const effectRandom = floor(random(1,101));
   const shouldMove = 0 < effectRandom && effectRandom <= 50;
-  const shouldGlitch = 0 < effectRandom && effectRandom <= 100;
   const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
   const initialX = random(0, windowWidth - image.width);
   const initialY = random(0, windowHeight - image.height);
   const shouldTrail = random() < 0.3;
+  
 
   images.push({
     img: image,
@@ -22,9 +24,13 @@ function imageLoaded(image) {
     aspectRatio: image.width / image.height,
     isDragging: false,
     isResizing: false,
+    isResizingLeft: false,
+    isResizingRight: false,
+    isResizingTop: false,
+    isResizingBottom: false,
+    resizeMargin: 10,
     randomPosition: { x: initialX, y: initialY },
     shouldMove: shouldMove,
-    shouldGlitch: shouldGlitch,
     startTime: millis() + 5000, //start effect after 5 seconds NOT WORKING
     stopAfter: random([5, 10, 30, 60, 300, Infinity]) * 1000,
     trail: [],
@@ -32,9 +38,7 @@ function imageLoaded(image) {
     noiseSeedY: random(1000),
     noiseOffset: 0,
     framesSinceLastTrail: 0,
-    isNegative: random() < 0.33,
     processedImg: null,
-    shouldGlitch: shouldGlitch,
     timeElapsed: 0,
     shouldDuplicate: shouldDuplicate,
     duplicateInterval: 5000, // Duplicate every 5 seconds
@@ -57,69 +61,6 @@ function processImage(imgData) {
   }*/
 }
 
-function updateGlitchEffect(imgData) {
-  if (imgData.shouldGlitch) {
-    if (random() < 0.1) { // 10% chance to apply glitch effect each frame
-      applyGlitchEffect(imgData);
-    } else {
-      imgData.glitchImg = null;
-    }
-  }
-}
-
-function applyGlitchEffect(imgData) {
-  const choice = random(0, 1);
-  if (choice < 0.8) {
-    const buffer = createGraphics(imgData.width, imgData.height);
-    buffer.image(imgData.img, 0, 0, imgData.width, imgData.height);
-
-    const glitchIntensity = floor(random(5, 15));
-    for (let i = 0; i < glitchIntensity; i++) {
-      const x = floor(random(0, buffer.width));
-      const y = floor(random(0, buffer.height));
-      const w = floor(random(10, buffer.width / 3));
-      const h = floor(random(1, buffer.height / 3));
-      const dx = floor(random(-buffer.width, buffer.width)); // Increase the range for dx
-      const dy = floor(random(-buffer.height, buffer.height)); // Increase the range for dy
-      buffer.copy(buffer, x, y, w, h, x + dx, y + dy, w, h);
-    }
-    imgData.glitchImg = buffer;
-  } else if (choice < 0.9) {
-    // Apply a completely black glitch
-    const buffer = createGraphics(imgData.width, imgData.height);
-    buffer.image(imgData.img, 0, 0, imgData.width, imgData.height);
-    buffer.filter(THRESHOLD, 1);
-    imgData.glitchImg = buffer;
-  } else {
-    // Apply an effect resembling SMPTE color bars
-    const buffer = createGraphics(imgData.width, imgData.height);
-    buffer.image(imgData.img, 0, 0, imgData.width, imgData.height);
-    buffer.loadPixels();
-    const barHeight = buffer.height / 7;
-    const colors = [
-      color(192, 192, 192),
-      color(192, 192, 0),
-      color(0, 192, 192),
-      color(0, 192, 0),
-      color(192, 0, 192),
-      color(192, 0, 0),
-      color(0, 0, 192),
-    ];
-    for (let i = 0; i < buffer.pixels.length; i += 4) {
-      const y = Math.floor(i / (4 * buffer.width));
-      const barIndex = Math.floor(y / barHeight);
-      const c = colors[barIndex % colors.length];
-      buffer.pixels[i] = red(c);
-      buffer.pixels[i + 1] = green(c);
-      buffer.pixels[i + 2] = blue(c);
-      buffer.pixels[i + 3] = 255;
-    }
-    buffer.updatePixels();
-    imgData.glitchImg = buffer;
-  }
-}
-
-
 function duplicateImage(imgData) {
   if (millis() - imgData.lastDuplicateTime >= imgData.duplicateInterval) {
     const newImgData = {
@@ -136,77 +77,138 @@ function duplicateImage(imgData) {
   }
 }
 
-function swapPixels(imgData1, imgData2) {
-  const buffer1 = createGraphics(imgData1.width, imgData1.height);
-  const buffer2 = createGraphics(imgData2.width, imgData2.height);
 
-  buffer1.image(imgData1.img, 0, 0, imgData1.width, imgData1.height);
-  buffer2.image(imgData2.img, 0, 0, imgData2.width, imgData2.height);
-
-  buffer1.loadPixels();
-  buffer2.loadPixels();
-
-  const overlapX = Math.max(imgData1.x, imgData2.x);
-  const overlapY = Math.max(imgData1.y, imgData2.y);
-  const overlapWidth = Math.min(imgData1.x + imgData1.width, imgData2.x + imgData2.width) - overlapX;
-  const overlapHeight = Math.min(imgData1.y + imgData1.height, imgData2.y + imgData2.height) - overlapY;
-
-  const swapIntensity = 20;
-  for (let i = 0; i < swapIntensity; i++) {
-    const x = floor(random(0, overlapWidth));
-    const y = floor(random(0, overlapHeight));
-
-    const idx1 = 4 * ((y + imgData1.y - overlapY) * buffer1.width + (x + imgData1.x - overlapX));
-    const idx2 = 4 * ((y + imgData2.y - overlapY) * buffer2.width + (x + imgData2.x - overlapX));
-
-    const localIdx1 = 4 * ((y) * buffer1.width + (x));
-    const localIdx2 = 4 * ((y) * buffer2.width + (x));
-
-    for (let j = 0; j < 4; j++) {
-      const temp = buffer1.pixels[localIdx1 + j];
-      buffer1.pixels[localIdx1 + j] = buffer2.pixels[localIdx2 + j];
-      buffer2.pixels[localIdx2 + j] = temp;
-    }
-  }
-
-  buffer1.updatePixels();
-  buffer2.updatePixels();
-
-  imgData1.swappedImg = buffer1;
-  imgData2
-}
 
 function mousePressed() {
-  for (let i = images.length - 1; i >= 0; i--) {
-    const imgData = images[i];
-
-    if (mouseX > imgData.x && mouseX < imgData.x + imgData.width && mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
-      imgData.isDragging = true;
+  let foundImage = false;
+  for (const imgData of images) {
+    if (mouseX > imgData.x - imgData.resizeMargin && mouseX < imgData.x + imgData.resizeMargin &&
+        mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
+      imgData.isResizingLeft = true;
+      foundImage = true;
+    } else if (mouseX > imgData.x + imgData.width - imgData.resizeMargin && mouseX < imgData.x + imgData.width + imgData.resizeMargin &&
+               mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
+      imgData.isResizingRight = true;
+      foundImage = true;
+    } else if (mouseY > imgData.y - imgData.resizeMargin && mouseY < imgData.y + imgData.resizeMargin &&
+               mouseX > imgData.x && mouseX < imgData.x + imgData.width) {
+      imgData.isResizingTop = true;
+      foundImage = true;
+    } else if (mouseY > imgData.y + imgData.height - imgData.resizeMargin && mouseY < imgData.y + imgData.height + imgData.resizeMargin &&
+               mouseX > imgData.x && mouseX < imgData.x + imgData.width) {
+      imgData.isResizingBottom = true;
+      foundImage = true;
+    } else if (mouseX > imgData.x && mouseX < imgData.x + imgData.width &&
+               mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
       imgData.offsetX = mouseX - imgData.x;
       imgData.offsetY = mouseY - imgData.y;
-      activeImage = imgData;
-      break;
-    }
+      imgData.isDragging = true;
+      foundImage = true;
+    } 
 
-    if (mouseX > imgData.x + imgData.width - handleSize && mouseX < imgData.x + imgData.width + handleSize && mouseY > imgData.y + imgData.height - handleSize && mouseY < imgData.y + imgData.height + handleSize) {
-      imgData.isResizing = true;
-      activeImage = imgData;
-      break;
+    const onLeftEdge = mouseX > imgData.x - imgData.resizeMargin && mouseX < imgData.x + imgData.resizeMargin;
+    const onRightEdge = mouseX > imgData.x + imgData.width - imgData.resizeMargin && mouseX < imgData.x + imgData.width + imgData.resizeMargin;
+    const onTopEdge = mouseY > imgData.y - imgData.resizeMargin && mouseY < imgData.y + imgData.resizeMargin;
+    const onBottomEdge = mouseY > imgData.y + imgData.height - imgData.resizeMargin && mouseY < imgData.y + imgData.height + imgData.resizeMargin;
+
+    if (onLeftEdge && onTopEdge) {
+      imgData.isResizingTopLeft = true;
+      foundImage = true;
+    } else if (onRightEdge && onTopEdge) {
+      imgData.isResizingTopRight = true;
+      foundImage = true;
+    } else if (onLeftEdge && onBottomEdge) {
+      imgData.isResizingBottomLeft = true;
+      foundImage = true;
+    } else if (onRightEdge && onBottomEdge) {
+      imgData.isResizingBottomRight = true;
+      foundImage = true;
     }
+    
+    if (!activeImage || activeImage !== imgData) {
+      activeImage = imgData;
+    } else {
+      activeImage = null;
+    }
+    
+  }
+
+  if (!foundImage) {
+    resizeCursorType = ARROW;
   }
 }
+
 
 function mouseReleased() {
+  resizeCursorType = ARROW;
   for (const imgData of images) {
     imgData.isDragging = false;
-    imgData.isResizing = false;
+    imgData.isResizingLeft = false;
+    imgData.isResizingRight = false;
+    imgData.isResizingTop = false;
+    imgData.isResizingBottom = false;
+    imgData.isResizingTopLeft = false;
+    imgData.isResizingTopRight = false;
+    imgData.isResizingBottomLeft = false;
+    imgData.isResizingBottomRight = false;
   }
 }
 
+
+function drawFrame(imgData) {
+  const frameThickness = 5;
+  topBuffer.noFill();
+  topBuffer.strokeWeight(frameThickness);
+  topBuffer.stroke(0,0,255);
+  topBuffer.rect(imgData.x + frameThickness / 2, imgData.y + frameThickness / 2, imgData.width - frameThickness, imgData.height - frameThickness);
+}
 
 
 function drawHandle(imgData) {
-  fill(255, 0, 0);
-  noStroke();
-  rect(imgData.x + imgData.width - handleSize / 2, imgData.y + imgData.height - handleSize / 2, handleSize, handleSize);
+  stroke(0,0,255);
+  noFill();
+  rect(imgData.x, imgData.y, imgData.width, imgData.height);
+}
+
+function isMouseOnLeftEdge(imgData) {
+  return abs(mouseX - imgData.x) <= EDGE_THRESHOLD;
+}
+
+function isMouseOnRightEdge(imgData) {
+  return abs(mouseX - (imgData.x + imgData.width)) <= EDGE_THRESHOLD;
+}
+
+function isMouseOnTopEdge(imgData) {
+  return abs(mouseY - imgData.y) <= EDGE_THRESHOLD;
+}
+
+function isMouseOnBottomEdge(imgData) {
+  return abs(mouseY - (imgData.y + imgData.height)) <= EDGE_THRESHOLD;
+}
+
+function updateCursor() {
+  if (activeImage) {
+    const isOnLeftEdge = mouseX >= activeImage.x - EDGE_THRESHOLD && mouseX <= activeImage.x + EDGE_THRESHOLD;
+    const isOnRightEdge = mouseX >= activeImage.x + activeImage.width - EDGE_THRESHOLD && mouseX <= activeImage.x + activeImage.width + EDGE_THRESHOLD;
+    const isOnTopEdge = mouseY >= activeImage.y - EDGE_THRESHOLD && mouseY <= activeImage.y + EDGE_THRESHOLD;
+    const isOnBottomEdge = mouseY >= activeImage.y + activeImage.height - EDGE_THRESHOLD && mouseY <= activeImage.y + activeImage.height + EDGE_THRESHOLD;
+
+    if (isOnLeftEdge && isOnTopEdge) {
+      resizeCursorType = RESIZE_NWSE;
+    } else if (isOnRightEdge && isOnTopEdge) {
+      resizeCursorType = RESIZE_NESW;
+    } else if (isOnLeftEdge && isOnBottomEdge) {
+      resizeCursorType = RESIZE_NESW;
+    } else if (isOnRightEdge && isOnBottomEdge) {
+      resizeCursorType = RESIZE_NWSE;
+    } else if (isOnLeftEdge || isOnRightEdge) {
+      resizeCursorType = RESIZE_EW;
+    } else if (isOnTopEdge || isOnBottomEdge) {
+      resizeCursorType = RESIZE_NS;
+    } else {
+      resizeCursorType = ARROW;
+    }
+  } else {
+    resizeCursorType = ARROW;
+  }
 }
