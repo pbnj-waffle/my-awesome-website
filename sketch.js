@@ -47,6 +47,7 @@ function setup() {
 
   buffer = createGraphics(windowWidth, windowHeight);
   topBuffer = createGraphics(windowWidth, windowHeight);
+  noBlendImagesBuffer = createGraphics(windowWidth, windowHeight);
   bgBuffer = createGraphics(windowWidth, windowHeight);
   frameRate(100);
 
@@ -62,7 +63,7 @@ function setup() {
     squareTrailBufferBlend = createGraphics(windowWidth, windowHeight);
   }
 
-  function saveImageToFile() {
+function saveImageToFile() {
     saveCanvas('myCanvas', 'jpg');
   }
 
@@ -90,7 +91,12 @@ function draw() {
       imgData.y = mouseY - imgData.offsetY;
     } 
 
-  
+    if (imgData.blendWithBg) {
+      differenceBuffer.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
+    } else {
+      noBlendImagesBuffer.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
+    }
+    
     // RESIZING
     if (imgData.isResizingLeft) {
       imgData.width += imgData.x - mouseX;
@@ -173,23 +179,14 @@ function draw() {
       buffer.image(imgToDraw, trailPosition.x, trailPosition.y, imgData.width, imgData.height);
     }
 
-    // Main image
-    differenceBuffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
+  // Main image
+  differenceBuffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
 
-    if (activeImage === imgData && !imgData.shouldMove && mouseX > imgData.x && mouseX < imgData.x + imgData.width && mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
-      cursorType = MOVE;
+  if (activeImage === imgData && !imgData.shouldMove && mouseX > imgData.x && mouseX < imgData.x + imgData.width && mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
+    cursorType = MOVE;
     }
   }
-  image(buffer, 0, 0); // Draw the buffer onto the main canvas
-  blendMode(OVERLAY); // Set the blend mode to screen
-  image(bgBuffer, 0, 0); // Draw the bgBuffer onto the main canvas
-
-  blendMode(BLEND); // Reset the blend mode to BLEND before drawing the squareTrailBuffer
-  image(squareTrailBuffer, 0, 0); // Draw the squareTrailBuffer
-
-  blendMode(DIFFERENCE); // Reset the blend mode to DIFFERENCE for the images
-  image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
-
+  
   if (activeImage) {
     drawFrame(activeImage);
   }
@@ -200,9 +197,23 @@ function draw() {
   } else {
     cursor(ARROW);
   }
+
+  image(buffer, 0, 0); // Draw the buffer onto the main canvas
+  blendMode(OVERLAY); // Set the blend mode to screen
+  image(bgBuffer, 0, 0); // Draw the bgBuffer onto the main canvas
+
+  blendMode(BLEND); // Reset the blend mode to BLEND before drawing the squareTrailBuffer
+  image(noBlendImagesBuffer, 0, 0);
+
+  blendMode(BLEND); // Reset the blend mode to BLEND before drawing the squareTrailBuffer
+  image(squareTrailBuffer, 0, 0); // Draw the squareTrailBuffer
+
+  blendMode(DIFFERENCE); // Reset the blend mode to DIFFERENCE for the images
+  image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
  
   drawMovingSquare();
   drawMainSquare(); // Add this line to draw the main square
+  image(noBlendImagesBuffer, 0, 0);
   image(topBuffer, 0, 0); // Add this line to draw the topBuffer onto the main canvas
 }
 

@@ -13,7 +13,7 @@ function imageLoaded(image) {
   const initialX = random(0, windowWidth - image.width);
   const initialY = random(0, windowHeight - image.height);
   const shouldTrail = random() < 0.3;
-  
+  const shouldBlendWithBg = random() < 0.5;
 
   images.push({
     img: image,
@@ -43,8 +43,8 @@ function imageLoaded(image) {
     shouldDuplicate: shouldDuplicate,
     duplicateInterval: 5000, // Duplicate every 5 seconds
     lastDuplicateTime: millis(),
-    glitchImg: null,
     shouldTrail: shouldTrail,
+    blendWithBg: shouldBlendWithBg,
   });
 }
 
