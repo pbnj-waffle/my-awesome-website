@@ -66,40 +66,8 @@ function setup() {
     saveCanvas('myCanvas', 'jpg');
   }
 
-
-  function drawMovingSquare() {
-    // Update square position
-    square.x += square.vx;
-    square.y += square.vy;
-  
-    // Check for collisions with the screen edges and reverse direction if necessary
-    if (square.x < 0 || square.x + square.size > windowWidth) {
-      square.vx = random(-3, 3); // Assign a random value for vx
-      square.vy = random(-3, 3); // Assign a random value for vy
-    }
-  
-    if (square.y < 0 || square.y + square.size > windowHeight) {
-      square.vx = random(-3, 3); // Assign a random value for vx
-      square.vy = random(-3, 3); // Assign a random value for vy
-    }
-  
-    if (!square.lastTrailSquarePosition || dist(square.x, square.y, square.lastTrailSquarePosition.x, square.lastTrailSquarePosition.y) >= squareTrailSpacing) {
-      squareTrailBuffer.noStroke();
-      squareTrailBuffer.fill(0,0,255);
-      squareTrailBuffer.rect(square.x, square.y, square.size, square.size);
-      square.lastTrailSquarePosition = { x: square.x, y: square.y }; // Update the last trail square position
-    }
-  }
-
-function drawMainSquare() {
-  // Draw the main square
-  fill(random(0,0,255));
-  noStroke();
-  rect(square.x, square.y, square.size, square.size);
-}
-
 function draw() {
-  background(0); // Set the background to white, so the transparent areas of the bg image will be filled with white
+  background(0); 
   topBuffer.clear();
   buffer.clear(); // IMPORTANT to use to keep browser from crashing
   bgBuffer.clear(); // Clear the bgBuffer
@@ -111,6 +79,10 @@ function draw() {
 
   for (const imgData of images) {
     processImage(imgData);
+
+    if (activeImage === imgData) {
+      drawFrame(imgData);
+    }
     if (imgData.shouldDuplicate) duplicateImage(imgData);
 
     if (imgData.isDragging) { // DRAGGING
@@ -118,7 +90,9 @@ function draw() {
       imgData.y = mouseY - imgData.offsetY;
     } 
 
-    if (imgData.isResizingLeft) { // RESIZING
+  
+    // RESIZING
+    if (imgData.isResizingLeft) {
       imgData.width += imgData.x - mouseX;
       imgData.x = mouseX;
     } else if (imgData.isResizingRight) {
@@ -130,7 +104,7 @@ function draw() {
       imgData.y = mouseY;
     } else if (imgData.isResizingBottom) {
       imgData.height = mouseY - imgData.y;
-    } 
+    }
 
     if (imgData.isResizingTopLeft) {
       const prevWidth = imgData.width;
@@ -170,19 +144,9 @@ function draw() {
 
       if (keyIsDown(SHIFT)) {
         const currentAspectRatio = imgData.width / imgData.height;
-        if (imgData.isResizingTop || imgData.isResizingBottom) {
-          imgData.width = imgData.height * currentAspectRatio;
-        } else if (imgData.isResizingLeft || imgData.isResizingRight) {
-          imgData.height = imgData.width / currentAspectRatio;
-        } else if (imgData.isResizingTopLeft || imgData.isResizingBottomRight) {
-          imgData.height = imgData.width / currentAspectRatio;
-        } else if (imgData.isResizingTopRight || imgData.isResizingBottomLeft) {
-          imgData.height = imgData.width / currentAspectRatio;
-        }
+        imgData.height = imgData.width / currentAspectRatio;
       }
-  
     }
-
 
      if (imgData.shouldMove) { // MOVE
       imgData.framesSinceLastTrail++;
@@ -236,7 +200,6 @@ function draw() {
   } else {
     cursor(ARROW);
   }
- 
  
   drawMovingSquare();
   drawMainSquare(); // Add this line to draw the main square

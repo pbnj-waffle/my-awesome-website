@@ -80,63 +80,50 @@ function duplicateImage(imgData) {
 
 
 function mousePressed() {
-  let foundImage = false;
-  for (const imgData of images) {
-    if (mouseX > imgData.x - imgData.resizeMargin && mouseX < imgData.x + imgData.resizeMargin &&
-        mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
-      imgData.isResizingLeft = true;
-      foundImage = true;
-    } else if (mouseX > imgData.x + imgData.width - imgData.resizeMargin && mouseX < imgData.x + imgData.width + imgData.resizeMargin &&
-               mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
-      imgData.isResizingRight = true;
-      foundImage = true;
-    } else if (mouseY > imgData.y - imgData.resizeMargin && mouseY < imgData.y + imgData.resizeMargin &&
-               mouseX > imgData.x && mouseX < imgData.x + imgData.width) {
-      imgData.isResizingTop = true;
-      foundImage = true;
-    } else if (mouseY > imgData.y + imgData.height - imgData.resizeMargin && mouseY < imgData.y + imgData.height + imgData.resizeMargin &&
-               mouseX > imgData.x && mouseX < imgData.x + imgData.width) {
-      imgData.isResizingBottom = true;
-      foundImage = true;
-    } else if (mouseX > imgData.x && mouseX < imgData.x + imgData.width &&
-               mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
-      imgData.offsetX = mouseX - imgData.x;
-      imgData.offsetY = mouseY - imgData.y;
-      imgData.isDragging = true;
-      foundImage = true;
-    } 
+  if (mouseButton !== LEFT) return;
 
+  let foundImage = false;
+  for (let i = images.length - 1; i >= 0; i--) {
+    const imgData = images[i];
     const onLeftEdge = mouseX > imgData.x - imgData.resizeMargin && mouseX < imgData.x + imgData.resizeMargin;
     const onRightEdge = mouseX > imgData.x + imgData.width - imgData.resizeMargin && mouseX < imgData.x + imgData.width + imgData.resizeMargin;
     const onTopEdge = mouseY > imgData.y - imgData.resizeMargin && mouseY < imgData.y + imgData.resizeMargin;
     const onBottomEdge = mouseY > imgData.y + imgData.height - imgData.resizeMargin && mouseY < imgData.y + imgData.height + imgData.resizeMargin;
 
-    if (onLeftEdge && onTopEdge) {
-      imgData.isResizingTopLeft = true;
-      foundImage = true;
-    } else if (onRightEdge && onTopEdge) {
-      imgData.isResizingTopRight = true;
-      foundImage = true;
-    } else if (onLeftEdge && onBottomEdge) {
-      imgData.isResizingBottomLeft = true;
-      foundImage = true;
-    } else if (onRightEdge && onBottomEdge) {
-      imgData.isResizingBottomRight = true;
-      foundImage = true;
-    }
+    imgData.isResizingLeft = onLeftEdge && !onTopEdge && !onBottomEdge;
+    imgData.isResizingRight = onRightEdge && !onTopEdge && !onBottomEdge;
+    imgData.isResizingTop = onTopEdge && !onLeftEdge && !onRightEdge;
+    imgData.isResizingBottom = onBottomEdge && !onLeftEdge && !onRightEdge;
+
+    imgData.isResizingTopLeft = onLeftEdge && onTopEdge;
+    imgData.isResizingTopRight = onRightEdge && onTopEdge;
+    imgData.isResizingBottomLeft = onLeftEdge && onBottomEdge;
+    imgData.isResizingBottomRight = onRightEdge && onBottomEdge;
     
-    if (!activeImage || activeImage !== imgData) {
+
+    if (imgData.isResizingLeft || imgData.isResizingRight || imgData.isResizingTop || imgData.isResizingBottom ||
+        imgData.isResizingTopLeft || imgData.isResizingTopRight || imgData.isResizingBottomLeft || imgData.isResizingBottomRight) {
+      foundImage = true;
       activeImage = imgData;
-    } else {
-      activeImage = null;
+      break;
     }
-    
+
+    if (mouseX > imgData.x && mouseX < imgData.x + imgData.width && mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
+      imgData.offsetX = mouseX - imgData.x;
+      imgData.offsetY = mouseY - imgData.y;
+      imgData.isDragging = true;
+      foundImage = true;
+      activeImage = imgData;
+      break;
+    }
   }
 
   if (!foundImage) {
+    activeImage = null;
     resizeCursorType = ARROW;
   }
 }
+
 
 
 function mouseReleased() {
