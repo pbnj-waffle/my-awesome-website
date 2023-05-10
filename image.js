@@ -1,19 +1,17 @@
 const EDGE_THRESHOLD = 5;
 
-function fileSelected() {
-  const newImage = loadImage(URL.createObjectURL(this.elt.files[0]), () => {
-    imageLoaded(newImage);
+function fileSelected(event, p) {
+  const newImage = p.loadImage(URL.createObjectURL(event.target.files[0]), () => {
+    imageLoaded(newImage, p);
   });
 }
-
-function imageLoaded(image) {
-  const effectRandom = floor(random(1,101));
+function imageLoaded(image, p) {
+  const effectRandom = p.floor(p.random(1,101));
   const shouldMove = 0 < effectRandom && effectRandom <= 50;
   const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
-  const initialX = random(0, windowWidth - image.width);
-  const initialY = random(0, windowHeight - image.height);
-  const shouldTrail = random() < 0.3;
-  const shouldBlendWithBg = random() < 0.5;
+  const initialX = p.random(0, p.windowWidth - image.width);
+  const initialY = p.random(0, p.windowHeight - image.height);
+  const shouldTrail = p.random() < 0.3; // NOT WORKING
 
   images.push({
     img: image,
@@ -31,171 +29,158 @@ function imageLoaded(image) {
     resizeMargin: 10,
     randomPosition: { x: initialX, y: initialY },
     shouldMove: shouldMove,
-    startTime: millis() + 5000, //start effect after 5 seconds NOT WORKING
-    stopAfter: random([5, 10, 30, 60, 300, Infinity]) * 1000,
+    startTime: p.millis() + 5000,
+    stopAfter: p.random([5, 10, 30, 60, 300, Infinity]) * 1000,
     trail: [],
-    noiseSeedX: random(1000),
-    noiseSeedY: random(1000),
+    noiseSeedX: p.random(1000),
+    noiseSeedY: p.random(1000),
     noiseOffset: 0,
     framesSinceLastTrail: 0,
     processedImg: null,
     timeElapsed: 0,
     shouldDuplicate: shouldDuplicate,
     duplicateInterval: 5000, // Duplicate every 5 seconds
-    lastDuplicateTime: millis(),
+    lastDuplicateTime: p.millis(),
+    glitchImg: null,
     shouldTrail: shouldTrail,
-    blendWithBg: shouldBlendWithBg,
   });
 }
 
-function processImage(imgData) {
+function processImage(imgData, p) {
   if (imgData.timeElapsed < 300) {
     imgData.timeElapsed++;
     return;
   }
- /* if (imgData.isNegative && !imgData.processedImg) {
-    const buffer = createGraphics(imgData.img.width, imgData.img.height);
-    buffer.image(imgData.img, 0, 0);
-    buffer.filter(INVERT);
-    imgData.processedImg = buffer;
-  }*/
 }
 
-function duplicateImage(imgData) {
-  if (millis() - imgData.lastDuplicateTime >= imgData.duplicateInterval) {
+function duplicateImage(imgData, p) {
+  if (p.millis() - imgData.lastDuplicateTime >= imgData.duplicateInterval) {
     const newImgData = {
       ...imgData,
-      x: random(0, windowWidth - imgData.width),
-      y: random(0, windowHeight - imgData.height),
+      x: p.random(0, p.windowWidth - imgData.width),
+      y: p.random(0, p.windowHeight - imgData.height),
       shouldMove: false,
       shouldGlitch: false,
       shouldDuplicate: false,
     };
 
     images.push(newImgData);
-    imgData.lastDuplicateTime = millis();
+    imgData.lastDuplicateTime = p.millis();
   }
 }
 
-
-
-function mousePressed() {
-  if (mouseButton !== LEFT) return;
+function mousePressed(p) {
+  if (p.mouseButton !== p.LEFT) return;
 
   let foundImage = false;
   for (let i = images.length - 1; i >= 0; i--) {
     const imgData = images[i];
-    const onLeftEdge = mouseX > imgData.x - imgData.resizeMargin && mouseX < imgData.x + imgData.resizeMargin;
-    const onRightEdge = mouseX > imgData.x + imgData.width - imgData.resizeMargin && mouseX < imgData.x + imgData.width + imgData.resizeMargin;
-    const onTopEdge = mouseY > imgData.y - imgData.resizeMargin && mouseY < imgData.y + imgData.resizeMargin;
-    const onBottomEdge = mouseY > imgData.y + imgData.height - imgData.resizeMargin && mouseY < imgData.y + imgData.height + imgData.resizeMargin;
-
+    const onLeftEdge = p.mouseX > imgData.x - imgData.resizeMargin && p.mouseX < imgData.x + imgData.resizeMargin;
+    const onRightEdge = p.mouseX > imgData.x + imgData.width - imgData.resizeMargin && p.mouseX < imgData.x + imgData.width + imgData.resizeMargin;
+    const onTopEdge = p.mouseY > imgData.y - imgData.resizeMargin && p.mouseY < imgData.y + imgData.resizeMargin;
+    const onBottomEdge = p.mouseY > imgData.y + imgData.height - imgData.resizeMargin && p.mouseY < imgData.y + imgData.height + imgData.resizeMargin;
     imgData.isResizingLeft = onLeftEdge && !onTopEdge && !onBottomEdge;
     imgData.isResizingRight = onRightEdge && !onTopEdge && !onBottomEdge;
     imgData.isResizingTop = onTopEdge && !onLeftEdge && !onRightEdge;
     imgData.isResizingBottom = onBottomEdge && !onLeftEdge && !onRightEdge;
-
+    
     imgData.isResizingTopLeft = onLeftEdge && onTopEdge;
     imgData.isResizingTopRight = onRightEdge && onTopEdge;
     imgData.isResizingBottomLeft = onLeftEdge && onBottomEdge;
     imgData.isResizingBottomRight = onRightEdge && onBottomEdge;
     
-
     if (imgData.isResizingLeft || imgData.isResizingRight || imgData.isResizingTop || imgData.isResizingBottom ||
         imgData.isResizingTopLeft || imgData.isResizingTopRight || imgData.isResizingBottomLeft || imgData.isResizingBottomRight) {
       foundImage = true;
       activeImage = imgData;
       break;
     }
-
-    if (mouseX > imgData.x && mouseX < imgData.x + imgData.width && mouseY > imgData.y && mouseY < imgData.y + imgData.height) {
-      imgData.offsetX = mouseX - imgData.x;
-      imgData.offsetY = mouseY - imgData.y;
+    
+    if (p.mouseX > imgData.x && p.mouseX < imgData.x + imgData.width && p.mouseY > imgData.y && p.mouseY < imgData.y + imgData.height) {
+      imgData.offsetX = p.mouseX - imgData.x;
+      imgData.offsetY = p.mouseY - imgData.y;
       imgData.isDragging = true;
       foundImage = true;
       activeImage = imgData;
       break;
     }
+
+    if (!foundImage) {
+      activeImage = null;
+      resizeCursorType = p.ARROW;
+      }
+    }
   }
 
-  if (!foundImage) {
-    activeImage = null;
+  function mouseReleased(p) {
     resizeCursorType = ARROW;
+    for (const imgData of images) {
+      imgData.isDragging = false;
+      imgData.isResizingLeft = false;
+      imgData.isResizingRight = false;
+      imgData.isResizingTop = false;
+      imgData.isResizingBottom = false;
+      imgData.isResizingTopLeft = false;
+      imgData.isResizingTopRight = false;
+      imgData.isResizingBottomLeft = false;
+      imgData.isResizingBottomRight = false;
+    }
   }
-}
-
-
-
-function mouseReleased() {
-  resizeCursorType = ARROW;
-  for (const imgData of images) {
-    imgData.isDragging = false;
-    imgData.isResizingLeft = false;
-    imgData.isResizingRight = false;
-    imgData.isResizingTop = false;
-    imgData.isResizingBottom = false;
-    imgData.isResizingTopLeft = false;
-    imgData.isResizingTopRight = false;
-    imgData.isResizingBottomLeft = false;
-    imgData.isResizingBottomRight = false;
-  }
-}
-
-
-function drawFrame(imgData) {
+  
+  
+  function drawFrame(imgData, p) {
   const frameThickness = 5;
   topBuffer.noFill();
   topBuffer.strokeWeight(frameThickness);
   topBuffer.stroke(0,0,255);
   topBuffer.rect(imgData.x + frameThickness / 2, imgData.y + frameThickness / 2, imgData.width - frameThickness, imgData.height - frameThickness);
-}
-
-
-function drawHandle(imgData) {
-  stroke(0,0,255);
-  noFill();
-  rect(imgData.x, imgData.y, imgData.width, imgData.height);
-}
-
-function isMouseOnLeftEdge(imgData) {
-  return abs(mouseX - imgData.x) <= EDGE_THRESHOLD;
-}
-
-function isMouseOnRightEdge(imgData) {
-  return abs(mouseX - (imgData.x + imgData.width)) <= EDGE_THRESHOLD;
-}
-
-function isMouseOnTopEdge(imgData) {
-  return abs(mouseY - imgData.y) <= EDGE_THRESHOLD;
-}
-
-function isMouseOnBottomEdge(imgData) {
-  return abs(mouseY - (imgData.y + imgData.height)) <= EDGE_THRESHOLD;
-}
-
-function updateCursor() {
-  if (activeImage) {
-    const isOnLeftEdge = mouseX >= activeImage.x - EDGE_THRESHOLD && mouseX <= activeImage.x + EDGE_THRESHOLD;
-    const isOnRightEdge = mouseX >= activeImage.x + activeImage.width - EDGE_THRESHOLD && mouseX <= activeImage.x + activeImage.width + EDGE_THRESHOLD;
-    const isOnTopEdge = mouseY >= activeImage.y - EDGE_THRESHOLD && mouseY <= activeImage.y + EDGE_THRESHOLD;
-    const isOnBottomEdge = mouseY >= activeImage.y + activeImage.height - EDGE_THRESHOLD && mouseY <= activeImage.y + activeImage.height + EDGE_THRESHOLD;
-
-    if (isOnLeftEdge && isOnTopEdge) {
-      resizeCursorType = RESIZE_NWSE;
-    } else if (isOnRightEdge && isOnTopEdge) {
-      resizeCursorType = RESIZE_NESW;
-    } else if (isOnLeftEdge && isOnBottomEdge) {
-      resizeCursorType = RESIZE_NESW;
-    } else if (isOnRightEdge && isOnBottomEdge) {
-      resizeCursorType = RESIZE_NWSE;
-    } else if (isOnLeftEdge || isOnRightEdge) {
-      resizeCursorType = RESIZE_EW;
-    } else if (isOnTopEdge || isOnBottomEdge) {
-      resizeCursorType = RESIZE_NS;
-    } else {
-      resizeCursorType = ARROW;
-    }
-  } else {
-    resizeCursorType = ARROW;
   }
-}
+  
+  function drawHandle(imgData, p) {
+  p.stroke(0,0,255);
+  p.noFill();
+  p.rect(imgData.x, imgData.y, imgData.width, imgData.height);
+  }
+  
+  function isMouseOnLeftEdge(imgData, p) {
+  return p.abs(p.mouseX - imgData.x) <= EDGE_THRESHOLD;
+  }
+  
+  function isMouseOnRightEdge(imgData, p) {
+  return p.abs(p.mouseX - (imgData.x + imgData.width)) <= EDGE_THRESHOLD;
+  }
+  
+  function isMouseOnTopEdge(imgData, p) {
+  return p.abs(p.mouseY - imgData.y) <= EDGE_THRESHOLD;
+  }
+  
+  function isMouseOnBottomEdge(imgData, p) {
+  return p.abs(p.mouseY - (imgData.y + imgData.height)) <= EDGE_THRESHOLD;
+  }
+  
+  function updateCursor(p) {
+    if (activeImage) {
+      const isOnLeftEdge = p.mouseX >= activeImage.x - EDGE_THRESHOLD && p.mouseX <= activeImage.x + EDGE_THRESHOLD;
+      const isOnRightEdge = p.mouseX >= activeImage.x + activeImage.width - EDGE_THRESHOLD && p.mouseX <= activeImage.x + activeImage.width + EDGE_THRESHOLD;
+      const isOnTopEdge = p.mouseY >= activeImage.y - EDGE_THRESHOLD && p.mouseY <= activeImage.y + EDGE_THRESHOLD;
+      const isOnBottomEdge = p.mouseY >= activeImage.y + activeImage.height - EDGE_THRESHOLD && p.mouseY <= activeImage.y + activeImage.height + EDGE_THRESHOLD;
+  
+      if (isOnLeftEdge && isOnTopEdge) {
+        canvas2D.elt.style.cursor = 'nwse-resize';
+      } else if (isOnRightEdge && isOnTopEdge) {
+        canvas2D.elt.style.cursor = 'nesw-resize';
+      } else if (isOnLeftEdge && isOnBottomEdge) {
+        canvas2D.elt.style.cursor = 'nesw-resize';
+      } else if (isOnRightEdge && isOnBottomEdge) {
+        canvas2D.elt.style.cursor = 'nwse-resize';
+      } else if (isOnLeftEdge || isOnRightEdge) {
+        canvas2D.elt.style.cursor = 'ew-resize';
+      } else if (isOnTopEdge || isOnBottomEdge) {
+        canvas2D.elt.style.cursor = 'ns-resize';
+      } else {
+        canvas2D.elt.style.cursor = 'default';
+      }
+    }
+  }
+  
+

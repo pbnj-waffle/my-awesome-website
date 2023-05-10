@@ -6,21 +6,24 @@ body {
   text-align: center;
 }
 
-canvas {
-  display: block;
-  position: relative;
+#canvasContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 1;
 }
 
-#uploadImage {
+#canvasContainer2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+#buttonsContainer {
   position: absolute;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 2;
-  cursor: pointer;
+  z-index: 3;
 }
-
-
-
-
