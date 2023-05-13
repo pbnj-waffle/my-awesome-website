@@ -7,7 +7,7 @@ function fileSelected(event, p) {
 }
 function imageLoaded(image, p) {
   const effectRandom = p.floor(p.random(1,101));
-  const shouldMove = 0 < effectRandom && effectRandom <= 50;
+  const shouldMove = 0 < effectRandom && effectRandom <= 100;
   const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
   const initialX = p.random(0, p.windowWidth - image.width);
   const initialY = p.random(0, p.windowHeight - image.height);
@@ -69,7 +69,7 @@ function duplicateImage(imgData, p) {
   }
 }
 
-function mousePressed(p) {
+/*function mousePressed(p) {
   if (p.mouseButton !== p.LEFT) return;
 
   let foundImage = false;
@@ -157,7 +157,11 @@ function mousePressed(p) {
   function isMouseOnBottomEdge(imgData, p) {
   return p.abs(p.mouseY - (imgData.y + imgData.height)) <= EDGE_THRESHOLD;
   }
-  
+
+  function setCursor(cursor) {
+    document.body.style.cursor = cursor;
+  }
+
   function updateCursor(p) {
     if (activeImage) {
       const isOnLeftEdge = p.mouseX >= activeImage.x - EDGE_THRESHOLD && p.mouseX <= activeImage.x + EDGE_THRESHOLD;
@@ -166,21 +170,21 @@ function mousePressed(p) {
       const isOnBottomEdge = p.mouseY >= activeImage.y + activeImage.height - EDGE_THRESHOLD && p.mouseY <= activeImage.y + activeImage.height + EDGE_THRESHOLD;
   
       if (isOnLeftEdge && isOnTopEdge) {
-        canvas2D.elt.style.cursor = 'nwse-resize';
+        setCursor('nwse-resize');
       } else if (isOnRightEdge && isOnTopEdge) {
-        canvas2D.elt.style.cursor = 'nesw-resize';
+        setCursor('nesw-resize');
       } else if (isOnLeftEdge && isOnBottomEdge) {
-        canvas2D.elt.style.cursor = 'nesw-resize';
+        setCursor('nesw-resize');
       } else if (isOnRightEdge && isOnBottomEdge) {
-        canvas2D.elt.style.cursor = 'nwse-resize';
+        setCursor('nwse-resize');
       } else if (isOnLeftEdge || isOnRightEdge) {
-        canvas2D.elt.style.cursor = 'ew-resize';
+        setCursor('ew-resize');
       } else if (isOnTopEdge || isOnBottomEdge) {
-        canvas2D.elt.style.cursor = 'ns-resize';
+        setCursor('ns-resize');
       } else {
-        canvas2D.elt.style.cursor = 'default';
+        setCursor('default');
       }
     }
-  }
+  }*/
   
 

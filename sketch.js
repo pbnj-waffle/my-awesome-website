@@ -48,7 +48,7 @@ const sketch2D = (p) => {
     topBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     bgBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     differenceBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
-    p.frameRate(100);
+    p.frameRate(350);
     
   
     const uploadImageButton = p.select('#uploadImage');
@@ -59,8 +59,7 @@ const sketch2D = (p) => {
 
     const saveImageButton = p.select('#saveImage');
     saveImageButton.mousePressed(saveImageToFile);
-
-    canvas2D.elt.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', (e) => {
       if (!mouseOver3DObject && activeImage) {
         updateCursor(p);
       } else {
