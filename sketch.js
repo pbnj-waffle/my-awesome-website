@@ -8,8 +8,7 @@ let buffer; //IMPORTANT to use to keep browser from crashing
 let topBuffer;
 let square;
 let squareTrail = [];
-let squareTrailSpacing = 50;
-let lastTrailSquareTime = 0;
+let squareTrailSpacing = 5000;//NOT WORKIN
 let differenceBuffer;
 const ARROW = 'default';
 const RESIZE_EW = 'ew-resize';
@@ -19,6 +18,7 @@ const RESIZE_NESW = "nesw-resize";
 let cursorType = ARROW;
 let resizeCursorType = ARROW;
 let mouseOver3DObject = false;
+
 
 const sketch2D = (p) => {
   p.mousePressed = () => {
@@ -66,19 +66,28 @@ const sketch2D = (p) => {
         p.cursor(ARROW);
       }
     });
-  
     square = {
-        x: p.random(p.windowWidth - 50),
-        y: p.random(p.windowHeight - 50),
-        size: 50,
-        vx: p.random(-3, 3),
-        vy: p.random(-3, 3),
-        lastTrailSquarePosition: null // Add this line
-      };
-      squareTrailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
-      squareTrailBufferBlend = p.createGraphics(p.windowWidth, p.windowHeight);
-    }
+      x: p.random(p.windowWidth - 50),
+      y: p.random(p.windowHeight - 50),
+      size: 50,
+      vx: p.random(-3, 3),
+      vy: p.random(-3, 3),
+      color: [p.random(255), p.random(255), p.random(255)],
+      lastTrailSquarePosition: null,
+      lastTrailSquareTime: 0,
+      direction: p.createVector(p.random(-1, 1), p.random(-1, 1)).normalize(),
+      stopped: false,
+      edgeHits: 0,
+      edgeHitsToStop: 0,
+      lastEdgeHitPosition: null,
+    };
   
+    square.edgeHitsToStop = p.random([10, 15, 30, 45, 60]);
+    squareTrailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
+    squareTrailBufferBlend = p.createGraphics(p.windowWidth, p.windowHeight);
+    squareBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
+  }
+
     function saveImageToFile() {
       p.saveCanvas('myCanvas', 'jpg');
     }
@@ -206,14 +215,16 @@ const sketch2D = (p) => {
     p.blendMode(p.OVERLAY); // Set the blend mode to screen
     p.image(bgBuffer, 0, 0); // Draw the bgBuffer onto the main canvas
   
-    p.blendMode(p.BLEND); // Reset the blend mode to BLEND before drawing the squareTrailBuffer
-    p.image(squareTrailBuffer, 0, 0); // Draw the squareTrailBuffer
-  
     p.blendMode(p.DIFFERENCE); // Reset the blend mode to DIFFERENCE for the images
     p.image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
+    p.image(topBuffer, 0, 0); // Add this line to draw the topBuffer onto the main canvas
+  
+    p.push(); // Create a separate context for square drawing
+    p.blendMode(p.BLEND); // Reset the blend mode to BLEND
+    p.image(squareTrailBuffer, 0, 0); // Draw the squareTrailBuffer
     drawMovingSquare(p);
     drawMainSquare(p); // Add this line to draw the main square
-    p.image(topBuffer, 0, 0); // Add this line to draw the topBuffer onto the main canvas
+    p.pop(); // Restore the previous context
   }
 };
 const my2D = new p5(sketch2D);
