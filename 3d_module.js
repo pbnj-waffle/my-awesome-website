@@ -57,6 +57,7 @@ renderer.domElement.addEventListener("wheel", (event) => {
 
 renderer.domElement.addEventListener("mousedown", (event) => {
   if (textInputMode) {
+    event.stopPropagation();
     return;
   }
 
@@ -67,15 +68,10 @@ renderer.domElement.addEventListener("mousedown", (event) => {
 
   isDragging3DModel = true;
   lastMousePosition = { x: event.clientX, y: event.clientY };
-});
-
-renderer.domElement.addEventListener('mousedown', () => {
-  if (textInputMode) {
-    return;
-  }
 
   isMousePressedOn3D = true;
 });
+
   
   renderer.domElement.addEventListener("mousemove", (event) => {
     if (isMouseOver3DObject(event)) {

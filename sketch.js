@@ -21,6 +21,7 @@ let mouseOver3DObject = false;
 let textInputMode = false;
 let inputField;
 let letters = [];
+let textSizeSlider;
 
 
 const sketch2D = (p) => {
@@ -63,30 +64,36 @@ const sketch2D = (p) => {
     saveImageButton.mousePressed(saveImageToFile);
 
     const addTextButton = p.select('#addText');
-    addTextButton.mousePressed(() => {
-      textInputMode = !textInputMode;
-      p.cursor(textInputMode ? p.TEXT : p.ARROW);
+    const textSizeContainer = p.select('#textSizeContainer');
+    textSizeSlider = p.select('#textSize');
+
+    p.canvas.addEventListener('mousedown', (e) => {
+      handleCanvasClick(p, e);
+    }, true);
     
+    addTextButton.mousePressed(() => {
+      if (textInputMode) {
+        if (inputField) {
+          saveText(p);
+          p.cursor(p.ARROW);
+          textInputMode = false;
+        }
+      } else {
+        textInputMode = true;
+        p.cursor(p.TEXT);
+      }
+      
       // Modify the button's text according to the `textInputMode` state
       addTextButton.html(textInputMode ? 'Save Text' : 'Add Text');
+      textSizeContainer.style('display', textInputMode ? 'block' : 'none');
     });
 
-    canvas2D.elt.addEventListener('mousedown', (e) => {
-      if (e.button === 0) { // Check if the left button is clicked
-        if (textInputMode) {
-          e.preventDefault(); // Prevent the event from propagating to the parent element
-    
-          const randomX = Math.floor(Math.random() * p.width);
-          const randomY = Math.floor(Math.random() * p.height);
-    
-          createInputField(p, randomX, randomY);
-          textInputMode = false;
-          addTextButton.html('Add Text'); // Change the button's text back to "Add Text"
-        } else {
-          mousePressed(p);
+
+      textSizeSlider.input(() => {
+        if (inputField) {
+          inputField.style('font-size', textSizeSlider.value() + 'px');
         }
-      }
-    });
+      });
 
     document.addEventListener('mousemove', (e) => {
       if (!mouseOver3DObject && activeImage) {
@@ -130,18 +137,11 @@ const sketch2D = (p) => {
     currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
     bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, p.windowHeight);
 
+    // TEXT
     p.fill(255); // Add this line to set the text color to white
     for (const letter of letters) {
       p.text(letter.char, letter.x, letter.y);
       updateLetter(p, letter);
-    }
-  
-    let cursorType = ARROW;
-    const framesBetweenTrail = 10;//NOT WORKING
-
-    // TEXT
-    if (textInputMode && p.mouseIsPressed && !inputField) {
-      createInputField(p, p.mouseX, p.mouseY);
     }
   
     for (let letter of letters) {
@@ -150,6 +150,8 @@ const sketch2D = (p) => {
     }
 
     //IMAGES
+    const framesBetweenTrail = 10;
+
     for (const imgData of images) {
       processImage(imgData, p);
   
@@ -287,20 +289,38 @@ const sketch2D = (p) => {
 const my2D = new p5(sketch2D);
 
 function handleCanvasClick(p, e) {
-  if (e.button === 0) { // Check if the left button is clicked
-    if (textInputMode) {
-      // Generate random x and y coordinates within the canvas bounds
-      const randomX = Math.floor(Math.random() * p.width);
-      const randomY = Math.floor(Math.random() * p.height);
+  console.log("handleCanvasClick called"); // Add this line
 
-      createInputField(p, randomX, randomY);
-      // Do not change the textInputMode here
+  if (!textInputMode && (isAnyImageActive() || isMouseOver3DObject(e))) {
+    console.log("3D module behavior"); // Add this line
+    isDragging3DModel = true;
+    lastMousePosition = { x: e.clientX, y: e.clientY };
+    isMousePressedOn3D = true;
+    return;
+  }
+
+  if (e.button === 0) { // Check if the left button is clicked
+    console.log("Left button clicked"); // Add this line
+    if (textInputMode) {
+      console.log("textInputMode is true"); // Add this line
+      if (e.target === p.canvas) {
+        console.log("Clicked on canvas"); // Add this line
+        // Get the click position, ensuring it is within the canvas
+        const clickX = Math.min(Math.max(0, e.clientX - p.canvas.offsetLeft), p.width);
+        const clickY = Math.min(Math.max(0, e.clientY - p.canvas.offsetTop), p.height);
+
+        if (inputField) {
+          saveText(p);
+        }
+
+        createInputField(p, clickX, clickY);
+        e.preventDefault();
+      }
     } else {
       mousePressed(p);
     }
   }
 }
-
 
 
 function windowResized() {
