@@ -18,16 +18,19 @@ const RESIZE_NESW = "nesw-resize";
 let cursorType = ARROW;
 let resizeCursorType = ARROW;
 let mouseOver3DObject = false;
+let textInputMode = false;
+let inputField;
+let letters = [];
 
 
 const sketch2D = (p) => {
-  p.mousePressed = () => {
+  /*p.mousePressed = () => {
     mousePressed(p);
   };
   
   p.mouseReleased = () => {
     mouseReleased(p);
-  };
+  };*/
 
   p.preload = () => {
     for (let i = 1; i <= 200; i++) { 
@@ -49,8 +52,7 @@ const sketch2D = (p) => {
     bgBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     differenceBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     p.frameRate(350);
-    
-  
+      
     const uploadImageButton = p.select('#uploadImage');
     uploadImageButton.mousePressed(() => p.select('#fileInput').elt.click());
   
@@ -59,6 +61,13 @@ const sketch2D = (p) => {
 
     const saveImageButton = p.select('#saveImage');
     saveImageButton.mousePressed(saveImageToFile);
+
+    const addTextButton = p.select('#addText');
+    addTextButton.mousePressed(() => {
+    textInputMode = !textInputMode;
+    p.cursor(textInputMode ? p.TEXT : p.ARROW);
+   });
+
     document.addEventListener('mousemove', (e) => {
       if (!mouseOver3DObject && activeImage) {
         updateCursor(p);
@@ -66,6 +75,7 @@ const sketch2D = (p) => {
         p.cursor(ARROW);
       }
     });
+
     square = {
       x: p.random(p.windowWidth - 50),
       y: p.random(p.windowHeight - 50),
@@ -82,7 +92,7 @@ const sketch2D = (p) => {
       lastEdgeHitPosition: null,
     };
   
-    square.edgeHitsToStop = p.random([10, 15, 30, 45, 60]);
+    square.edgeHitsToStop = p.random([15, 30, 45, 60, 75]);
     squareTrailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     squareTrailBufferBlend = p.createGraphics(p.windowWidth, p.windowHeight);
     squareBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
@@ -102,7 +112,18 @@ const sketch2D = (p) => {
   
     let cursorType = ARROW;
     const framesBetweenTrail = 10;//NOT WORKING
+
+    // TEXT
+    if (textInputMode && p.mouseIsPressed && !inputField) {
+      createInputField(p, p.mouseX, p.mouseY);
+    }
   
+    for (let letter of letters) {
+      updateLetter(letter, p);
+      p.text(letter.char, letter.x, letter.y);
+    }
+
+    //IMAGES
     for (const imgData of images) {
       processImage(imgData, p);
   
@@ -225,6 +246,16 @@ const sketch2D = (p) => {
     drawMovingSquare(p);
     drawMainSquare(p); // Add this line to draw the main square
     p.pop(); // Restore the previous context
+
+    // Draw images not affected by blending
+    p.push(); // Create a separate context for images with no blending
+    p.blendMode(p.BLEND);
+    for (const imgData of images) {
+    if (imgData.noBlending) {
+    p.image(imgData.processedImg || imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
+    }
+  }
+  p.pop(); // Restore the previous context
   }
 };
 const my2D = new p5(sketch2D);

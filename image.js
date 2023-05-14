@@ -7,11 +7,14 @@ function fileSelected(event, p) {
 }
 function imageLoaded(image, p) {
   const effectRandom = p.floor(p.random(1,101));
+  console.log('Random number:', effectRandom);
   const shouldMove = 0 < effectRandom && effectRandom <= 100;
   const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
   const initialX = p.random(0, p.windowWidth - image.width);
   const initialY = p.random(0, p.windowHeight - image.height);
   const shouldTrail = p.random() < 0.3; // NOT WORKING
+  const noBlending = p.random() < 0.5;
+
 
   images.push({
     img: image,
@@ -28,9 +31,9 @@ function imageLoaded(image, p) {
     isResizingBottom: false,
     resizeMargin: 10,
     randomPosition: { x: initialX, y: initialY },
-    shouldMove: shouldMove,
+    shouldMove: !noBlending && shouldMove,
     startTime: p.millis() + 5000,
-    stopAfter: p.random([5, 10, 30, 60, 300, Infinity]) * 1000,
+    stopAfter: p.random([5, 10, 30, 60, 300, Infinity]) * 1000, //  NOT WORKING
     trail: [],
     noiseSeedX: p.random(1000),
     noiseSeedY: p.random(1000),
@@ -39,10 +42,12 @@ function imageLoaded(image, p) {
     processedImg: null,
     timeElapsed: 0,
     shouldDuplicate: shouldDuplicate,
-    duplicateInterval: 5000, // Duplicate every 5 seconds
+    duplicateInterval: 15000, // Duplicate every 15 seconds
     lastDuplicateTime: p.millis(),
     glitchImg: null,
     shouldTrail: shouldTrail,
+    noBlending: noBlending,
+    shouldMove: !noBlending && shouldMove,
   });
 }
 
@@ -69,7 +74,7 @@ function duplicateImage(imgData, p) {
   }
 }
 
-function mousePressed(p) {
+/*function mousePressed(p) {
   if (p.mouseButton !== p.LEFT) return;
 
   let foundImage = false;
@@ -185,6 +190,6 @@ function mousePressed(p) {
         setCursor('default');
       }
     }
-  }
+  }*/
   
 
