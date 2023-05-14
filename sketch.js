@@ -68,6 +68,18 @@ const sketch2D = (p) => {
     p.cursor(textInputMode ? p.TEXT : p.ARROW);
    });
 
+   canvas2D.elt.addEventListener('mousedown', (e) => {
+    if (e.button === 0) { // Check if the left button is clicked
+      if (textInputMode) {
+        const rect = canvas2D.elt.getBoundingClientRect();
+        createInputField(p, e.clientX - rect.left, e.clientY - rect.top);
+        textInputMode = false;
+      } else {
+        mousePressed(p);
+      }
+    }
+  });
+
     document.addEventListener('mousemove', (e) => {
       if (!mouseOver3DObject && activeImage) {
         updateCursor(p);
@@ -109,6 +121,12 @@ const sketch2D = (p) => {
     bgBuffer.clear(); // Clear the bgBuffer
     currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
     bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, p.windowHeight);
+
+    p.fill(255); // Add this line to set the text color to white
+    for (const letter of letters) {
+      p.text(letter.char, letter.x, letter.y);
+      updateLetter(p, letter);
+    }
   
     let cursorType = ARROW;
     const framesBetweenTrail = 10;//NOT WORKING
@@ -263,4 +281,3 @@ const my2D = new p5(sketch2D);
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
-

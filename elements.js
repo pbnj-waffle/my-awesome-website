@@ -36,7 +36,7 @@ function drawMovingSquare(p) {
         p.dist(square.x, square.y, square.lastEdgeHitPosition.x, square.lastEdgeHitPosition.y) > edgeHitCooldownDistance
       ) {
         square.edgeHits++; // Increment the edge hit counter
-        console.log("Edge hit:", square.edgeHits); // Log edge hit count
+
         square.lastEdgeHitPosition = { x: square.x, y: square.y }; // Update the last edge hit position
       }
     }
@@ -46,7 +46,7 @@ function drawMovingSquare(p) {
       square.vx = 0;
       square.vy = 0;
       square.stopped = true;
-      console.log("Edge hit:", square.edgeHits);
+
     }
   }
 

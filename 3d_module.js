@@ -55,15 +55,27 @@ renderer.domElement.addEventListener("wheel", (event) => {
   lastMouseWheelDelta = event.deltaY;
 });
 
-  renderer.domElement.addEventListener("mousedown", (event) => {
-    if (isAnyImageActive() || !isMouseOver3DObject(event)) {
-      isDragging3DModel = false;
-      return;
-    }
-  
-    isDragging3DModel = true;
-    lastMousePosition = { x: event.clientX, y: event.clientY };
-  });
+renderer.domElement.addEventListener("mousedown", (event) => {
+  if (textInputMode) {
+    return;
+  }
+
+  if (isAnyImageActive() || !isMouseOver3DObject(event)) {
+    isDragging3DModel = false;
+    return;
+  }
+
+  isDragging3DModel = true;
+  lastMousePosition = { x: event.clientX, y: event.clientY };
+});
+
+renderer.domElement.addEventListener('mousedown', () => {
+  if (textInputMode) {
+    return;
+  }
+
+  isMousePressedOn3D = true;
+});
   
   renderer.domElement.addEventListener("mousemove", (event) => {
     if (isMouseOver3DObject(event)) {
