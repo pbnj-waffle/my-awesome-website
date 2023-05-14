@@ -17,19 +17,27 @@ function createInputField(p, x, y) {
 }
 
 function createLetters(p, text, x, y) {
+  x = parseFloat(x);
+  y = parseFloat(y);
+  const shouldAllFall = Math.random() < 0.5; // Decide once whether all letters should fall or not
+
   for (let i = 0; i < text.length; i++) {
     letters.push({
       char: text[i],
       x: x + i * p.textWidth(text[i]), // Use textWidth() to properly space the characters
       y: y,
       vy: 0,
+      shouldFall: shouldAllFall, // Set the shouldFall property for all letters based on the decided value
     });
   }
 }
 
+
 function updateLetter(letter, p) {
-  letter.y += letter.vy;
-  letter.vy += 0.2; // Gravity
+  if (letter.shouldFall) {
+    letter.y += letter.vy;
+    letter.vy += 0.2; // Gravity
+  }
   if (letter.y > p.height) {
     letter.y = 0;
     letter.vy = 0;

@@ -64,21 +64,29 @@ const sketch2D = (p) => {
 
     const addTextButton = p.select('#addText');
     addTextButton.mousePressed(() => {
-    textInputMode = !textInputMode;
-    p.cursor(textInputMode ? p.TEXT : p.ARROW);
-   });
+      textInputMode = !textInputMode;
+      p.cursor(textInputMode ? p.TEXT : p.ARROW);
+    
+      // Modify the button's text according to the `textInputMode` state
+      addTextButton.html(textInputMode ? 'Save Text' : 'Add Text');
+    });
 
-   canvas2D.elt.addEventListener('mousedown', (e) => {
-    if (e.button === 0) { // Check if the left button is clicked
-      if (textInputMode) {
-        const rect = canvas2D.elt.getBoundingClientRect();
-        createInputField(p, e.clientX - rect.left, e.clientY - rect.top);
-        textInputMode = false;
-      } else {
-        mousePressed(p);
+    canvas2D.elt.addEventListener('mousedown', (e) => {
+      if (e.button === 0) { // Check if the left button is clicked
+        if (textInputMode) {
+          e.preventDefault(); // Prevent the event from propagating to the parent element
+    
+          const randomX = Math.floor(Math.random() * p.width);
+          const randomY = Math.floor(Math.random() * p.height);
+    
+          createInputField(p, randomX, randomY);
+          textInputMode = false;
+          addTextButton.html('Add Text'); // Change the button's text back to "Add Text"
+        } else {
+          mousePressed(p);
+        }
       }
-    }
-  });
+    });
 
     document.addEventListener('mousemove', (e) => {
       if (!mouseOver3DObject && activeImage) {
@@ -277,6 +285,23 @@ const sketch2D = (p) => {
   }
 };
 const my2D = new p5(sketch2D);
+
+function handleCanvasClick(p, e) {
+  if (e.button === 0) { // Check if the left button is clicked
+    if (textInputMode) {
+      // Generate random x and y coordinates within the canvas bounds
+      const randomX = Math.floor(Math.random() * p.width);
+      const randomY = Math.floor(Math.random() * p.height);
+
+      createInputField(p, randomX, randomY);
+      // Do not change the textInputMode here
+    } else {
+      mousePressed(p);
+    }
+  }
+}
+
+
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
