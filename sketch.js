@@ -290,39 +290,32 @@ const sketch2D = (p) => {
 const my2D = new p5(sketch2D);
 
 function handleCanvasClick(p, e) {
-  console.log("handleCanvasClick called"); // Add this line
 
-  if (!textInputMode/* && (isAnyImageActive() || isMouseOver3DObject(e))*/) {
-    console.log("3D module behavior"); // Add this line
+  if (!textInputMode) {
     isDragging3DModel = true;
     lastMousePosition = { x: e.clientX, y: e.clientY };
     isMousePressedOn3D = true;
     return;
   }
-  console.log(e)
-  console.log(inputField)
+
   if (e.button === 0) { // Check if the left button is clicked
-    console.log("Left button clicked"); // Add this line
     if (e.target.tagName == 'BUTTON' || inputField && e.target.closest('.text-input-wrapper')) {
       return;
     }
     if (textInputMode) {
-      console.log("textInputMode is true"); // Add this line
-      //if (e.target === p.canvas) {
-        console.log("Clicked on canvas"); // Add this line
         // Get the click position, ensuring it is within the canvas
         const clickX = Math.min(Math.max(0, e.clientX - p.canvas.offsetLeft), p.width);
         const clickY = Math.min(Math.max(0, e.clientY - p.canvas.offsetTop), p.height);
 
         if (inputField) {
-          moveInput(clickX, clickY);
+          console.log('there is an input')
+          saveText(p);
         }
         else
-          createInputField(p, clickX, clickY);
+          console.log('no input')
 
-        
+        createInputField(p, clickX, clickY);
         e.preventDefault();
-      //}
     } else {
       mousePressed(p);
     }
