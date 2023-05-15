@@ -315,13 +315,12 @@ function handleCanvasClick(p, e) {
         const clickY = Math.min(Math.max(0, e.clientY - p.canvas.offsetTop), p.height);
 
         if (inputField) {
-          console.log('there is an input')
-          saveText(p);
+          moveInput(clickX, clickY);
         }
         else
-          console.log('no input')
+          createInputField(p, clickX, clickY);
 
-        createInputField(p, clickX, clickY);
+        
         e.preventDefault();
       //}
     } else {

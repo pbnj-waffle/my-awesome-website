@@ -61,6 +61,10 @@ function createInputField(p, x, y) {
 
 }
 
+function moveInput(x, y) {
+  inputField.parent().style.left = x + 'px';
+  inputField.parent().style.top = y + 'px';
+}
 
 function saveText(p) {
   if (inputField) {
