@@ -55,9 +55,10 @@ renderer.domElement.addEventListener("wheel", (event) => {
   lastMouseWheelDelta = event.deltaY;
 });
 
-renderer.domElement.addEventListener("mousedown", (event) => {
+document.addEventListener("mousedown", (event) => {
   if (textInputMode) {
     event.stopPropagation();
+    console.log('STOPPED!')
     return;
   }
 
