@@ -303,40 +303,38 @@ const sketch2D = (p) => {
       p.image(buffer, 0, 0); // Draw the buffer onto the main canvas
       p.blendMode(p.OVERLAY); // Set the blend mode to screen
       p.image(bgBuffer, 0, 0); // Draw the bgBuffer onto the main canvas
-
-      if(isBlackBg) {
-          p.blendMode(p.DIFFERENCE); // Set the blend mode to DIFFERENCE for the images
-      } else {
-          p.blendMode(p.BLEND);
-      }
-  } else {
-      p.blendMode(p.BLEND);
   }
 
-  // draw your images here
-
-  if (isBgAnimationEnabled && isBlackBg) {
-      p.image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
-      p.image(topBuffer, 0, 0); // Add this line to draw the topBuffer onto the main canvas
-  }
-
-    p.push(); // Create a separate context for square drawing
-    p.blendMode(p.BLEND); // Reset the blend mode to BLEND
-    p.image(squareTrailBuffer, 0, 0); // Draw the squareTrailBuffer
-    drawMovingSquare(p);
-    drawMainSquare(p); // Add this line to draw the main square
-    p.pop(); // Restore the previous context
-  
-    // Draw images not affected by blending
-    p.push(); // Create a separate context for images with no blending
-    p.blendMode(p.BLEND);
-    for (const imgData of images) {
-      if (imgData.noBlending) {
+  // Draw images affected by blending with the appropriate blending mode
+  p.blendMode(isBlackBg ? p.DIFFERENCE : p.BLEND); 
+  for (const imgData of images) {
+    if (!imgData.noBlending) {
         p.image(imgData.processedImg || imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
-      }
     }
-    p.pop(); // Restore the previous context
   }
+
+  // Draw differenceBuffer and topBuffer in all cases but change blending mode
+  p.blendMode(isBlackBg ? p.DIFFERENCE : p.BLEND);
+  p.image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
+  p.image(topBuffer, 0, 0); // Draw the topBuffer onto the main canvas
+
+  p.push(); // Create a separate context for square drawing
+  p.blendMode(p.BLEND); // Reset the blend mode to BLEND
+  p.image(squareTrailBuffer, 0, 0); // Draw the squareTrailBuffer
+  drawMovingSquare(p);
+  drawMainSquare(p); // Add this line to draw the main square
+  p.pop(); // Restore the previous context
+
+  // Draw images not affected by blending
+  p.push(); // Create a separate context for images with no blending
+  p.blendMode(p.BLEND);
+  for (const imgData of images) {
+    if (imgData.noBlending) {
+      p.image(imgData.processedImg || imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
+    }
+  }
+  p.pop(); // Restore the previous context
+}
 };
 const my2D = new p5(sketch2D);
 
