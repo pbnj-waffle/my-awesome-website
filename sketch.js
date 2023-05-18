@@ -108,7 +108,7 @@ const sketch2D = (p) => {
       handleCanvasClick(p, e);
     }, true);
     
-    addTextButton.mousePressed(() => {
+    addTextButton.mousePressed((e) => {
       if (textInputMode) {
         if (inputField) {
           saveText(p);
@@ -121,7 +121,7 @@ const sketch2D = (p) => {
       }
       
       // Modify the button's text according to the `textInputMode` state
-      addTextButton.html(textInputMode ? 'Save Text' : 'Add Text');
+      addTextButton.html(textInputMode ? 'submit' : 'text');
       textSizeContainer.style('display', textInputMode ? 'block' : 'none');
     });
 
@@ -304,8 +304,8 @@ const sketch2D = (p) => {
       p.blendMode(p.OVERLAY); // Set the blend mode to screen
       p.image(bgBuffer, 0, 0); 
       p.blendMode(p.DIFFERENCE); // Reset the blend mode to DIFFERENCE for the images
-    p.image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
-    p.image(topBuffer, 0, 0); // Add this line to draw the topBuffer onto the main canvas
+      p.image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
+      p.image(topBuffer, 0, 0); // Add this line to draw the topBuffer onto the main canvas
     }
     //p.image(bgBuffer, 0, 0); // Draw the bgBuffer onto the main canvas
   
@@ -344,20 +344,21 @@ function handleCanvasClick(p, e) {
     if (e.target.tagName == 'BUTTON' || inputField && e.target.closest('.text-input-wrapper')) {
       return;
     }
+
     if (textInputMode) {
         // Get the click position, ensuring it is within the canvas
         const clickX = Math.min(Math.max(0, e.clientX - p.canvas.offsetLeft), p.width);
         const clickY = Math.min(Math.max(0, e.clientY - p.canvas.offsetTop), p.height);
 
         if (inputField) {
-          console.log('there is an input')
-          saveText(p);
+          moveInput(clickX, clickY);
         }
         else
-          console.log('no input')
+          createInputField(p, clickX, clickY);
 
-        createInputField(p, clickX, clickY);
+        
         e.preventDefault();
+      //}
     } else {
       mousePressed(p);
     }
