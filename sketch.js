@@ -1,6 +1,6 @@
 let canvas;
 let bgColor;
-let transitionSpeed = 0.0000000000000000001; 
+let transitionSpeed = 0.01; 
 let targetColor;
 let images = [];
 let handleSize = 10;
@@ -9,10 +9,11 @@ let maskedBgs = []; // An array to store the masked background images
 let currentBgFrame = 0; // Store the current frame index of the background animation
 let buffer; //IMPORTANT to use to keep browser from crashing
 let topBuffer;
+let bgBuffer; 
+let differenceBuffer;
 let square;
 let squareTrail = [];
-let squareTrailSpacing = 5000;//NOT WORKIN
-let differenceBuffer;
+let squareTrailSpacing = 5000;//NOT WORKING
 const ARROW = 'default';
 const RESIZE_EW = 'ew-resize';
 const RESIZE_NS = 'ns-resize';
@@ -26,9 +27,8 @@ let inputField;
 let letters = [];
 let textSizeSlider;
 var clickCounter = 0;
-let isBlackBg = false; // a variable to keep track of whether the background is currently black
-let isBgAnimationEnabled = false; // a variable to control whether to show the background animation or not
-
+//let isBlackBg = false; 
+//let isBgAnimationEnabled = false; 
 
 
 document.addEventListener('click', function () {
@@ -42,13 +42,13 @@ document.addEventListener('click', function () {
 
 const sketch2D = (p) => {
   
-  /*p.mousePressed = () => {
+  p.mousePressed = () => {
     mousePressed(p);
   };
   
   p.mouseReleased = () => {
     mouseReleased(p);
-  };*/
+  };
 
   p.preload = () => {
     for (let i = 1; i <= 200; i++) { 
@@ -64,7 +64,7 @@ const sketch2D = (p) => {
   
   p.setup = () => {
     bgColor = p.color(0);
-    targetColor = p.color("#2bff00");
+    //targetColor = p.color("#2bff00");
     const canvas2D = p.createCanvas(p.windowWidth, p.windowHeight); // Store the canvas
     canvas2D.parent('canvasContainer');
     buffer = p.createGraphics(p.windowWidth, p.windowHeight);
@@ -90,15 +90,17 @@ const sketch2D = (p) => {
     const toggleBgButton = document.querySelector('#toggleBg');
     
     colorPicker.addEventListener('input', () => {
-  let hex = colorPicker.value;
-  let r = parseInt(hex.slice(1, 3), 16);
-  let g = parseInt(hex.slice(3, 5), 16);
-  let b = parseInt(hex.slice(5, 7), 16);
-
-  targetColor = p.color(r, g, b); // update the target color
-  isBlackBg = colorPicker.value === "#000000"; // check if the selected color is black
-  isBgAnimationEnabled = isBlackBg; // update whether the animation is enabled
-});
+      let hex = colorPicker.value;
+      let r = parseInt(hex.slice(1, 3), 16);
+      let g = parseInt(hex.slice(3, 5), 16);
+      let b = parseInt(hex.slice(5, 7), 16);
+    
+      targetColor = p.color(r, g, b); // update the target color
+      //isBlackBg = colorPicker.value === "#000000"; // check if the selected color is black
+      //isBgAnimationEnabled = isBlackBg; // update whether the animation is enabled
+    
+      console.log(targetColor); // log the targetColor to check if it's being updated correctly
+    });
     
     toggleBgButton.addEventListener('click', () => {
       colorPicker.click(); // open the color picker
@@ -167,8 +169,9 @@ const sketch2D = (p) => {
     }
   
     p.draw = () => {
-    bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
-    p.background(bgColor); 
+    //bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
+    //p.background(bgColor);
+    p.background(0); 
     topBuffer.clear();
     buffer.clear(); // IMPORTANT to use to keep browser from crashing
     bgBuffer.clear(); // Clear the bgBuffer
@@ -299,14 +302,14 @@ const sketch2D = (p) => {
     }
   
     
-    if (isBgAnimationEnabled) {
+    //if (isBgAnimationEnabled) {
       p.image(buffer, 0, 0); // Draw the buffer onto the main canvas
       p.blendMode(p.OVERLAY); // Set the blend mode to screen
       p.image(bgBuffer, 0, 0); 
       p.blendMode(p.DIFFERENCE); // Reset the blend mode to DIFFERENCE for the images
       p.image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
       p.image(topBuffer, 0, 0); // Add this line to draw the topBuffer onto the main canvas
-    }
+    //}
     //p.image(bgBuffer, 0, 0); // Draw the bgBuffer onto the main canvas
   
     

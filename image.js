@@ -74,7 +74,7 @@ function duplicateImage(imgData, p) {
   }
 }
 
-/*function mousePressed(p) {
+function mousePressed(p) {
   if (p.mouseButton !== p.LEFT) return;
 
   let foundImage = false;
@@ -190,5 +190,5 @@ function duplicateImage(imgData, p) {
         setCursor('default');
       }
     }
-  }*/
+  }
   
