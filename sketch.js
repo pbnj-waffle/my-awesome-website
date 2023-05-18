@@ -64,11 +64,8 @@ const sketch2D = (p) => {
   
   p.setup = () => {
     bgColor = p.color(0);
-    targetColor = p.color(0, 0, 0); // set default target color as black
-    isBlackBg = true; // set default color check as true
-    isBgAnimationEnabled = true; // enable the animation by default
-
-    const canvas2D = p.createCanvas(p.windowWidth, p.windowHeight);
+    targetColor = p.color(0, 0, 0);
+    const canvas2D = p.createCanvas(p.windowWidth, p.windowHeight); // Store the canvas
     canvas2D.parent('canvasContainer');
     buffer = p.createGraphics(p.windowWidth, p.windowHeight);
     topBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
@@ -99,7 +96,7 @@ const sketch2D = (p) => {
       let b = parseInt(hex.slice(5, 7), 16);
     
       targetColor = p.color(r, g, b);
-      bgColor = targetColor;
+      bgColor = targetColor; // Set bgColor directly to the target color
       isBlackBg = colorPicker.value === "#000000";
       isBgAnimationEnabled = isBlackBg;
     });
@@ -172,13 +169,13 @@ const sketch2D = (p) => {
   
     p.draw = () => {
       bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
-    p.background(bgColor);
-    topBuffer.clear();
-    buffer.clear();
-    bgBuffer.clear();
-    currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
-    bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, p.windowHeight);
-    
+      p.background(bgColor);
+      topBuffer.clear();
+      buffer.clear();
+      bgBuffer.clear();
+      currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
+      bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, p.windowHeight);
+
     // TEXT
     p.fill(255);
     for (const letter of letters) {
@@ -301,34 +298,37 @@ const sketch2D = (p) => {
     if (activeImage) {
       drawFrame(activeImage);
     }
-    p.push(); // New context for the PNG sequence
+  
+    
     if (isBgAnimationEnabled) {
-        p.image(buffer, 0, 0);
-        p.blendMode(p.OVERLAY);
-        p.image(bgBuffer, 0, 0); 
-        p.blendMode(p.DIFFERENCE);
-        p.image(differenceBuffer, 0, 0);
-        p.image(topBuffer, 0, 0);
+      p.image(buffer, 0, 0); // Draw the buffer onto the main canvas
+      p.blendMode(p.OVERLAY); // Set the blend mode to screen
+      p.image(bgBuffer, 0, 0); 
+      p.blendMode(p.DIFFERENCE); // Reset the blend mode to DIFFERENCE for the images
+      p.image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
+      p.image(topBuffer, 0, 0); // Add this line to draw the topBuffer onto the main canvas
     }
-    p.pop(); // End of the new context
-
-    p.push(); // Separate context for square drawing
-    p.blendMode(p.BLEND);
-    p.image(squareTrailBuffer, 0, 0);
+    //p.image(bgBuffer, 0, 0); // Draw the bgBuffer onto the main canvas
+  
+    
+  
+    p.push(); // Create a separate context for square drawing
+    p.blendMode(p.BLEND); // Reset the blend mode to BLEND
+    p.image(squareTrailBuffer, 0, 0); // Draw the squareTrailBuffer
     drawMovingSquare(p);
-    drawMainSquare(p);
+    drawMainSquare(p); // Add this line to draw the main square
     p.pop(); // Restore the previous context
 
     // Draw images not affected by blending
-    p.push(); // Separate context for images with no blending
+    p.push(); // Create a separate context for images with no blending
     p.blendMode(p.BLEND);
     for (const imgData of images) {
-        if (imgData.noBlending) {
-            p.image(imgData.processedImg || imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
-        }
+    if (imgData.noBlending) {
+    p.image(imgData.processedImg || imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
     }
-    p.pop(); // Restore the previous context
-}
+  }
+  p.pop(); // Restore the previous context
+  }
 };
 const my2D = new p5(sketch2D);
 
