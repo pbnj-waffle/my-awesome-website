@@ -27,8 +27,8 @@ let inputField;
 let letters = [];
 let textSizeSlider;
 var clickCounter = 0;
-//let isBlackBg = false; 
-//let isBgAnimationEnabled = false; 
+let isBlackBg = false; 
+let isBgAnimationEnabled = false; 
 
 
 document.addEventListener('click', function () {
@@ -64,8 +64,11 @@ const sketch2D = (p) => {
   
   p.setup = () => {
     bgColor = p.color(0);
-    //targetColor = p.color("#2bff00");
-    const canvas2D = p.createCanvas(p.windowWidth, p.windowHeight); // Store the canvas
+    targetColor = p.color(0, 0, 0); // set default target color as black
+    isBlackBg = true; // set default color check as true
+    isBgAnimationEnabled = true; // enable the animation by default
+
+    const canvas2D = p.createCanvas(p.windowWidth, p.windowHeight);
     canvas2D.parent('canvasContainer');
     buffer = p.createGraphics(p.windowWidth, p.windowHeight);
     topBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
@@ -95,11 +98,10 @@ const sketch2D = (p) => {
       let g = parseInt(hex.slice(3, 5), 16);
       let b = parseInt(hex.slice(5, 7), 16);
     
-      targetColor = p.color(r, g, b); // update the target color
-      //isBlackBg = colorPicker.value === "#000000"; // check if the selected color is black
-      //isBgAnimationEnabled = isBlackBg; // update whether the animation is enabled
-    
-      console.log(targetColor);
+      targetColor = p.color(r, g, b);
+      bgColor = targetColor;
+      isBlackBg = colorPicker.value === "#000000";
+      isBgAnimationEnabled = isBlackBg;
     });
     
     toggleBgButton.addEventListener('click', () => {
@@ -169,15 +171,14 @@ const sketch2D = (p) => {
     }
   
     p.draw = () => {
-    //bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
-    //p.background(bgColor);
-    p.background(0); 
+      bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
+    p.background(bgColor);
     topBuffer.clear();
-    buffer.clear(); // IMPORTANT to use to keep browser from crashing
-    bgBuffer.clear(); // Clear the bgBuffer
+    buffer.clear();
+    bgBuffer.clear();
     currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
     bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, p.windowHeight);
-
+    
     // TEXT
     p.fill(255);
     for (const letter of letters) {
@@ -300,37 +301,34 @@ const sketch2D = (p) => {
     if (activeImage) {
       drawFrame(activeImage);
     }
-  
-    
-    //if (isBgAnimationEnabled) {
-      p.image(buffer, 0, 0); // Draw the buffer onto the main canvas
-      p.blendMode(p.OVERLAY); // Set the blend mode to screen
-      p.image(bgBuffer, 0, 0); 
-      p.blendMode(p.DIFFERENCE); // Reset the blend mode to DIFFERENCE for the images
-      p.image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
-      p.image(topBuffer, 0, 0); // Add this line to draw the topBuffer onto the main canvas
-    //}
-    //p.image(bgBuffer, 0, 0); // Draw the bgBuffer onto the main canvas
-  
-    
-  
-    p.push(); // Create a separate context for square drawing
-    p.blendMode(p.BLEND); // Reset the blend mode to BLEND
-    p.image(squareTrailBuffer, 0, 0); // Draw the squareTrailBuffer
+    p.push(); // New context for the PNG sequence
+    if (isBgAnimationEnabled) {
+        p.image(buffer, 0, 0);
+        p.blendMode(p.OVERLAY);
+        p.image(bgBuffer, 0, 0); 
+        p.blendMode(p.DIFFERENCE);
+        p.image(differenceBuffer, 0, 0);
+        p.image(topBuffer, 0, 0);
+    }
+    p.pop(); // End of the new context
+
+    p.push(); // Separate context for square drawing
+    p.blendMode(p.BLEND);
+    p.image(squareTrailBuffer, 0, 0);
     drawMovingSquare(p);
-    drawMainSquare(p); // Add this line to draw the main square
+    drawMainSquare(p);
     p.pop(); // Restore the previous context
 
     // Draw images not affected by blending
-    p.push(); // Create a separate context for images with no blending
+    p.push(); // Separate context for images with no blending
     p.blendMode(p.BLEND);
     for (const imgData of images) {
-    if (imgData.noBlending) {
-    p.image(imgData.processedImg || imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
+        if (imgData.noBlending) {
+            p.image(imgData.processedImg || imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
+        }
     }
-  }
-  p.pop(); // Restore the previous context
-  }
+    p.pop(); // Restore the previous context
+}
 };
 const my2D = new p5(sketch2D);
 
