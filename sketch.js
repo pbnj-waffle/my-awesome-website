@@ -99,11 +99,11 @@ const sketch2D = (p) => {
       //isBlackBg = colorPicker.value === "#000000"; // check if the selected color is black
       //isBgAnimationEnabled = isBlackBg; // update whether the animation is enabled
     
-      console.log(targetColor); // log the targetColor to check if it's being updated correctly
+      console.log(targetColor);
     });
     
     toggleBgButton.addEventListener('click', () => {
-      colorPicker.click(); // open the color picker
+      colorPicker.click(); 
     });
 
     document.addEventListener('mousedown', (e) => {
@@ -179,7 +179,7 @@ const sketch2D = (p) => {
     bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, p.windowHeight);
 
     // TEXT
-    p.fill(255); // Add this line to set the text color to white
+    p.fill(255);
     for (const letter of letters) {
       p.text(letter.char, letter.x, letter.y);
       updateLetter(p, letter);
