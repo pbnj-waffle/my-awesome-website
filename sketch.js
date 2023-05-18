@@ -1,4 +1,7 @@
 let canvas;
+let bgColor;
+let transitionSpeed = 0.0000000000000000001; 
+let targetColor;
 let images = [];
 let handleSize = 10;
 let activeImage;
@@ -22,9 +25,23 @@ let textInputMode = false;
 let inputField;
 let letters = [];
 let textSizeSlider;
+var clickCounter = 0;
+let isBlackBg = false; // a variable to keep track of whether the background is currently black
+let isBgAnimationEnabled = false; // a variable to control whether to show the background animation or not
+
+
+
+document.addEventListener('click', function () {
+  clickCounter++;
+
+  if (clickCounter >= 10) { //the amount of clicks
+    toggleTransition();
+  }
+});
 
 
 const sketch2D = (p) => {
+  
   /*p.mousePressed = () => {
     mousePressed(p);
   };
@@ -46,6 +63,8 @@ const sketch2D = (p) => {
   }
   
   p.setup = () => {
+    bgColor = p.color(0);
+    targetColor = p.color("#2bff00");
     const canvas2D = p.createCanvas(p.windowWidth, p.windowHeight); // Store the canvas
     canvas2D.parent('canvasContainer');
     buffer = p.createGraphics(p.windowWidth, p.windowHeight);
@@ -67,8 +86,25 @@ const sketch2D = (p) => {
     const textSizeContainer = p.select('#textSizeContainer');
     textSizeSlider = p.select('#textSize');
 
+    const colorPicker = document.querySelector('#colorPicker');
+    const toggleBgButton = document.querySelector('#toggleBg');
+    
+    colorPicker.addEventListener('input', () => {
+  let hex = colorPicker.value;
+  let r = parseInt(hex.slice(1, 3), 16);
+  let g = parseInt(hex.slice(3, 5), 16);
+  let b = parseInt(hex.slice(5, 7), 16);
+
+  targetColor = p.color(r, g, b); // update the target color
+  isBlackBg = colorPicker.value === "#000000"; // check if the selected color is black
+  isBgAnimationEnabled = isBlackBg; // update whether the animation is enabled
+});
+    
+    toggleBgButton.addEventListener('click', () => {
+      colorPicker.click(); // open the color picker
+    });
+
     document.addEventListener('mousedown', (e) => {
-      console.log('hello')
       handleCanvasClick(p, e);
     }, true);
     
@@ -131,7 +167,8 @@ const sketch2D = (p) => {
     }
   
     p.draw = () => {
-    p.background(0); 
+    bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
+    p.background(bgColor); 
     topBuffer.clear();
     buffer.clear(); // IMPORTANT to use to keep browser from crashing
     bgBuffer.clear(); // Clear the bgBuffer
@@ -261,13 +298,18 @@ const sketch2D = (p) => {
       drawFrame(activeImage);
     }
   
-    p.image(buffer, 0, 0); // Draw the buffer onto the main canvas
-    p.blendMode(p.OVERLAY); // Set the blend mode to screen
-    p.image(bgBuffer, 0, 0); // Draw the bgBuffer onto the main canvas
-  
-    p.blendMode(p.DIFFERENCE); // Reset the blend mode to DIFFERENCE for the images
+    
+    if (isBgAnimationEnabled) {
+      p.image(buffer, 0, 0); // Draw the buffer onto the main canvas
+      p.blendMode(p.OVERLAY); // Set the blend mode to screen
+      p.image(bgBuffer, 0, 0); 
+      p.blendMode(p.DIFFERENCE); // Reset the blend mode to DIFFERENCE for the images
     p.image(differenceBuffer, 0, 0); // Draw the differenceBuffer onto the main canvas
     p.image(topBuffer, 0, 0); // Add this line to draw the topBuffer onto the main canvas
+    }
+    //p.image(bgBuffer, 0, 0); // Draw the bgBuffer onto the main canvas
+  
+    
   
     p.push(); // Create a separate context for square drawing
     p.blendMode(p.BLEND); // Reset the blend mode to BLEND
@@ -320,6 +362,21 @@ function handleCanvasClick(p, e) {
       mousePressed(p);
     }
   }
+}
+
+
+function toggleTransition() {
+  var buttons = document.querySelectorAll('#buttonsContainer button');
+
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].classList.add('alt');
+  }
+
+  var marqueeTop = document.querySelector('.marquee-top');
+  var marqueeBottom = document.querySelector('.marquee-bottom');
+  
+  marqueeTop.classList.add('alt');
+  marqueeBottom.classList.add('alt');
 }
 
 

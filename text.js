@@ -10,7 +10,7 @@ function createInputField(p, x, y) {
   inputField.addClass('transparent-input', true);
   inputField.style('font-size', '20px');
   inputField.style('display', 'block');
-  slider = p.createSlider(10, 80, 20, 1);
+  slider = p.createSlider(10, 80, 20, 5);
   slider.parent(inputDiv);
   slider.changed(() => {
     inputField.style('font-size', slider.value() + 'px');

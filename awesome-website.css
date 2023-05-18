@@ -1,6 +1,23 @@
+@font-face {
+    font-family: 'spratcondensed_thin';
+    src: url('sprat-condensedthin-webfont.woff2') format('woff2'),
+         url('sprat-condensedthin-webfont.woff') format('woff');
+    font-weight: thin;
+    font-style: normal;
+
+}
+
+@font-face {
+  font-family: 'spratextended_bold';
+  src: url('sprat-extendedbold-webfont.woff2') format('woff2'),
+       url('sprat-extendedbold-webfont.woff') format('woff');
+  font-weight: thin;
+  font-style: normal;
+
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #ffffff;
+  font-family: 'spratcondensed_thin'!important;
   margin: 0;
   padding: 0;
   text-align: center;
@@ -20,12 +37,49 @@ body {
   z-index: 2;
 }
 
+button {
+  all: unset;
+}
+
 #buttonsContainer {
+  font-family: 'spratcondensed_thin'!important;
   position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 150px;
+  left: 45px;
   z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#buttonsContainer button {
+  /* initial styles */
+  height: 30px;
+  margin-bottom: 30px;
+  width: 130px;
+  text-align: center;
+  border: 1px solid #ffffff;
+  background-color: #000000;
+  border-radius: 80px;
+  color: #ffffff;
+  font-family: 'spratcondensed_thin';
+  transition: all 1s ease;
+}
+
+#buttonsContainer button.alt {
+  /* alternate styles */
+  background-color: #ff00d0; /* Change color to red */
+  border-radius: 0px; /* Less round edges */
+  font-family: 'spratextended_bold'; /* Different font */
+}
+
+#buttonsContainer button:hover {
+  cursor: pointer;
+}
+
+.saveButton {
+  position: absolute;
+  top: 300px;
 }
 
 .transparent-input {
@@ -45,3 +99,54 @@ body {
   cursor: se-resize;
   pointer-events: auto;
 }
+
+.marquee-top {
+  top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  position: fixed;
+  z-index: 10;
+  border-bottom: 1px solid #fff;
+  background-color: #000000;
+  transition: background-color 1s;
+}
+
+.marquee-top.alt {
+  background-color: #ff0000;
+}
+
+.marquee-bottom {
+  bottom: 0;
+  overflow: hidden;
+  position: fixed;
+  white-space: nowrap;
+  z-index: 10;
+  border-top: 1px solid #fff;
+  background-color: #000000;
+  transition: background-color 1s;  
+}
+
+.marquee-bottom.alt {
+  background-color: #ff0000;
+}
+
+.marquee-content {
+  width: fit-content;
+  display: flex;
+  animation: marquee 40s linear infinite;
+  color:#ffffff;
+}
+
+.marquee-content span {
+  padding-right: 50px; /* Give some space between the two identical pieces of text */
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+

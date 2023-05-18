@@ -45,7 +45,7 @@ function isMouseOver3DObject(event) {
 const init3D = () => {
   renderer = new THREE.WebGLRenderer({ alpha: true });
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.domElement.style.position = 'absolute';
 document.getElementById('canvasContainer2').appendChild(renderer.domElement);
 
