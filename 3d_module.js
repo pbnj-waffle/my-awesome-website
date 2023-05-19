@@ -58,7 +58,6 @@ renderer.domElement.addEventListener("wheel", (event) => {
 document.addEventListener("mousedown", (event) => {
   if (textInputMode) {
     event.stopPropagation();
-    console.log('STOPPED!')
     return;
   }
 

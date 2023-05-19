@@ -18,6 +18,7 @@
 
 body {
   font-family: 'spratcondensed_thin'!important;
+  background-color: #000000;
   margin: 0;
   padding: 0;
   text-align: center;
@@ -59,15 +60,16 @@ button {
   width: 130px;
   text-align: center;
   border: 1px solid #ffffff;
-  background-color: #000000;
+  background-color: #00000000;
   border-radius: 80px;
   color: #ffffff;
   font-family: 'spratcondensed_thin';
-  transition: all 1s ease;
+  transition: all 20s linear;
 }
 
 #buttonsContainer button.alt {
   /* alternate styles */
+  border: 1px solid #ffffff00;
   background-color: #ff00d0; /* Change color to red */
   border-radius: 0px; /* Less round edges */
   font-family: 'spratextended_bold'; /* Different font */
@@ -101,32 +103,36 @@ button {
 }
 
 .marquee-top {
+  font-family: 'spratcondensed_thin';
   top: 0;
   overflow: hidden;
   white-space: nowrap;
   position: fixed;
   z-index: 10;
   border-bottom: 1px solid #fff;
-  background-color: #000000;
-  transition: background-color 1s;
+  background-color: #00000000;
+  transition: background-color 2s,
 }
 
 .marquee-top.alt {
+  font-family: 'spratextended_bold';
   background-color: #ff0000;
 }
 
 .marquee-bottom {
+  font-family: 'spratcondensed_thin';
   bottom: 0;
   overflow: hidden;
   position: fixed;
   white-space: nowrap;
   z-index: 10;
   border-top: 1px solid #fff;
-  background-color: #000000;
+  background-color: #00000000;
   transition: background-color 1s;  
 }
 
 .marquee-bottom.alt {
+  font-family: 'spratextended_bold';
   background-color: #ff0000;
 }
 
@@ -146,7 +152,7 @@ button {
     transform: translateX(0%);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-100%);
   }
 }
 

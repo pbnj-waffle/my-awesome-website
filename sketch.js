@@ -27,6 +27,7 @@ let inputField;
 let letters = [];
 let textSizeSlider;
 var clickCounter = 0;
+var currentMarquee = 0;
 let isBlackBg = true; 
 let isBgAnimationEnabled = true; 
 
@@ -185,6 +186,7 @@ const sketch2D = (p) => {
   
     for (let letter of letters) {
       updateLetter(letter, p);
+      p.textFont(letter.font);
       p.text(letter.char, letter.x, letter.y);
     }
 
@@ -338,39 +340,6 @@ const sketch2D = (p) => {
 };
 const my2D = new p5(sketch2D);
 
-function handleCanvasClick(p, e) {
-
-  if (!textInputMode) {
-    isDragging3DModel = true;
-    lastMousePosition = { x: e.clientX, y: e.clientY };
-    isMousePressedOn3D = true;
-    return;
-  }
-
-  if (e.button === 0) { // Check if the left button is clicked
-    if (e.target.tagName == 'BUTTON' || inputField && e.target.closest('.text-input-wrapper')) {
-      return;
-    }
-
-    if (textInputMode) {
-        // Get the click position, ensuring it is within the canvas
-        const clickX = Math.min(Math.max(0, e.clientX - p.canvas.offsetLeft), p.width);
-        const clickY = Math.min(Math.max(0, e.clientY - p.canvas.offsetTop), p.height);
-
-        if (inputField) {
-          moveInput(clickX, clickY);
-        }
-        else
-          createInputField(p, clickX, clickY);
-
-        
-        e.preventDefault();
-      //}
-    } else {
-      mousePressed(p);
-    }
-  }
-}
 
 
 function toggleTransition() {
