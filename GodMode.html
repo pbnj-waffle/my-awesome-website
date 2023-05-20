@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="awesome-website.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js"></script>
+    <script src="godmode_sketch.js" defer></script>
+    <script src="godmode_image.js" defer></script>
+    <script src="godmode_elements.js" defer></script>
+    <script src="godmode_text.js" defer></script>
+    <script type="module" src="godmode_3d_module.js" defer></script>
+  </head>
+  <body>
+    <div id="canvasContainer2"></div>
+    <div id="canvasContainer"></div>
+    <div id="buttonsContainer">
+      <button id="uploadImage">image</button>
+      <button id="addText">text</button>
+      <input type="color" id="colorPicker" value="#ff0000" style="position: absolute; opacity: 0;">
+      <button id="toggleBg">color</button>
+      <button id="upload3DObject">3D</button>      
+      <input type="file" id="fileInput" style="display:none" />
+      <button id="saveImage" class="saveButton">save</button>
+      <!--<input type="checkbox" id="toggleBlending" checked> Enable blending-->
+    </div>
+    <div id="textSizeContainer" style="display: none;">
+      <label for="textSize">Text Size: </label>
+      <input type="range" id="textSize" min="10" max="100" value="30" />
+    </div>
+    <div class="marquee-top">
+      <div class="marquee-content">
+        <span>Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website</span>
+        <span>I'm on a whiskey diet. I've lost three days already.</span>
+        <span>Why did the scarecrow win an award? Because he was outstanding in his field.</span>
+      </div>
+    </div>
+    <div class="marquee-bottom">
+      <div class="marquee-content">
+        <span>Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website</span>
+        <span>I'm on a whiskey diet. I've lost three days already.</span>
+        <span>Why did the scarecrow win an award? Because he was outstanding in his field.</span>
+      </div>
+    </div>
+    </body>
+</html>

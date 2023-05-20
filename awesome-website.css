@@ -7,14 +7,14 @@
 
 }
 
-@font-face {
+/*@font-face {
   font-family: 'spratextended_bold';
   src: url('sprat-extendedbold-webfont.woff2') format('woff2'),
        url('sprat-extendedbold-webfont.woff') format('woff');
   font-weight: thin;
   font-style: normal;
 
-}
+}*/
 
 body {
   font-family: 'spratcondensed_thin'!important;
@@ -38,6 +38,11 @@ body {
   z-index: 2;
 }
 
+#navigation {
+  color: #ffffff;
+  z-index: 10;
+}
+
 button {
   all: unset;
 }
@@ -45,9 +50,9 @@ button {
 #buttonsContainer {
   font-family: 'spratcondensed_thin'!important;
   position: absolute;
-  top: 150px;
-  left: 45px;
-  z-index: 3;
+  bottom: -200%;
+  left: 45%;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -60,7 +65,7 @@ button {
   width: 130px;
   text-align: center;
   border: 1px solid #ffffff;
-  background-color: #00000000;
+
   border-radius: 80px;
   color: #ffffff;
   font-family: 'spratcondensed_thin';
@@ -108,14 +113,14 @@ button {
   overflow: hidden;
   white-space: nowrap;
   position: fixed;
-  z-index: 10;
+  z-index: 5;
   border-bottom: 1px solid #fff;
   background-color: #00000000;
   transition: background-color 2s,
 }
 
 .marquee-top.alt {
-  font-family: 'spratextended_bold';
+  font-family: 'spratcondensed_thin';
   background-color: #ff0000;
 }
 
@@ -125,14 +130,14 @@ button {
   overflow: hidden;
   position: fixed;
   white-space: nowrap;
-  z-index: 10;
+  z-index: 5;
   border-top: 1px solid #fff;
   background-color: #00000000;
   transition: background-color 1s;  
 }
 
 .marquee-bottom.alt {
-  font-family: 'spratextended_bold';
+  font-family: 'spratcondensed_thin';
   background-color: #ff0000;
 }
 

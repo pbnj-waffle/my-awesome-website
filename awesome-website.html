@@ -10,26 +10,23 @@
     <script src="image.js" defer></script>
     <script src="elements.js" defer></script>
     <script src="text.js" defer></script>
+    <!--<script src="imageTexts.json" defer></script>-->
     <script type="module" src="3d_module.js" defer></script>
   </head>
   <body>
+    
     <div id="canvasContainer2"></div>
     <div id="canvasContainer"></div>
+    
     <div id="buttonsContainer">
-      <button id="uploadImage">image</button>
-      <button id="addText">text</button>
-      <input type="color" id="colorPicker" value="#ff0000" style="position: absolute; opacity: 0;">
-      <button id="toggleBg">color</button>
-      <button id="upload3DObject">3D</button>      
-      <input type="file" id="fileInput" style="display:none" />
-      <button id="saveImage" class="saveButton">save</button>
-      <!--<input type="checkbox" id="toggleBlending" checked> Enable blending-->
+      <button onclick="window.location.href = 'GodMode.html';">god mode</button>
+      <button id="saveImage">save this page</button>
     </div>
     <div id="textSizeContainer" style="display: none;">
       <label for="textSize">Text Size: </label>
       <input type="range" id="textSize" min="10" max="100" value="30" />
     </div>
-    <div class="marquee-top">
+    <!--<div class="marquee-top">
       <div class="marquee-content">
         <span>Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website Welcome to this absolutely normal website</span>
         <span>I'm on a whiskey diet. I've lost three days already.</span>
@@ -42,6 +39,6 @@
         <span>I'm on a whiskey diet. I've lost three days already.</span>
         <span>Why did the scarecrow win an award? Because he was outstanding in his field.</span>
       </div>
-    </div>
+    </div>-->
     </body>
 </html>

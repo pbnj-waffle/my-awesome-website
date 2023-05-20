@@ -1,25 +1,25 @@
 const EDGE_THRESHOLD = 5;
 
-function fileSelected(event, p) {
+/*function fileSelected(event, p) {
   const newImage = p.loadImage(URL.createObjectURL(event.target.files[0]), () => {
     imageLoaded(newImage, p);
   });
-}
-function imageLoaded(image, p) {
+}*/
+
+function imageLoaded(image, p, imageName) {
   const effectRandom = p.floor(p.random(1,101));
   console.log('Random number:', effectRandom);
   const shouldMove = 0 < effectRandom && effectRandom <= 100;
   const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
-  const initialX = p.random(0, p.windowWidth - image.width);
-  const initialY = p.random(0, p.windowHeight - image.height);
+  //const initialX = p.random(0, p.windowWidth - image.width);
+  //const initialY = p.random(0, p.windowHeight - image.height);
   const shouldTrail = p.random() < 0.3; // NOT WORKING
   const noBlending = p.random() < 0.5;
 
-
   images.push({
     img: image,
-    x: initialX,
-    y: initialY,
+    x: p.random(0, p.windowWidth - image.width),
+    y: p.random(0, p.windowHeight - image.height),
     width: image.width / 3,
     height: image.height / 3,
     aspectRatio: image.width / image.height,
@@ -30,10 +30,9 @@ function imageLoaded(image, p) {
     isResizingTop: false,
     isResizingBottom: false,
     resizeMargin: 10,
-    randomPosition: { x: initialX, y: initialY },
     shouldMove: !noBlending && shouldMove,
     startTime: p.millis() + 5000,
-    stopAfter: p.random([5, 10, 30, 60, 300, Infinity]) * 1000, //  NOT WORKING
+    stopAfter: p.random([5, 10, 30, 60, 300, Infinity]) * 1000, 
     trail: [],
     noiseSeedX: p.random(1000),
     noiseSeedY: p.random(1000),
@@ -47,7 +46,7 @@ function imageLoaded(image, p) {
     glitchImg: null,
     shouldTrail: shouldTrail,
     noBlending: noBlending,
-    shouldMove: !noBlending && shouldMove,
+    text: imageTexts[imageName] || '',
   });
 }
 
@@ -73,67 +72,53 @@ function duplicateImage(imgData, p) {
     imgData.lastDuplicateTime = p.millis();
   }
 }
-
 function mousePressed(p) {
-  if (p.mouseButton !== p.LEFT) return;
+  for (const imgData of images) {
+    const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
+      p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
+    if (imageClicked) {
+      // If we're transitioning from a non-full-screen state to a full-screen state
+      if (!showFullScreenImage) {
+        // Copy the contents of bgBuffer to blurredBgBuffer
+        blurredBgBuffer.image(bgBuffer, 0, 0);
 
-  let foundImage = false;
-  for (let i = images.length - 1; i >= 0; i--) {
-    const imgData = images[i];
-    const onLeftEdge = p.mouseX > imgData.x - imgData.resizeMargin && p.mouseX < imgData.x + imgData.resizeMargin;
-    const onRightEdge = p.mouseX > imgData.x + imgData.width - imgData.resizeMargin && p.mouseX < imgData.x + imgData.width + imgData.resizeMargin;
-    const onTopEdge = p.mouseY > imgData.y - imgData.resizeMargin && p.mouseY < imgData.y + imgData.resizeMargin;
-    const onBottomEdge = p.mouseY > imgData.y + imgData.height - imgData.resizeMargin && p.mouseY < imgData.y + imgData.height + imgData.resizeMargin;
-    imgData.isResizingLeft = onLeftEdge && !onTopEdge && !onBottomEdge;
-    imgData.isResizingRight = onRightEdge && !onTopEdge && !onBottomEdge;
-    imgData.isResizingTop = onTopEdge && !onLeftEdge && !onRightEdge;
-    imgData.isResizingBottom = onBottomEdge && !onLeftEdge && !onRightEdge;
-    
-    imgData.isResizingTopLeft = onLeftEdge && onTopEdge;
-    imgData.isResizingTopRight = onRightEdge && onTopEdge;
-    imgData.isResizingBottomLeft = onLeftEdge && onBottomEdge;
-    imgData.isResizingBottomRight = onRightEdge && onBottomEdge;
-    
-    if (imgData.isResizingLeft || imgData.isResizingRight || imgData.isResizingTop || imgData.isResizingBottom ||
-        imgData.isResizingTopLeft || imgData.isResizingTopRight || imgData.isResizingBottomLeft || imgData.isResizingBottomRight) {
-      foundImage = true;
-      activeImage = imgData;
-      break;
-    }
-    
-    if (p.mouseX > imgData.x && p.mouseX < imgData.x + imgData.width && p.mouseY > imgData.y && p.mouseY < imgData.y + imgData.height) {
-      imgData.offsetX = p.mouseX - imgData.x;
-      imgData.offsetY = p.mouseY - imgData.y;
-      imgData.isDragging = true;
-      foundImage = true;
-      activeImage = imgData;
-      break;
-    }
-
-    if (!foundImage) {
-      activeImage = null;
-      resizeCursorType = p.ARROW;
+        // Apply the blur filter to blurredBgBuffer
+        blurredBgBuffer.filter(p.BLUR, 5);
       }
+
+      showFullScreenImage = true;
+      fullScreenImage = imgData.img;
+      fullScreenImageText = imgData.text || '';
+      clickedImageData = imgData;  // Store the entire imgData object
+      clickedImageData.clickY = p.mouseY;  // Store the y-position of the click
+      break;
     }
   }
+};
+
+
+  
+  function keyPressed(p) {
+    if (p.keyCode === p.ESCAPE) {
+      showFullScreenImage = false;
+      fullScreenImage = null;
+      return false; // prevent default
+    }
+  };
 
   function mouseReleased(p) {
-    resizeCursorType = ARROW;
-    for (const imgData of images) {
-      imgData.isDragging = false;
-      imgData.isResizingLeft = false;
-      imgData.isResizingRight = false;
-      imgData.isResizingTop = false;
-      imgData.isResizingBottom = false;
-      imgData.isResizingTopLeft = false;
-      imgData.isResizingTopRight = false;
-      imgData.isResizingBottomLeft = false;
-      imgData.isResizingBottomRight = false;
-    }
-  }
+    // If the user released the mouse on the closing icon, close the full screen image
+   const clickedOnClosingIcon = p.mouseX >= p.windowWidth - closingIconSize && p.mouseX <= p.windowWidth &&
+   p.mouseY >= 0 && p.mouseY <= closingIconSize;
+ if (clickedOnClosingIcon) {
+   setTimeout(() => {
+     showFullScreenImage = false;
+     fullScreenImage = null;
+   }, 100); // wait 100 milliseconds before closing the image
+ }
+   };
   
-  
-  function drawFrame(imgData, p) {
+ /* function drawFrame(imgData, p) {
   const frameThickness = 5;
   topBuffer.noFill();
   topBuffer.strokeWeight(frameThickness);
@@ -191,4 +176,4 @@ function mousePressed(p) {
       }
     }
   }
-  
+  */

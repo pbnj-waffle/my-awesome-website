@@ -177,6 +177,7 @@ const loadModel = (url) => {
   });
 };
 
+
 document.getElementById('upload3DObject').addEventListener('click', () => {
   const input = document.createElement('input');
   input.type = 'file';

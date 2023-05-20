@@ -29,7 +29,7 @@ function createInputField(p, x, y) {
     selectedFont = fontDropdown.value(); // Store the selected font
   });
 
-  slider = p.createSlider(10, 80, 20, 5);
+  slider = p.createSlider(10, 280, 20, 5);
   slider.parent(inputDiv);
   slider.changed(() => {
     inputField.style('font-size', slider.value() + 'px');
