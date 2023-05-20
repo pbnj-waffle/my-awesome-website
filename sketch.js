@@ -29,6 +29,7 @@ let imageTexts;
 let fullScreenImageText = '';
 const canvasHeight = 1620;
 let clickedImageData = null;
+let isBlurApplied = false;
 
 
 
@@ -111,11 +112,11 @@ const sketch2D = (p) => {
     }
   
     p.draw = () => {
-      bgBuffer.clear();
-  
-  if (showFullScreenImage) {
-    // Draw the blurred buffer
-    p.image(blurredBgBuffer, 0, 0, p.windowWidth, canvasHeight);
+      if (showFullScreenImage) {
+        // Draw the blurred buffer only when isBlurApplied is true
+        if(isBlurApplied) {
+            p.image(blurredBgBuffer, 0, 0, p.windowWidth, canvasHeight);
+        }
 
     // Draw the non-blurred image and other UI elements...
     const aspectRatio = fullScreenImage.width / fullScreenImage.height;
@@ -146,11 +147,11 @@ const sketch2D = (p) => {
     p.pop();
     console.log("blurred")
   } else {
+    isBlurApplied = false;
     bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
     p.background(bgColor);
-    buffer.clear();
+    bgBuffer.clear(); // Clear bgBuffer here, after checking showFullScreenImage
     p.image(bgBuffer, 0, 0, p.windowWidth, canvasHeight);
-  
       //currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
      // bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, canvasHeight);
 

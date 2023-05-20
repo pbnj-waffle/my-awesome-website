@@ -7,14 +7,14 @@
 
 }
 
-/*@font-face {
+@font-face {
   font-family: 'spratextended_bold';
   src: url('sprat-extendedbold-webfont.woff2') format('woff2'),
        url('sprat-extendedbold-webfont.woff') format('woff');
   font-weight: thin;
   font-style: normal;
 
-}*/
+}
 
 body {
   font-family: 'spratcondensed_thin'!important;
@@ -38,24 +38,6 @@ body {
   z-index: 2;
 }
 
-#blur-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1080px;
-  height: 1620px;
-  backdrop-filter: blur(20px);
-  pointer-events: none; /* to allow mouse events to go through the overlay */
-  display: none; /* initially hidden */
-  background-color: rgba(0, 0, 0, 0.1); /* make sure there is some transparency */
-  z-index: 10; /* set z-index between the content and the fullscreen image */
-}
-
-#navigation {
-  color: #ffffff;
-  z-index: 10;
-}
-
 button {
   all: unset;
 }
@@ -63,12 +45,12 @@ button {
 #buttonsContainer {
   font-family: 'spratcondensed_thin'!important;
   position: absolute;
-  bottom: -200%;
-  left: 45%;
+  top: 150px;
+  left: 45px;
   z-index: 10;
   display: flex;
   flex-direction: column;
-  
+  align-items: flex-start;
 }
 
 #buttonsContainer button {
@@ -78,7 +60,7 @@ button {
   width: 130px;
   text-align: center;
   border: 1px solid #ffffff;
-
+  background-color: #00000000;
   border-radius: 80px;
   color: #ffffff;
   font-family: 'spratcondensed_thin';
@@ -95,6 +77,11 @@ button {
 
 #buttonsContainer button:hover {
   cursor: pointer;
+}
+
+.saveButton {
+  position: absolute;
+  top: 300px;
 }
 
 .transparent-input {
@@ -121,14 +108,14 @@ button {
   overflow: hidden;
   white-space: nowrap;
   position: fixed;
-  z-index: 5;
+  z-index: 10;
   border-bottom: 1px solid #fff;
   background-color: #00000000;
   transition: background-color 2s,
 }
 
 .marquee-top.alt {
-  font-family: 'spratcondensed_thin';
+  font-family: 'spratextended_bold';
   background-color: #ff0000;
 }
 
@@ -138,14 +125,14 @@ button {
   overflow: hidden;
   position: fixed;
   white-space: nowrap;
-  z-index: 5;
+  z-index: 10;
   border-top: 1px solid #fff;
   background-color: #00000000;
   transition: background-color 1s;  
 }
 
 .marquee-bottom.alt {
-  font-family: 'spratcondensed_thin';
+  font-family: 'spratextended_bold';
   background-color: #ff0000;
 }
 

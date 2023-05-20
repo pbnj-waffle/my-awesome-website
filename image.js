@@ -76,15 +76,13 @@ function mousePressed(p) {
   for (const imgData of images) {
     const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
       p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
-    if (imageClicked) {
-      // If we're transitioning from a non-full-screen state to a full-screen state
-      if (!showFullScreenImage) {
-        // Copy the contents of bgBuffer to blurredBgBuffer
-        blurredBgBuffer.image(bgBuffer, 0, 0);
+    if (imageClicked && !isBlurApplied) {
+      console.log("image clicked and blur applied")
 
-        // Apply the blur filter to blurredBgBuffer
-        blurredBgBuffer.filter(p.BLUR, 5);
-      }
+      // Apply the blur and update the flag only when image is clicked and blur is not yet applied
+      buffer.filter(p.BLUR, 10); 
+      blurredBgBuffer.image(buffer, 0, 0); 
+      isBlurApplied = true;
 
       showFullScreenImage = true;
       fullScreenImage = imgData.img;
@@ -96,15 +94,6 @@ function mousePressed(p) {
   }
 };
 
-
-  
-  function keyPressed(p) {
-    if (p.keyCode === p.ESCAPE) {
-      showFullScreenImage = false;
-      fullScreenImage = null;
-      return false; // prevent default
-    }
-  };
 
   function mouseReleased(p) {
     // If the user released the mouse on the closing icon, close the full screen image
