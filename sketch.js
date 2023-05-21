@@ -38,6 +38,7 @@ let videoNames = ["1.mp4", "3.mp4"];
 let bgVideos = [];
 let chosenVideo;
 let hoveredImage = null;
+let hoveredImgData = null;
 const ARROW = 'default';
 const RESIZE_EW = 'ew-resize';
 const RESIZE_NS = 'ns-resize';
@@ -110,7 +111,7 @@ const sketch2D = (p) => {
     const randomIndex = Math.floor(p.random(bgImages.length));
     chosenBgImage = bgImages[randomIndex];
 
-    if (Math.random() > 0.8) {
+    if (Math.random() > 0.1) {
       square = {
         x: p.random(p.windowWidth - 50),
         y: p.random(canvasHeight - 50),
@@ -138,6 +139,8 @@ const sketch2D = (p) => {
     p.draw = () => {
       
       if (showFullScreenImage) {
+        p.fill(0);
+        p.rect(0, 0, p.width, p.height);
         // Draw the blurred buffer only when isBlurApplied is true
         if(isBlurApplied) {
             p.image(blurredBgBuffer, 0, 0, p.windowWidth, canvasHeight);
@@ -196,19 +199,11 @@ const sketch2D = (p) => {
     const framesBetweenTrail = 10;
 
     for (const imgData of images) {
-      // Check if this image is being hovered over
-  if (hoveredImage === imgData) {
-    // Apply the glow effect
-    p.drawingContext.shadowBlur = 20; // Set the amount of blur. Adjust as needed.
-    p.drawingContext.shadowColor = "white"; // Set the color of the glow. Adjust as needed.
-
-    // Draw the image
-    p.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
-
-    // Reset the shadow properties to their default values
-    p.drawingContext.shadowBlur = 0;
-    p.drawingContext.shadowColor = 'rgba(0,0,0,0)';
-  } else {
+      
+      if (hoveredImage === imgData) {
+        // Save the hovered image data to be processed later
+        hoveredImgData = imgData;
+      } else {
       processImage(imgData, p);
   
       if (activeImage === imgData) {
@@ -253,6 +248,46 @@ imgData.y = p.constrain(imgData.y, 0, canvasHeight - imgData.height);
 
     }
     }
+
+// After processing all other images, process the hovered image
+if (hoveredImgData) {
+  processImage(hoveredImgData, p);
+
+  if (activeImage === hoveredImgData) {
+    drawFrame(hoveredImgData, p);
+  }
+  if (hoveredImgData.shouldDuplicate) duplicateImage(hoveredImgData, p);
+
+  // ... (rest of your processing code for hovered image)
+
+  // Draw the image onto the buffer
+  const imgToDrawHovered = hoveredImgData.processedImg || hoveredImgData.img;
+  buffer.image(imgToDrawHovered, hoveredImgData.x, hoveredImgData.y, hoveredImgData.width, hoveredImgData.height);
+}
+
+// Display the buffer
+p.image(buffer, 0, 0);
+
+// Check if the mouse is still over the hovered image
+let mouseOverHoveredImage = false;
+if (hoveredImgData) {
+    mouseOverHoveredImage = p.mouseX >= hoveredImgData.x && p.mouseX <= hoveredImgData.x + hoveredImgData.width && 
+    p.mouseY >= hoveredImgData.y && p.mouseY <= hoveredImgData.y + hoveredImgData.height;
+}
+
+// Apply the glow effect and draw the hovered image onto the main canvas only if the mouse is still over it
+if (hoveredImgData && mouseOverHoveredImage) {
+    p.drawingContext.shadowBlur = 20; // Set the amount of blur. Adjust as needed.
+    p.drawingContext.shadowColor = "white"; // Set the color of the glow. Adjust as needed.
+
+    const imgToDrawHovered = hoveredImgData.processedImg || hoveredImgData.img;
+    p.image(imgToDrawHovered, hoveredImgData.x, hoveredImgData.y, hoveredImgData.width, hoveredImgData.height);
+
+    // Reset the shadow properties to their default values
+    p.drawingContext.shadowBlur = 0;
+    p.drawingContext.shadowColor = 'rgba(0,0,0,0)';
+}
+
 
     updateCursor(p);
  

@@ -4,7 +4,7 @@ function drawMovingSquare(p) {
   square.y += square.vy;
 
   const edgeCollisionX = square.x < 0 || square.x + square.size > p.windowWidth;
-  const edgeCollisionY = square.y < 0 || square.y + square.size > p.windowHeight;
+  const edgeCollisionY = square.y < 0 || square.y + square.size > canvasHeight;
   let edgeHit = false;
 
   // Check for collisions with the screen edges and reverse direction if necessary
