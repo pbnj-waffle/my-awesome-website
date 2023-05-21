@@ -157,11 +157,12 @@ for (let i = images.length - 1; i >= 0; i--) {
   }*/
 
   function setCursor(cursor) {
-    document.body.style.setProperty('cursor', 'pointer', 'important')
+    document.body.style.setProperty('cursor', cursor, 'important');
   }
 
-  function updateCursor(p) {
+ function updateCursor(p) {
   let overAnyImage = false;
+  hoveredImage = null;
 
   for (const imgData of images) {
     // Check if mouse is over this image
@@ -170,6 +171,7 @@ for (let i = images.length - 1; i >= 0; i--) {
       p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height
     ) {
       overAnyImage = true; // We're over an image, set the flag
+      hoveredImage = imgData; // Save the hovered image
     }
   }
 

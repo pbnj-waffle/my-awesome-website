@@ -37,7 +37,7 @@ let chosenBgImage;
 let videoNames = ["1.mp4", "3.mp4"];
 let bgVideos = [];
 let chosenVideo;
-
+let hoveredImage = null;
 const ARROW = 'default';
 const RESIZE_EW = 'ew-resize';
 const RESIZE_NS = 'ns-resize';
@@ -175,7 +175,7 @@ const sketch2D = (p) => {
         bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
         p.background(bgColor);
         bgBuffer.clear(); // Clear bgBuffer here, after checking showFullScreenImage
-        p.image(chosenBgImage, 0, 0, p.windowWidth, canvasHeight);
+        p.image(bgBuffer, 0, 0, p.windowWidth, canvasHeight);
       //currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
      // bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, canvasHeight);
 
@@ -196,6 +196,19 @@ const sketch2D = (p) => {
     const framesBetweenTrail = 10;
 
     for (const imgData of images) {
+      // Check if this image is being hovered over
+  if (hoveredImage === imgData) {
+    // Apply the glow effect
+    p.drawingContext.shadowBlur = 20; // Set the amount of blur. Adjust as needed.
+    p.drawingContext.shadowColor = "white"; // Set the color of the glow. Adjust as needed.
+
+    // Draw the image
+    p.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
+
+    // Reset the shadow properties to their default values
+    p.drawingContext.shadowBlur = 0;
+    p.drawingContext.shadowColor = 'rgba(0,0,0,0)';
+  } else {
       processImage(imgData, p);
   
       if (activeImage === imgData) {
@@ -238,7 +251,7 @@ imgData.y = p.constrain(imgData.y, 0, canvasHeight - imgData.height);
     // Main image
     buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
 
-    
+    }
     }
 
     updateCursor(p);
