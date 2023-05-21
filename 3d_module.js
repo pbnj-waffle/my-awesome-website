@@ -5,10 +5,11 @@ let lastMousePosition = new THREE.Vector2();
 let my3DModel;
 let objectRotation = new THREE.Vector3();
 let renderer, scene, camera, loader;
-let isMousePressedOn3D = false;
+
 let isDragging3DModel = false;
 let lastMouseWheelDelta = 0;
 const raycaster = new THREE.Raycaster();
+
 
 
 function isAnyImageActive() {
@@ -30,91 +31,132 @@ function isAnyImageActive() {
   return false;
 }
 
+
 function isMouseOver3DObject(event) {
+ 
   const mouse = new THREE.Vector2();
   mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
   mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
 
-  const intersects = raycaster.intersectObjects(scene.children, true);
+  const intersects = raycaster.intersectObject(my3DModel, true);
+
   return intersects.length > 0;
 }
 
+function set3DObjectVisibility(visible) {
+  renderer.domElement.style.display = visible ? 'block' : 'none';
+}
 
+window.set3DObjectVisibility = set3DObjectVisibility;
 
 const init3D = () => {
   renderer = new THREE.WebGLRenderer({ alpha: true });
 
-renderer.setSize(window.innerWidth, window.innerWidth * 1.5);
-renderer.domElement.style.position = 'absolute';
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.domElement.style.position = 'absolute';
 document.getElementById('canvasContainer2').appendChild(renderer.domElement);
 
 renderer.domElement.addEventListener("wheel", (event) => {
   if (isAnyImageActive()) return;
 
-  lastMouseWheelDelta = event.deltaY;
+  if (isMouseOver3DObject(event)) {
+    lastMouseWheelDelta = event.deltaY;
+
+    if (lastMouseWheelDelta !== 0) {
+      const scaleChange = lastMouseWheelDelta > 0 ? 1.02 : 0.98;
+      my3DModel.scale.multiplyScalar(scaleChange);
+      camera.updateProjectionMatrix();
+      lastMouseWheelDelta = 0;
+    }
+  }
 });
 
 document.addEventListener("mousedown", (event) => {
   if (textInputMode) {
+    return;
+  }
+
+  if (event.target === renderer.domElement && isMouseOver3DObject(event)) {
+    isDragging3DModel = true;
+    lastMousePosition = { x: event.clientX, y: event.clientY };
+
+    isMousePressedOn3D = true;
+    // prevent the event from being passed to the 2D canvas
     event.stopPropagation();
-    return;
-  }
-
-  if (isAnyImageActive() || !isMouseOver3DObject(event)) {
+  } else {
     isDragging3DModel = false;
-    return;
   }
-
-  isDragging3DModel = true;
-  lastMousePosition = { x: event.clientX, y: event.clientY };
-
-  isMousePressedOn3D = true;
 });
 
-  
-  renderer.domElement.addEventListener("mousemove", (event) => {
-    if (isMouseOver3DObject(event)) {
-      renderer.domElement.style.cursor = "grab";
-    } else {
-      renderer.domElement.style.cursor = "default";
-    }
-  
-    if (isDragging3DModel && isMouseOver3DObject(event)) {
-      const deltaX = (event.clientX - lastMousePosition.x) * 0.01;
-      const deltaY = (event.clientY - lastMousePosition.y) * 0.01;
-  
-      my3DModel.position.x += deltaX;
-      my3DModel.position.y -= deltaY;
-  
-      lastMousePosition = { x: event.clientX, y: event.clientY };
-    }
-  });
-  
+document.addEventListener('mouseup', () => {
+  isMousePressedOn3D = false;
+  isDragging3DModel = false;
+});
+
+renderer.domElement.addEventListener("mousemove", (event) => {
+  if (isMouseOver3DObject(event)) {
+    console.log("over 3d")
+    renderer.domElement.style.cursor = "grab";
+  } else {
+    renderer.domElement.style.cursor = "default";
+  }
+
+  if (isDragging3DModel) {
+    const deltaX = (event.clientX - lastMousePosition.x) * 0.01;
+    const deltaY = (event.clientY - lastMousePosition.y) * 0.01;
+
+    my3DModel.position.x += deltaX;
+    my3DModel.position.y -= deltaY;
+    camera.updateProjectionMatrix();
+
+    lastMousePosition = { x: event.clientX, y: event.clientY };
+  }
+
+  lastMousePosition = { x: event.clientX, y: event.clientY };
+});
  
-  renderer.domElement.addEventListener("mouseup", () => {
-    if (isAnyImageActive()) return;
+renderer.domElement.addEventListener("mouseup", () => {
+  if (isAnyImageActive()) return;
+
+  isDragging3DModel = false;
+  isMousePressedOn3D = false;
+  renderer.domElement.style.cursor = "default";
+});
   
-    isDragging3DModel = false;
-    renderer.domElement.style.cursor = "default";
-  });
-  
-  renderer.domElement.addEventListener("mouseleave", () => {
-    if (isAnyImageActive()) return;
-  
-    isDragging3DModel = false;
-    renderer.domElement.style.cursor = "default";
-  });
+renderer.domElement.addEventListener("mouseleave", () => {
+  if (isAnyImageActive()) return;
+
+  isDragging3DModel = false;
+  isMousePressedOn3D = false;
+  renderer.domElement.style.cursor = "default";
+});
 
   // Move the event listeners here, after the renderer is created.
+  window.addEventListener('resize', function(){
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+
   renderer.domElement.addEventListener('mousemove', (event) => {
     lastMousePosition.x = event.clientX;
     lastMousePosition.y = event.clientY;
   });
-  renderer.domElement.addEventListener('mousedown', () => {
+
+  renderer.domElement.addEventListener("mousedown", (event) => {
+  if (textInputMode) {
+    return;
+  }
+
+  if (event.target === renderer.domElement && isMouseOver3DObject(event)) {
+    isDragging3DModel = true;
+    lastMousePosition = { x: event.clientX, y: event.clientY };
     isMousePressedOn3D = true;
-  });
+    event.stopPropagation();
+  }
+});
 
   renderer.domElement.addEventListener('mouseup', () => {
     isMousePressedOn3D = false;
@@ -125,8 +167,11 @@ document.addEventListener("mousedown", (event) => {
   });
 
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / (window.innerWidth * 1.5), 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.z = 5;
+
+  camera.aspect = window.innerWidth / window.innerHeight;  // set aspect ratio here
+  camera.updateProjectionMatrix();  // update the camera projection matrix
 
   loader = new OBJLoader();
 
@@ -136,7 +181,8 @@ document.addEventListener("mousedown", (event) => {
   const pointLight = new THREE.PointLight(0xffffff, 0.5);
   camera.add(pointLight);
   scene.add(camera);
-  loadModel('./3d (3).obj');
+
+  loadModel('./3d (4).obj');
   animate3D();
 };
 
@@ -144,25 +190,22 @@ const animate3D = () => {
   requestAnimationFrame(animate3D);
 
   if (my3DModel) {
-    if (isMousePressedOn3D && !isAnyImageActive() && isMouseOver3DObject({ clientX: lastMousePosition.x, clientY: lastMousePosition.y })) {
-      const deltaX =
-        (lastMousePosition.x - renderer.domElement.clientWidth / 2) * 0.0001;
-      const deltaY =
-        (lastMousePosition.y - renderer.domElement.clientHeight / 2) * 0.0001;
+    if (isMousePressedOn3D && isMouseOver3DObject({ clientX: lastMousePosition.x, clientY: lastMousePosition.y })) {
+      const deltaX = (lastMousePosition.x - renderer.domElement.clientWidth / 2) * 0.0001;
+      const deltaY = (lastMousePosition.y - renderer.domElement.clientHeight / 2) * 0.0001;
 
       objectRotation.x += deltaY;
       objectRotation.y += deltaX;
+
+      my3DModel.rotation.x = objectRotation.x;
+      my3DModel.rotation.y = objectRotation.y;
     }
 
-    if (lastMouseWheelDelta !== 0 && !isAnyImageActive() && isMouseOver3DObject({ clientX: lastMousePosition.x, clientY: lastMousePosition.y })) {
+    if (lastMouseWheelDelta !== 0 && isMouseOver3DObject({ clientX: lastMousePosition.x, clientY: lastMousePosition.y })) {
       const scaleChange = lastMouseWheelDelta > 0 ? 1.02 : 0.98;
       my3DModel.scale.multiplyScalar(scaleChange);
       lastMouseWheelDelta = 0;
     }
-
-    my3DModel.rotation.x = objectRotation.x;
-    my3DModel.rotation.y = objectRotation.y;
-    my3DModel.rotation.z = objectRotation.z;
   }
 
   renderer.render(scene, camera);
@@ -170,10 +213,21 @@ const animate3D = () => {
 
 
 
+
 const loadModel = (url) => {
   loader.load(url, (model) => {
     if (my3DModel) scene.remove(my3DModel);
     my3DModel = model;
+    
+    // Scale down the model by a factor of 3
+    my3DModel.scale.set(1/3, 1/3, 1/3);
+
+    // Create a new bounding box
+    const boundingBox = new THREE.Box3().setFromObject(my3DModel);
+
+    // If you need to access the bounding box later, you can attach it to the model
+    my3DModel.userData.boundingBox = boundingBox;
+
     scene.add(my3DModel);
   });
 };
