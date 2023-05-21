@@ -7,14 +7,14 @@
 
 }
 
-/*@font-face {
+@font-face {
   font-family: 'spratextended_bold';
   src: url('sprat-extendedbold-webfont.woff2') format('woff2'),
        url('sprat-extendedbold-webfont.woff') format('woff');
   font-weight: thin;
   font-style: normal;
 
-}*/
+}
 
 body {
   font-family: 'spratcondensed_thin'!important;
@@ -63,12 +63,14 @@ button {
 #buttonsContainer {
   font-family: 'spratcondensed_thin'!important;
   position: absolute;
-  bottom: -200%;
-  left: 45%;
+  bottom: 0;  
+  left: 0;  
+  right: 0;  
   z-index: 10;
   display: flex;
-  flex-direction: column;
-  
+  flex-direction: row;  
+  justify-content: space-around; 
+  background-color: transparent;  
 }
 
 #buttonsContainer button {
@@ -87,6 +89,7 @@ button {
 
 #buttonsContainer button.alt {
   /* alternate styles */
+  width: 150px;
   border: 1px solid #ffffff00;
   background-color: #ff00d0; /* Change color to red */
   border-radius: 0px; /* Less round edges */

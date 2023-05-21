@@ -12,7 +12,7 @@ let blurredBgBuffer = null;
 let bgBuffer;
 let square;
 let squareTrail = [];
-
+let sketchInstance;
 let mouseOver3DObject = false;
 let textInputMode = false;
 let inputField;
@@ -27,9 +27,10 @@ let fullScreenImage = null;
 const closingIconSize = 50;
 let imageTexts;
 let fullScreenImageText = '';
-const canvasHeight = 1620;
+
 let clickedImageData = null;
 let isBlurApplied = false;
+let canvasHeight;
 
 
 
@@ -44,8 +45,8 @@ document.addEventListener('click', function () {
 
 
 const sketch2D = (p) => {
-
-  
+  sketchInstance = p;
+  const canvasHeight = p.windowWidth * 1.5;
   p.mousePressed = () => {
     mousePressed(p);
   };
@@ -55,6 +56,7 @@ const sketch2D = (p) => {
   };
 
   p.preload = () => {
+    bgImage = p.loadImage('./bg.png');
     imageTexts = p.loadJSON('imageTexts.json');
     myFont = p.loadFont('Sprat-Regular.otf');
     for (let i = 1; i <= 7; i++) { 
@@ -117,41 +119,40 @@ const sketch2D = (p) => {
         if(isBlurApplied) {
             p.image(blurredBgBuffer, 0, 0, p.windowWidth, canvasHeight);
         }
-
-    // Draw the non-blurred image and other UI elements...
-    const aspectRatio = fullScreenImage.width / fullScreenImage.height;
-    const imageHeight = canvasHeight;
-    const imageWidth = p.windowWidth / 2; 
-    const displayHeight = imageWidth / aspectRatio;
-    const imageX = 45; 
-    const imageY = (clickedImageData.clickY - displayHeight) / 2; 
-    p.image(fullScreenImage, imageX, imageY, imageWidth, displayHeight);
-
-    // Draw the associated text on the right half of the screen
-    const textStart = p.windowWidth / 2 + 100; 
-    const textWidth = p.windowWidth / 2 - 100; 
-    p.textFont(myFont); 
-    p.textSize(24);
-    p.textAlign(p.LEFT, p.TOP); 
-    p.text(fullScreenImageText, textStart, clickedImageData.clickY, textWidth);
-    p.fill(255); 
-
-    // Draw closing icon
-    p.push(); 
-    p.stroke(255);
-    p.strokeWeight(4);
-    const iconX = p.windowWidth - closingIconSize;
-    const iconY = 0;
-    p.line(iconX, iconY, iconX + closingIconSize, iconY + closingIconSize);
-    p.line(iconX + closingIconSize, iconY, iconX, iconY + closingIconSize);
-    p.pop();
-    console.log("blurred")
-  } else {
-    isBlurApplied = false;
-    bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
-    p.background(bgColor);
-    bgBuffer.clear(); // Clear bgBuffer here, after checking showFullScreenImage
-    p.image(bgBuffer, 0, 0, p.windowWidth, canvasHeight);
+    
+        // Draw the non-blurred image and other UI elements...
+        const aspectRatio = fullScreenImage.width / fullScreenImage.height;
+        const imageWidth = p.windowWidth / 2; 
+        const displayHeight = Math.min(canvasHeight, imageWidth / aspectRatio);
+        const imageX = 45;
+        const imageY = Math.max(0, Math.min(canvasHeight - displayHeight, clickedImageData.clickY - displayHeight / 2));
+        p.image(fullScreenImage, imageX, imageY, imageWidth, displayHeight);
+    
+        // Draw the associated text on the right half of the screen
+        const textStart = p.windowWidth / 2 + 100; 
+        const textWidth = p.windowWidth / 2 - 100; 
+        p.textFont(myFont); 
+        p.textSize(24);
+        p.textAlign(p.LEFT, p.TOP); 
+        p.text(fullScreenImageText, textStart, clickedImageData.clickY, textWidth);
+        p.fill(255); 
+    
+        // Draw closing icon
+        p.push(); 
+        p.stroke(255);
+        p.strokeWeight(4);
+        iconX = ( p.windowWidth - 20 ) - closingIconSize; // make this a global variable
+        iconY = imageY;  // Adjust the iconY to match the top of the image. Make this a global variable too.
+        p.line(iconX, iconY, iconX + closingIconSize, iconY + closingIconSize);
+        p.line(iconX + closingIconSize, iconY, iconX, iconY + closingIconSize);
+        p.pop();
+        console.log("blurred")
+      } else {
+        isBlurApplied = false;
+        bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
+        p.background(bgColor);
+        bgBuffer.clear(); // Clear bgBuffer here, after checking showFullScreenImage
+        p.image(bgBuffer, 0, 0, p.windowWidth, canvasHeight);
       //currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
      // bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, canvasHeight);
 
@@ -240,7 +241,9 @@ buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
 };
 const my2D = new p5(sketch2D);
 
-
+function getRandomColor(p) {
+  return p.color(p.random(255), p.random(255), p.random(255));
+}
 
 function toggleTransition() {
   var buttons = document.querySelectorAll('#buttonsContainer button');
@@ -254,6 +257,11 @@ function toggleTransition() {
   
   marqueeTop.classList.add('alt');
   marqueeBottom.classList.add('alt');
+
+  targetColor = getRandomColor(sketchInstance);  // assuming p is globally accessible
+
+  // Reset the click counter
+  clickCounter = 0;
 }
 
 

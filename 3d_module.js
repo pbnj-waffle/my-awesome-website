@@ -10,6 +10,7 @@ let isDragging3DModel = false;
 let lastMouseWheelDelta = 0;
 const raycaster = new THREE.Raycaster();
 
+
 function isAnyImageActive() {
   for (const imgData of images) {
     if (
@@ -45,7 +46,7 @@ function isMouseOver3DObject(event) {
 const init3D = () => {
   renderer = new THREE.WebGLRenderer({ alpha: true });
 
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(window.innerWidth, window.innerWidth * 1.5);
 renderer.domElement.style.position = 'absolute';
 document.getElementById('canvasContainer2').appendChild(renderer.domElement);
 
@@ -124,7 +125,7 @@ document.addEventListener("mousedown", (event) => {
   });
 
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / (window.innerWidth * 1.5), 0.1, 1000);
   camera.position.z = 5;
 
   loader = new OBJLoader();
@@ -135,7 +136,7 @@ document.addEventListener("mousedown", (event) => {
   const pointLight = new THREE.PointLight(0xffffff, 0.5);
   camera.add(pointLight);
   scene.add(camera);
-
+  loadModel('./3d (3).obj');
   animate3D();
 };
 
@@ -176,7 +177,6 @@ const loadModel = (url) => {
     scene.add(my3DModel);
   });
 };
-
 
 document.getElementById('upload3DObject').addEventListener('click', () => {
   const input = document.createElement('input');

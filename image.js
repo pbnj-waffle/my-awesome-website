@@ -73,6 +73,14 @@ function duplicateImage(imgData, p) {
   }
 }
 function mousePressed(p) {
+  if (showFullScreenImage) {
+    const closeClicked = p.mouseX >= iconX && p.mouseX <= iconX + closingIconSize &&
+      p.mouseY >= iconY && p.mouseY <= iconY + closingIconSize;
+    if (closeClicked) {
+      showFullScreenImage = false;
+      return;
+    }
+  }
   for (const imgData of images) {
     const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
       p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
@@ -80,8 +88,8 @@ function mousePressed(p) {
       console.log("image clicked and blur applied")
 
       // Apply the blur and update the flag only when image is clicked and blur is not yet applied
-      buffer.filter(p.BLUR, 10); 
-      blurredBgBuffer.image(buffer, 0, 0); 
+      //buffer.filter(p.BLUR, 10); 
+      //blurredBgBuffer.image(buffer, 0, 0); 
       isBlurApplied = true;
 
       showFullScreenImage = true;
