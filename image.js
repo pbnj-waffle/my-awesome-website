@@ -51,6 +51,35 @@ function imageLoaded(image, p, imageName) {
   });
 }
 
+function extraImageLoaded(image, p, imageName) {
+  if (!clickedImageData) {
+    console.error('clickedImageData is null in extraImageLoaded');
+    return;
+  }
+  const scaleFactor = p.random(1, 3);
+
+  let newY;
+  if (extraImages.length === 0) {
+    // Position the first extra image right below the clicked image
+    newY = clickedImageData.y + clickedImageData.height;
+  } else {
+    // Position the subsequent extra images right below the last extra image
+    const lastExtraImage = extraImages[extraImages.length - 1];
+    newY = lastExtraImage.y + lastExtraImage.height;
+  }
+
+  extraImages.push({
+    img: image,
+    x: clickedImageData.x,
+    y: newY,
+    width: image.width / scaleFactor,
+    height: image.height / scaleFactor,
+    aspectRatio: image.width / image.height,
+    text: imageTexts[imageName] || '',
+  });
+}
+
+
 function processImage(imgData, p) {
   if (imgData.timeElapsed < 300) {
     imgData.timeElapsed++;
@@ -95,7 +124,7 @@ for (let i = images.length - 1; i >= 0; i--) {
     const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
       p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
     if (imageClicked && !isBlurApplied) {
-
+      showExtraImages = true;
 
       // Apply the blur and update the flag only when image is clicked and blur is not yet applied
       //buffer.filter(p.BLUR, 10); 

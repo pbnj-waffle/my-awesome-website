@@ -57,6 +57,7 @@ body {
 }
 
 button {
+  
   all: unset;
 }
 
@@ -89,8 +90,8 @@ button {
 
 #buttonsContainer button.alt {
   /* alternate styles */
-  width: 150px;
-  border: 1px solid #ffffff00;
+  width: 200px;
+  border: 1pxsolid #ffffff00;
   background-color: #ff00d0; /* Change color to red */
   border-radius: 0px; /* Less round edges */
   font-family: 'spratextended_bold'; /* Different font */

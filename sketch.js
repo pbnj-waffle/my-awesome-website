@@ -3,6 +3,7 @@ let bgColor;
 let transitionSpeed = 0.01; 
 let targetColor;
 let images = [];
+let extraImages = [];
 let handleSize = 10;
 let activeImage;
 let buffer; //IMPORTANT to use to keep browser from crashing
@@ -40,12 +41,8 @@ let chosenVideo;
 let hoveredImage = null;
 let hoveredImgData = null;
 const ARROW = 'default';
-const RESIZE_EW = 'ew-resize';
-const RESIZE_NS = 'ns-resize';
-const RESIZE_NWSE = "nwse-resize";
-const RESIZE_NESW = "nesw-resize";
 let cursorType = ARROW;
-
+let showExtraImages = false;
 
 
 document.addEventListener('click', function () {
@@ -70,28 +67,32 @@ const sketch2D = (p) => {
   };
 
   p.preload = () => {
-    /*for (let i = 0; i < videoNames.length; i++) {
+    /*for (let i = 0; i < videoNames.length; i++) { //BACKGROUND VIDEO
       let video = p.createVideo(videoNames[i]);
       bgVideos.push(video);
     }*/
-    for (let i = 0; i < bgImagesNames.length; i++) {
+    for (let i = 0; i < bgImagesNames.length; i++) { //BACKGROUND IMAGES
       let img = p.loadImage(bgImagesNames[i]);
       bgImages.push(img);
-  }
-    //bgImage = p.loadImage('./bg.png');
-    imageTexts = p.loadJSON('imageTexts.json');
-    myFont = p.loadFont('Sprat-Regular.otf');
-    for (let i = 1; i <= 7; i++) { 
+    }
+    
+    for (let i = 1; i <= 7; i++) { //MAIN IMAGES
       const img = p.loadImage(`./images/img (${i}).png`, () => {
           imageLoaded(img, p, `img (${i})`);
       });
     }
+    for (let i = 1; i <= 3; i++) { //EXTRA IMAGES
+      const img = p.loadImage(`./images/extra/extra_img (${i}).jpg`, () => {
+          extraImageLoaded(img, p, `extra_img (${i})`);
+      });
+    }
+
+  imageTexts = p.loadJSON('imageTexts.json');
+  myFont = p.loadFont('Sprat-Regular.otf');
   }
   
   
-  p.setup = () => {
-    
-    
+  p.setup = () => {    
     bgColor = p.color(0);
     targetColor = p.color(0, 0, 0);
     const canvas2D = p.createCanvas(p.windowWidth, canvasHeight); // Store the canvas
@@ -139,12 +140,13 @@ const sketch2D = (p) => {
     p.draw = () => {
       
       if (showFullScreenImage) {
-        p.fill(0);
-        p.rect(0, 0, p.width, p.height);
+        p.background(0, 0, 0, 150);
+        //p.fill(0);
+       // p.rect(0, 0, p.width, p.height);
         // Draw the blurred buffer only when isBlurApplied is true
-        if(isBlurApplied) {
+        /*if(isBlurApplied) {
             p.image(blurredBgBuffer, 0, 0, p.windowWidth, canvasHeight);
-        }
+        }*/
     
         // Draw the non-blurred image and other UI elements...
         const aspectRatio = fullScreenImage.width / fullScreenImage.height;
@@ -172,7 +174,15 @@ const sketch2D = (p) => {
         p.line(iconX, iconY, iconX + closingIconSize, iconY + closingIconSize);
         p.line(iconX + closingIconSize, iconY, iconX, iconY + closingIconSize);
         p.pop();
-        console.log("blurred")
+        
+        if (showExtraImages) {
+          const validExtraImages = extraImages.filter(imgData => imgData != null);
+        
+          for (const imgData of validExtraImages) {
+            // Draw each image
+            p.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
+          }
+        }
       } else {
         isBlurApplied = false;
         bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
@@ -196,9 +206,13 @@ const sketch2D = (p) => {
     }
 
     //IMAGES
-    const framesBetweenTrail = 10;
+    const framesBetweenTrail = 15;
+
+    
 
     for (const imgData of images) {
+
+    
       
       if (hoveredImage === imgData) {
         // Save the hovered image data to be processed later
