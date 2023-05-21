@@ -27,10 +27,23 @@ let fullScreenImage = null;
 const closingIconSize = 50;
 let imageTexts;
 let fullScreenImageText = '';
-
+let isMousePressedOn3D = false;
 let clickedImageData = null;
 let isBlurApplied = false;
 let canvasHeight;
+let bgImagesNames = ["thunder.png", "thunder.png"];
+let bgImages = [];
+let chosenBgImage;
+let videoNames = ["1.mp4", "3.mp4"];
+let bgVideos = [];
+let chosenVideo;
+
+const ARROW = 'default';
+const RESIZE_EW = 'ew-resize';
+const RESIZE_NS = 'ns-resize';
+const RESIZE_NWSE = "nwse-resize";
+const RESIZE_NESW = "nesw-resize";
+let cursorType = ARROW;
 
 
 
@@ -46,7 +59,7 @@ document.addEventListener('click', function () {
 
 const sketch2D = (p) => {
   sketchInstance = p;
-  const canvasHeight = p.windowWidth * 1.5;
+  canvasHeight = p.windowWidth * 1.5;
   p.mousePressed = () => {
     mousePressed(p);
   };
@@ -56,14 +69,22 @@ const sketch2D = (p) => {
   };
 
   p.preload = () => {
-    bgImage = p.loadImage('./bg.png');
+    /*for (let i = 0; i < videoNames.length; i++) {
+      let video = p.createVideo(videoNames[i]);
+      bgVideos.push(video);
+    }*/
+    for (let i = 0; i < bgImagesNames.length; i++) {
+      let img = p.loadImage(bgImagesNames[i]);
+      bgImages.push(img);
+  }
+    //bgImage = p.loadImage('./bg.png');
     imageTexts = p.loadJSON('imageTexts.json');
     myFont = p.loadFont('Sprat-Regular.otf');
     for (let i = 1; i <= 7; i++) { 
       const img = p.loadImage(`./images/img (${i}).png`, () => {
           imageLoaded(img, p, `img (${i})`);
       });
-  }
+    }
   }
   
   
@@ -80,7 +101,14 @@ const sketch2D = (p) => {
     bgBuffer = p.createGraphics(p.windowWidth, canvasHeight);
     blurredBgBuffer = p.createGraphics(p.windowWidth, canvasHeight);
     
-    
+    /*const randomIndex = Math.floor(p.random(bgVideos.length));
+    chosenVideo = bgVideos[randomIndex];
+    chosenVideo.volume(0);  // Mute the video by setting volume to 0
+    chosenVideo.loop();
+    chosenVideo.hide();*/
+
+    const randomIndex = Math.floor(p.random(bgImages.length));
+    chosenBgImage = bgImages[randomIndex];
 
     if (Math.random() > 0.8) {
       square = {
@@ -107,13 +135,8 @@ const sketch2D = (p) => {
     
   }
   
-
-
-    function saveImageToFile() {
-      p.saveCanvas('myCanvas', 'jpg');
-    }
-  
     p.draw = () => {
+      let overAnyImage = false;
       if (showFullScreenImage) {
         // Draw the blurred buffer only when isBlurApplied is true
         if(isBlurApplied) {
@@ -152,7 +175,7 @@ const sketch2D = (p) => {
         bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
         p.background(bgColor);
         bgBuffer.clear(); // Clear bgBuffer here, after checking showFullScreenImage
-        p.image(bgBuffer, 0, 0, p.windowWidth, canvasHeight);
+        p.image(chosenBgImage, 0, 0, p.windowWidth, canvasHeight);
       //currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
      // bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, canvasHeight);
 
@@ -181,7 +204,7 @@ const sketch2D = (p) => {
       if (imgData.shouldDuplicate) duplicateImage(imgData, p);// DUPLICATE
   
   
-       if (imgData.shouldMove) { // MOVE
+      if (imgData.shouldMove && p.millis() > imgData.startTime && (p.millis() - imgData.startTime) < imgData.stopAfter) { // MOVE
         imgData.framesSinceLastTrail++;
   
         if (imgData.framesSinceLastTrail >= framesBetweenTrail) {
@@ -206,9 +229,13 @@ const sketch2D = (p) => {
         buffer.image(imgToDraw, trailPosition.x, trailPosition.y, imgData.width, imgData.height);
       }
 
- // Main image
-buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
+    // Main image
+    buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
+
+    
     }
+
+    updateCursor(p);
  
     if (activeImage) {
       drawFrame(activeImage);

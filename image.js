@@ -7,6 +7,7 @@ const EDGE_THRESHOLD = 5;
 }*/
 
 function imageLoaded(image, p, imageName) {
+  const scaleFactor = p.random(1, 3);
   const effectRandom = p.floor(p.random(1,101));
   console.log('Random number:', effectRandom);
   const shouldMove = 0 < effectRandom && effectRandom <= 100;
@@ -19,9 +20,9 @@ function imageLoaded(image, p, imageName) {
   images.push({
     img: image,
     x: p.random(0, p.windowWidth - image.width),
-    y: p.random(0, p.windowHeight - image.height),
-    width: image.width / 3,
-    height: image.height / 3,
+    y: p.random(0, canvasHeight - image.height),
+    width: image.width / scaleFactor,
+    height: image.height / scaleFactor,
     aspectRatio: image.width / image.height,
     isDragging: false,
     isResizing: false,
@@ -73,19 +74,24 @@ function duplicateImage(imgData, p) {
   }
 }
 function mousePressed(p) {
-  if (showFullScreenImage) {
-    const closeClicked = p.mouseX >= iconX && p.mouseX <= iconX + closingIconSize &&
-      p.mouseY >= iconY && p.mouseY <= iconY + closingIconSize;
-    if (closeClicked) {
-      showFullScreenImage = false;
-      return;
-    }
+  if (isMousePressedOn3D) {
+    // If the 3D object is being interacted with, do nothing in this function.
+    return;
   }
+  if (showFullScreenImage) {
+  const closeClicked = p.mouseX >= iconX && p.mouseX <= iconX + closingIconSize &&
+    p.mouseY >= iconY && p.mouseY <= iconY + closingIconSize;
+  if (closeClicked) {
+    showFullScreenImage = false;
+    window.set3DObjectVisibility(true);
+    return;
+  }
+}
   for (const imgData of images) {
     const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
       p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
     if (imageClicked && !isBlurApplied) {
-      console.log("image clicked and blur applied")
+
 
       // Apply the blur and update the flag only when image is clicked and blur is not yet applied
       //buffer.filter(p.BLUR, 10); 
@@ -97,6 +103,7 @@ function mousePressed(p) {
       fullScreenImageText = imgData.text || '';
       clickedImageData = imgData;  // Store the entire imgData object
       clickedImageData.clickY = p.mouseY;  // Store the y-position of the click
+      window.set3DObjectVisibility(false);
       break;
     }
   }
@@ -143,34 +150,29 @@ function mousePressed(p) {
   
   function isMouseOnBottomEdge(imgData, p) {
   return p.abs(p.mouseY - (imgData.y + imgData.height)) <= EDGE_THRESHOLD;
-  }
+  }*/
 
   function setCursor(cursor) {
-    document.body.style.cursor = cursor;
+    document.body.style.setProperty('cursor', 'pointer', 'important')
   }
 
   function updateCursor(p) {
-    if (activeImage) {
-      const isOnLeftEdge = p.mouseX >= activeImage.x - EDGE_THRESHOLD && p.mouseX <= activeImage.x + EDGE_THRESHOLD;
-      const isOnRightEdge = p.mouseX >= activeImage.x + activeImage.width - EDGE_THRESHOLD && p.mouseX <= activeImage.x + activeImage.width + EDGE_THRESHOLD;
-      const isOnTopEdge = p.mouseY >= activeImage.y - EDGE_THRESHOLD && p.mouseY <= activeImage.y + EDGE_THRESHOLD;
-      const isOnBottomEdge = p.mouseY >= activeImage.y + activeImage.height - EDGE_THRESHOLD && p.mouseY <= activeImage.y + activeImage.height + EDGE_THRESHOLD;
-  
-      if (isOnLeftEdge && isOnTopEdge) {
-        setCursor('nwse-resize');
-      } else if (isOnRightEdge && isOnTopEdge) {
-        setCursor('nesw-resize');
-      } else if (isOnLeftEdge && isOnBottomEdge) {
-        setCursor('nesw-resize');
-      } else if (isOnRightEdge && isOnBottomEdge) {
-        setCursor('nwse-resize');
-      } else if (isOnLeftEdge || isOnRightEdge) {
-        setCursor('ew-resize');
-      } else if (isOnTopEdge || isOnBottomEdge) {
-        setCursor('ns-resize');
-      } else {
-        setCursor('default');
-      }
+  let overAnyImage = false;
+
+  for (const imgData of images) {
+    // Check if mouse is over this image
+    if (
+      p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
+      p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height
+    ) {
+      overAnyImage = true; // We're over an image, set the flag
     }
   }
-  */
+
+  if (overAnyImage) {
+    console.log("over")
+    setCursor('pointer');
+  } else {
+    setCursor('default');
+  }
+}

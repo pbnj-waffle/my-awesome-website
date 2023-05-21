@@ -13,7 +13,8 @@ import {
 	Vector3,
 	Color,
 	LineBasicMaterial,
-	LineSegments
+	LineSegments,
+	MeshPhongMaterial,
 } from 'https://threejs.org/build/three.module.js';
 
 // o object_name | g group_name
