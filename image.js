@@ -74,6 +74,7 @@ function duplicateImage(imgData, p) {
   }
 }
 function mousePressed(p) {
+  
   if (isMousePressedOn3D) {
     // If the 3D object is being interacted with, do nothing in this function.
     return;
@@ -87,7 +88,10 @@ function mousePressed(p) {
     return;
   }
 }
-  for (const imgData of images) {
+for (let i = images.length - 1; i >= 0; i--) {
+  const imgData = images[i];
+  
+  
     const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
       p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
     if (imageClicked && !isBlurApplied) {

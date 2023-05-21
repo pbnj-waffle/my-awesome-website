@@ -136,7 +136,7 @@ const sketch2D = (p) => {
   }
   
     p.draw = () => {
-      let overAnyImage = false;
+      
       if (showFullScreenImage) {
         // Draw the blurred buffer only when isBlurApplied is true
         if(isBlurApplied) {
@@ -217,8 +217,14 @@ const sketch2D = (p) => {
         imgData.noiseOffset += speed;
   
         // Perlin noise for moving
-        imgData.x = p.map(p.noise(imgData.noiseSeedX + imgData.noiseOffset), 0, 1, 0, p.windowWidth - imgData.width);
-        imgData.y = p.map(p.noise(imgData.noiseSeedY + imgData.noiseOffset), 0, 1, 0, canvasHeight - imgData.height);
+const noiseX = p.map(p.noise(imgData.noiseSeedX + imgData.noiseOffset), 0, 1, -1, 1);
+const noiseY = p.map(p.noise(imgData.noiseSeedY + imgData.noiseOffset), 0, 1, -1, 1);
+imgData.x += noiseX;
+imgData.y += noiseY;
+
+// Make sure the image doesn't go off the screen
+imgData.x = p.constrain(imgData.x, 0, p.windowWidth - imgData.width);
+imgData.y = p.constrain(imgData.y, 0, canvasHeight - imgData.height);
       }
   
       // Define imgToDraw inside the loop
@@ -245,11 +251,11 @@ const sketch2D = (p) => {
     if (isBgAnimationEnabled) {
       p.image(buffer, 0, 0); // Draw the buffer onto the main canvas
 
-      // Draw images with the BLEND mode
+      /*// Draw images with the BLEND mode
       p.blendMode(p.BLEND);
       for (const imgData of images) {
         p.image(imgData.processedImg || imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
-      }
+      }*/
     } 
 
     p.push(); // Create a separate context for square drawing
