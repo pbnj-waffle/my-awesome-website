@@ -31,6 +31,20 @@ function isAnyImageActive() {
   return false;
 }
 
+function isMouseOverImage(event) {
+  for (const imgData of images) {
+    if (
+      event.clientX > imgData.x &&
+      event.clientX < imgData.x + imgData.width &&
+      event.clientY > imgData.y &&
+      event.clientY < imgData.y + imgData.height
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 
 function isMouseOver3DObject(event) {
  
@@ -43,6 +57,7 @@ function isMouseOver3DObject(event) {
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObject(my3DModel, true);
+  console.log(intersects);
 
   return intersects.length > 0;
 }
@@ -64,6 +79,7 @@ renderer.domElement.addEventListener("wheel", (event) => {
   if (isAnyImageActive()) return;
 
   if (isMouseOver3DObject(event)) {
+    event.stopPropagation();
     lastMouseWheelDelta = event.deltaY;
 
     if (lastMouseWheelDelta !== 0) {
@@ -100,6 +116,8 @@ document.addEventListener('mouseup', () => {
 renderer.domElement.addEventListener("mousemove", (event) => {
   if (isMouseOver3DObject(event)) {
     renderer.domElement.style.cursor = "grab";
+  } else if (isMouseOverImage(event)) {
+    renderer.domElement.style.cursor = "pointer";
   } else {
     renderer.domElement.style.cursor = "default";
   }
@@ -128,7 +146,7 @@ renderer.domElement.addEventListener("mouseup", () => {
   
 renderer.domElement.addEventListener("mouseleave", () => {
   if (isAnyImageActive()) return;
-
+  
   isDragging3DModel = false;
   isMousePressedOn3D = false;
   renderer.domElement.style.cursor = "default";

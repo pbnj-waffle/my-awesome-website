@@ -41,7 +41,7 @@ function imageLoaded(image, p, imageName) {
     framesSinceLastTrail: 0,
     processedImg: null,
     timeElapsed: 0,
-    shouldDuplicate: shouldDuplicate,
+    //shouldDuplicate: shouldDuplicate,
     duplicateInterval: 15000, // Duplicate every 15 seconds
     lastDuplicateTime: p.millis(),
     glitchImg: null,
