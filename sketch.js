@@ -3,7 +3,6 @@ let bgColor;
 let transitionSpeed = 0.01; 
 let targetColor;
 let images = [];
-let extraImages = [];
 let handleSize = 10;
 let activeImage;
 let buffer; //IMPORTANT to use to keep browser from crashing
@@ -42,7 +41,10 @@ let hoveredImage = null;
 let hoveredImgData = null;
 const ARROW = 'default';
 let cursorType = ARROW;
+let extraImages = [];
+let extraImagesData = {};
 let showExtraImages = false;
+let isExtraImagesLoaded = false;
 
 
 document.addEventListener('click', function () {
@@ -81,13 +83,14 @@ const sketch2D = (p) => {
           imageLoaded(img, p, `img (${i})`);
       });
     }
-    for (let i = 1; i <= 3; i++) { //EXTRA IMAGES
+    /*for (let i = 1; i <= 3; i++) { //EXTRA IMAGES
       const img = p.loadImage(`./images/extra/extra_img (${i}).jpg`, () => {
           extraImageLoaded(img, p, `extra_img (${i})`);
       });
-    }
+    }*/
 
   imageTexts = p.loadJSON('imageTexts.json');
+  extraImagesData = p.loadJSON('extraImages.json');
   myFont = p.loadFont('Sprat-Regular.otf');
   }
   
@@ -109,8 +112,8 @@ const sketch2D = (p) => {
     chosenVideo.loop();
     chosenVideo.hide();*/
 
-    const randomIndex = Math.floor(p.random(bgImages.length));
-    chosenBgImage = bgImages[randomIndex];
+    /*const randomIndex = Math.floor(p.random(bgImages.length));
+    chosenBgImage = bgImages[randomIndex];*/
 
     if (Math.random() > 0.1) {
       square = {
@@ -140,9 +143,9 @@ const sketch2D = (p) => {
     p.draw = () => {
       
       if (showFullScreenImage) {
-        p.background(0, 0, 0, 150);
-        //p.fill(0);
-       // p.rect(0, 0, p.width, p.height);
+        //p.background(0, 0, 0, 150);
+        p.fill(0);
+       p.rect(0, 0, p.width, p.height);
         // Draw the blurred buffer only when isBlurApplied is true
         /*if(isBlurApplied) {
             p.image(blurredBgBuffer, 0, 0, p.windowWidth, canvasHeight);
@@ -153,7 +156,7 @@ const sketch2D = (p) => {
         const imageWidth = p.windowWidth / 2; 
         const displayHeight = Math.min(canvasHeight, imageWidth / aspectRatio);
         const imageX = 45;
-        const imageY = Math.max(0, Math.min(canvasHeight - displayHeight, clickedImageData.clickY - displayHeight / 2));
+        const imageY = 45;
         p.image(fullScreenImage, imageX, imageY, imageWidth, displayHeight);
     
         // Draw the associated text on the right half of the screen
@@ -162,7 +165,7 @@ const sketch2D = (p) => {
         p.textFont(myFont); 
         p.textSize(24);
         p.textAlign(p.LEFT, p.TOP); 
-        p.text(fullScreenImageText, textStart, clickedImageData.clickY, textWidth);
+        p.text(fullScreenImageText, textStart, imageY, textWidth);
         p.fill(255); 
     
         // Draw closing icon
@@ -206,13 +209,9 @@ const sketch2D = (p) => {
     }
 
     //IMAGES
-    const framesBetweenTrail = 15;
+    const framesBetweenTrail = 15;   
 
-    
-
-    for (const imgData of images) {
-
-    
+    for (const imgData of images) {    
       
       if (hoveredImage === imgData) {
         // Save the hovered image data to be processed later
@@ -303,7 +302,7 @@ if (hoveredImgData && mouseOverHoveredImage) {
 }
 
 
-    updateCursor(p);
+    updateCursor(p)
  
     if (activeImage) {
       drawFrame(activeImage);

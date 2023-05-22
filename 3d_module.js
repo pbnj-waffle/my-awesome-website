@@ -99,7 +99,6 @@ document.addEventListener('mouseup', () => {
 
 renderer.domElement.addEventListener("mousemove", (event) => {
   if (isMouseOver3DObject(event)) {
-    console.log("over 3d")
     renderer.domElement.style.cursor = "grab";
   } else {
     renderer.domElement.style.cursor = "default";
@@ -145,6 +144,7 @@ renderer.domElement.addEventListener("mouseleave", () => {
   renderer.domElement.addEventListener('mousemove', (event) => {
     lastMousePosition.x = event.clientX;
     lastMousePosition.y = event.clientY;
+    
   });
 
   renderer.domElement.addEventListener("mousedown", (event) => {

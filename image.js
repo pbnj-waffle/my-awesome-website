@@ -52,33 +52,28 @@ function imageLoaded(image, p, imageName) {
 }
 
 function extraImageLoaded(image, p, imageName) {
-  if (!clickedImageData) {
-    console.error('clickedImageData is null in extraImageLoaded');
-    return;
+  const scaleFactor = 1;
+  // Calculate the maximum possible height for the main images
+  let maxHeight = 0;
+  for (let img of images) {
+    if (img.height > maxHeight) {
+      maxHeight = img.height;
+    }
   }
-  const scaleFactor = p.random(1, 3);
-
-  let newY;
-  if (extraImages.length === 0) {
-    // Position the first extra image right below the clicked image
-    newY = clickedImageData.y + clickedImageData.height;
-  } else {
-    // Position the subsequent extra images right below the last extra image
-    const lastExtraImage = extraImages[extraImages.length - 1];
-    newY = lastExtraImage.y + lastExtraImage.height;
-  }
-
+  
+  let randomX = p.random(0, p.windowWidth - image.width / scaleFactor);
+  let randomY = p.random(maxHeight, p.windowHeight - image.height / scaleFactor);
+  console.log(extraImages);
   extraImages.push({
     img: image,
-    x: clickedImageData.x,
-    y: newY,
     width: image.width / scaleFactor,
     height: image.height / scaleFactor,
     aspectRatio: image.width / image.height,
     text: imageTexts[imageName] || '',
+    x: randomX,  // random x
+    y: randomY,  // random y, but always greater than the height of the tallest image in the gallery
   });
 }
-
 
 function processImage(imgData, p) {
   if (imgData.timeElapsed < 300) {
@@ -102,6 +97,7 @@ function duplicateImage(imgData, p) {
     imgData.lastDuplicateTime = p.millis();
   }
 }
+
 function mousePressed(p) {
   
   if (isMousePressedOn3D) {
@@ -119,17 +115,46 @@ function mousePressed(p) {
 }
 for (let i = images.length - 1; i >= 0; i--) {
   const imgData = images[i];
-  
-  
-    const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
-      p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
-    if (imageClicked && !isBlurApplied) {
-      showExtraImages = true;
+  const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
+    p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
 
+  if (imageClicked && !isBlurApplied) {//IMAGE CLICKED
+    showExtraImages = true;
+
+    
+      // Find the associated extra images for the clicked image
+    const imageName = `img (${i+1})`;  // Construct the image name
+    const associatedExtraImages = extraImagesData[imageName];
+    
+    // Reinitialize extraImages to be an empty array
+    extraImages = [];
+
+    // Only load the associated extra images
+    for (let i = 0; i < associatedExtraImages.length; i++) {
+      const extraImageName = associatedExtraImages[i];
+      p.loadImage(`./images/extra/${extraImageName}.png`, (img) => {
+        extraImageLoaded(img, p, extraImageName);
+      });
+    }
+
+      // Assign random positions to the extra images
+    for (let i = 0; i < extraImages.length; i++) {
+      let extraImage = extraImages[i];
+      extraImage.x = p.random(0, p.windowWidth - extraImage.width);  // Random x position
+      
+      if (i === 0) {
+        // Position the first extra image right below the clicked image
+        extraImage.y = clickedImageData.y + clickedImageData.height + p.random(0, p.height - (clickedImageData.y + clickedImageData.height + extraImage.height));
+      } else {
+        // Position the subsequent extra images randomly but below the clicked image
+        let previousExtraImage = extraImages[i - 1];
+        extraImage.y = previousExtraImage.y + previousExtraImage.height + p.random(0, p.height - (previousExtraImage.y + previousExtraImage.height + extraImage.height));
+      }
+    }
       // Apply the blur and update the flag only when image is clicked and blur is not yet applied
       //buffer.filter(p.BLUR, 10); 
       //blurredBgBuffer.image(buffer, 0, 0); 
-      isBlurApplied = true;
+      //isBlurApplied = true;
 
       showFullScreenImage = true;
       fullScreenImage = imgData.img;
