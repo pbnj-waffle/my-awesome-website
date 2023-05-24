@@ -26,7 +26,7 @@ window.onload = function() {
   let tl = gsap.timeline();
 
   // Calculate the distance to fall
-  const distanceToFall = document.getElementById('canvasGlobalContainer').clientHeight - textContainer.getBoundingClientRect().top;
+  const distanceToFall = document.getElementById('canvasGlobalContainer').clientHeight - textContainer.getBoundingClientRect().top - textContainer.clientHeight + 20;
 
   // Add the animation to the timeline for each letter
   letters.forEach((letter, i) => {
