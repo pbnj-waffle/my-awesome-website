@@ -8,7 +8,7 @@ const EDGE_THRESHOLD = 5;
 
 function imageLoaded(image, p, imageName) {
   const scaleFactor = p.random(1, 3);
-  const effectRandom = p.floor(p.random(1,101));
+  const effectRandom = p.floor(p.random(1, 101));
   console.log('Random number:', effectRandom);
   const shouldMove = 0 < effectRandom && effectRandom <= 100;
   const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
@@ -37,7 +37,7 @@ function imageLoaded(image, p, imageName) {
     resizeMargin: 10,
     shouldMove: !noBlending && shouldMove,
     startTime: p.millis() + 5000,
-    stopAfter: p.random([5, 10, 30, 60, 300, Infinity]) * 1000, 
+    stopAfter: p.random([5, 10, 30, 60, 300, Infinity]) * 1000,
     trail: [],
     noiseSeedX: p.random(1000),
     noiseSeedY: p.random(1000),
@@ -65,7 +65,7 @@ function extraImageLoaded(image, p, imageName) {
       maxHeight = img.height;
     }
   }
-  
+
   let randomX = p.random(0, p.windowWidth - image.width / scaleFactor);
   let randomY = p.random(maxHeight, p.windowHeight - image.height / scaleFactor);
   extraImages.push({
@@ -103,67 +103,67 @@ function duplicateImage(imgData, p) {
 }
 
 function mousePressed(p) {
-  
+
   if (isMousePressedOn3D) {
     // If the 3D object is being interacted with, do nothing in this function.
     return;
   }
   if (showFullScreenImage) {
-  const closeClicked = p.mouseX >= iconX && p.mouseX <= iconX + closingIconSize &&
-    p.mouseY >= iconY && p.mouseY <= iconY + closingIconSize;
-  if (closeClicked) {
-     // Show elements
-  document.getElementById('header').style.display = '';
-  document.getElementById('textContainer').style.display = '';
-  document.getElementById('otherTextContainer').style.display = '';
-  document.getElementById('canvasContainer').style.top = '100vh';
-    showFullScreenImage = false;
-    window.set3DObjectVisibility(true);
-    return;
-  }
-}
-for (let i = images.length - 1; i >= 0; i--) {
-  const imgData = images[i];
-  const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
-    p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
+    const closeClicked = p.mouseX >= iconX && p.mouseX <= iconX + closingIconSize &&
+      p.mouseY >= iconY && p.mouseY <= iconY + closingIconSize;
+    if (closeClicked) {
+      // Show elements
+      document.getElementById('header').style.display = '';
+      document.getElementById('textContainer').style.display = '';
+      document.getElementById('otherTextContainer').style.display = '';
 
-  if (imageClicked && !isBlurApplied) {//IMAGE CLICKED
-    showExtraImages = true;
-
-    // Hide elements
-  document.getElementById('header').style.display = 'none';
-  document.getElementById('textContainer').style.display = 'none';
-  document.getElementById('otherTextContainer').style.display = 'none';
-  document.getElementById('canvasContainer').style.top = '0';
-      // Find the associated extra images for the clicked image
-    const imageName = `img (${i+1})`;  // Construct the image name
-    const associatedExtraImages = extraImagesData[imageName];
-    
-    // Reinitialize extraImages to be an empty array
-    extraImages = [];
-
-    // Only load the associated extra images
-    for (let i = 0; i < associatedExtraImages.length; i++) {
-      const extraImageName = associatedExtraImages[i];
-      p.loadImage(`./images/extra/${extraImageName}.png`, (img) => {
-        extraImageLoaded(img, p, extraImageName);
-      });
+      showFullScreenImage = false;
+      window.set3DObjectVisibility(true);
+      return;
     }
+  }
+  for (let i = images.length - 1; i >= 0; i--) {
+    const imgData = images[i];
+    const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
+      p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
+
+    if (imageClicked && !isBlurApplied) {//IMAGE CLICKED
+      showExtraImages = true;
+
+      // Hide elements
+      document.getElementById('header').style.display = 'none';
+      document.getElementById('textContainer').style.display = 'none';
+      document.getElementById('otherTextContainer').style.display = 'none';
+
+      // Find the associated extra images for the clicked image
+      const imageName = `img (${i + 1})`;  // Construct the image name
+      const associatedExtraImages = extraImagesData[imageName];
+
+      // Reinitialize extraImages to be an empty array
+      extraImages = [];
+
+      // Only load the associated extra images
+      for (let i = 0; i < associatedExtraImages.length; i++) {
+        const extraImageName = associatedExtraImages[i];
+        p.loadImage(`./images/extra/${extraImageName}.png`, (img) => {
+          extraImageLoaded(img, p, extraImageName);
+        });
+      }
 
       // Assign random positions to the extra images
-    for (let i = 0; i < extraImages.length; i++) {
-      let extraImage = extraImages[i];
-      extraImage.x = p.random(0, p.windowWidth - extraImage.width);  // Random x position
-      
-      if (i === 0) {
-        // Position the first extra image right below the clicked image
-        extraImage.y = clickedImageData.y + clickedImageData.height + p.random(0, p.height - (clickedImageData.y + clickedImageData.height + extraImage.height));
-      } else {
-        // Position the subsequent extra images randomly but below the clicked image
-        let previousExtraImage = extraImages[i - 1];
-        extraImage.y = previousExtraImage.y + previousExtraImage.height + p.random(0, p.height - (previousExtraImage.y + previousExtraImage.height + extraImage.height));
+      for (let i = 0; i < extraImages.length; i++) {
+        let extraImage = extraImages[i];
+        extraImage.x = p.random(0, p.windowWidth - extraImage.width);  // Random x position
+
+        if (i === 0) {
+          // Position the first extra image right below the clicked image
+          extraImage.y = clickedImageData.y + clickedImageData.height + p.random(0, p.height - (clickedImageData.y + clickedImageData.height + extraImage.height));
+        } else {
+          // Position the subsequent extra images randomly but below the clicked image
+          let previousExtraImage = extraImages[i - 1];
+          extraImage.y = previousExtraImage.y + previousExtraImage.height + p.random(0, p.height - (previousExtraImage.y + previousExtraImage.height + extraImage.height));
+        }
       }
-    }
       // Apply the blur and update the flag only when image is clicked and blur is not yet applied
       //buffer.filter(p.BLUR, 10); 
       //blurredBgBuffer.image(buffer, 0, 0); 
@@ -181,53 +181,53 @@ for (let i = images.length - 1; i >= 0; i--) {
 };
 
 
-  function mouseReleased(p) {
-    // If the user released the mouse on the closing icon, close the full screen image
-   const clickedOnClosingIcon = p.mouseX >= p.windowWidth - closingIconSize && p.mouseX <= p.windowWidth &&
-   p.mouseY >= 0 && p.mouseY <= closingIconSize;
- if (clickedOnClosingIcon) {
-   setTimeout(() => {
-     showFullScreenImage = false;
-     fullScreenImage = null;
-   }, 100); // wait 100 milliseconds before closing the image
+function mouseReleased(p) {
+  // If the user released the mouse on the closing icon, close the full screen image
+  const clickedOnClosingIcon = p.mouseX >= p.windowWidth - closingIconSize && p.mouseX <= p.windowWidth &&
+    p.mouseY >= 0 && p.mouseY <= closingIconSize;
+  if (clickedOnClosingIcon) {
+    setTimeout(() => {
+      showFullScreenImage = false;
+      fullScreenImage = null;
+    }, 100); // wait 100 milliseconds before closing the image
+  }
+};
+
+/* function drawFrame(imgData, p) {
+ const frameThickness = 5;
+ topBuffer.noFill();
+ topBuffer.strokeWeight(frameThickness);
+ topBuffer.stroke(0,0,255);
+ topBuffer.rect(imgData.x + frameThickness / 2, imgData.y + frameThickness / 2, imgData.width - frameThickness, imgData.height - frameThickness);
  }
-   };
-  
- /* function drawFrame(imgData, p) {
-  const frameThickness = 5;
-  topBuffer.noFill();
-  topBuffer.strokeWeight(frameThickness);
-  topBuffer.stroke(0,0,255);
-  topBuffer.rect(imgData.x + frameThickness / 2, imgData.y + frameThickness / 2, imgData.width - frameThickness, imgData.height - frameThickness);
-  }
-  
-  function drawHandle(imgData, p) {
-  p.stroke(0,0,255);
-  p.noFill();
-  p.rect(imgData.x, imgData.y, imgData.width, imgData.height);
-  }
-  
-  function isMouseOnLeftEdge(imgData, p) {
-  return p.abs(p.mouseX - imgData.x) <= EDGE_THRESHOLD;
-  }
-  
-  function isMouseOnRightEdge(imgData, p) {
-  return p.abs(p.mouseX - (imgData.x + imgData.width)) <= EDGE_THRESHOLD;
-  }
-  
-  function isMouseOnTopEdge(imgData, p) {
-  return p.abs(p.mouseY - imgData.y) <= EDGE_THRESHOLD;
-  }
-  
-  function isMouseOnBottomEdge(imgData, p) {
-  return p.abs(p.mouseY - (imgData.y + imgData.height)) <= EDGE_THRESHOLD;
-  }*/
+ 
+ function drawHandle(imgData, p) {
+ p.stroke(0,0,255);
+ p.noFill();
+ p.rect(imgData.x, imgData.y, imgData.width, imgData.height);
+ }
+ 
+ function isMouseOnLeftEdge(imgData, p) {
+ return p.abs(p.mouseX - imgData.x) <= EDGE_THRESHOLD;
+ }
+ 
+ function isMouseOnRightEdge(imgData, p) {
+ return p.abs(p.mouseX - (imgData.x + imgData.width)) <= EDGE_THRESHOLD;
+ }
+ 
+ function isMouseOnTopEdge(imgData, p) {
+ return p.abs(p.mouseY - imgData.y) <= EDGE_THRESHOLD;
+ }
+ 
+ function isMouseOnBottomEdge(imgData, p) {
+ return p.abs(p.mouseY - (imgData.y + imgData.height)) <= EDGE_THRESHOLD;
+ }*/
 
-  function setCursor(cursor) {
-    document.body.style.setProperty('cursor', cursor, 'important');
-  }
+function setCursor(cursor) {
+  document.body.style.setProperty('cursor', cursor, 'important');
+}
 
- function updateCursor(p) {
+function updateCursor(p) {
   let overAnyImage = false;
   hoveredImage = null;
 

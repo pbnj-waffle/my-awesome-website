@@ -12,7 +12,7 @@
     <script src="sketch.js" defer></script>
     <script src="pure.js" defer></script>
     <script src="elements.js" defer></script>
-    
+    <script src="text.js" defer></script>
     <!--<script src="imageTexts.json" defer></script>-->
     <script type="module" src="3d_module.js" defer></script>
     <script src="image.js" defer></script>
@@ -25,24 +25,20 @@
         <a href="contact.html" id="contact">contact</a>
       </div>
     </div>
-    <div id="textContainer">Hello, I <br> </div>
+    <div id="textContainer"></div>
     <div id="otherTextContainer">is this what you're looking for? <br><br> if not, try
     <img src="./f51.webp" style="height: 50px; width: 50px;">
     </div>
-    <div id="canvasContainer2"></div>
-    <div id="videoContainer">
-      <video id="myVideo" autoplay></video>
-    </div>
-    <div id="canvasContainer"></div>
-    
+    <div id="canvasGlobalContainer" style="height: 150vw; width: 100%; position: absolute; top: 0">
+      <div id="canvasContainer2"></div>
+      <!--<div id="videoContainer">
+        <video id="myVideo" autoplay></video>
+      </div>-->
+      <div id="canvasContainer"></div>
       <div id="buttonsContainer">
         <p>This portfolio was created as a part of my diploma project,<br> resulting in the creation of an anti-design tool,<br> capable of surprising you.<br>Try it here: </p>
         <button onclick="window.location.href = 'GodMode.html';">god mode</button>  
       </div>
-    </div>
-    <div id="textSizeContainer" style="display: none;">
-      <label for="textSize">Text Size: </label>
-      <input type="range" id="textSize" min="10" max="100" value="30" />
     </div>
     <!--<div class="marquee-top">
       <div class="marquee-content">

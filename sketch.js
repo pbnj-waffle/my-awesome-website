@@ -1,6 +1,9 @@
 let canvas;
 let bgColor;
-let transitionSpeed = 0.01; 
+let transitionSpeed = 5000;
+let transitionBeginning = null;
+let transitionFinished = false;
+let transitionBeginColor = null;
 let targetColor;
 let images = [];
 let handleSize = 10;
@@ -17,7 +20,7 @@ let sketchInstance;
 let mouseOver3DObject = false;
 let textInputMode = false;
 let inputField;
-let letters = [];
+
 let textSizeSlider;
 var clickCounter = 0;
 var currentMarquee = 0;
@@ -46,14 +49,13 @@ let extraImages = [];
 let extraImagesData = {};
 let showExtraImages = false;
 let isExtraImagesLoaded = false;
-
-
+let letters = [];
 
 
 
 const sketch2D = (p) => {
   sketchInstance = p;
-  canvasHeight = p.windowWidth * 1.5;
+  canvasHeight = document.getElementById('canvasGlobalContainer').offsetHeight;
   p.mousePressed = () => {
     mousePressed(p);
   };
@@ -62,47 +64,7 @@ const sketch2D = (p) => {
     mouseReleased(p);
   };
 
-  /*p.createLetters = function(text, x, y) {
-    x = parseFloat(x);
-    y = parseFloat(y);
-    const shouldAllFall = Math.random() < 0.5;
-    const textSize = parseFloat(inputField.elt.style.fontSize);
-    p.textSize(textSize);
   
-    let offsetX = 0; // Offset for x position
-  
-    for (let i = 0; i < text.length; i++) {
-      letters.push({
-        char: text[i],
-        x: x + offsetX,
-        y: y,
-        vy: 0,
-        shouldFall: shouldAllFall,
-        fallDelay: i * Math.random() * 100, 
-        time: 0, 
-        font: selectedFont,
-      });
-      offsetX += p.textWidth(text[i]); // Increase offset by current letter's width
-    }
-  }
-
-  p.updateLetter = function(letter) {
-    if (letter.shouldFall && letter.time > letter.fallDelay) {
-      letter.y += letter.vy;
-      letter.vy += 0.05; // Gravity
-    }
-    if (letter.y > p.height) {
-      letter.y = 0;
-      letter.vy = 0;
-    }
-    letter.time++; // Increase time for each frame
-  }
-
-  p.createLettersFromDiv = function() {
-    const textContainer = p.select('#textContainer');
-    let text = textContainer.html();
-    p.createLetters(text, 0, 0);
-  };*/
 
   p.preload = () => {
     /*for (let i = 0; i < videoNames.length; i++) { //BACKGROUND VIDEO
@@ -133,6 +95,7 @@ const sketch2D = (p) => {
   
   p.setup = () => {    
     bgColor = p.color(236,245,230);
+    transitionBeginColor = bgColor;
     targetColor = p.color(0);
     const canvas2D = p.createCanvas(p.windowWidth, canvasHeight); // Store the canvas
     canvas2D.parent('canvasContainer');
@@ -142,7 +105,7 @@ const sketch2D = (p) => {
     bgBuffer = p.createGraphics(p.windowWidth, canvasHeight);
     blurredBgBuffer = p.createGraphics(p.windowWidth, canvasHeight);
     textBuffer = p.createGraphics(p.windowWidth, canvasHeight);
-   // p.createLettersFromDiv();
+
     /*const randomIndex = Math.floor(p.random(bgVideos.length));
     chosenVideo = bgVideos[randomIndex];
     chosenVideo.volume(0);  // Mute the video by setting volume to 0
@@ -225,7 +188,10 @@ const sketch2D = (p) => {
         }
       } else {
         isBlurApplied = false;
-        bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
+        if (!transitionFinished) {
+          initTransitionIfNeeded();
+          bgColor = p.lerpColor(transitionBeginColor, targetColor, getTransitionProgress());
+        }
         p.background(bgColor);
         bgBuffer.clear(); // Clear bgBuffer here, after checking showFullScreenImage
         
@@ -236,10 +202,6 @@ const sketch2D = (p) => {
     // TEXT
     p.fill(255);
 
-    for (let letter of letters) {
-      updateLetter(letter, p);
-      p.text(letter.char, letter.x, letter.y); // Draw the letter
-    }
     //IMAGES
     const framesBetweenTrail = 15;   
 

@@ -1,34 +1,34 @@
 @font-face {
-    font-family: 'spratcondensed_thin';
-    src: url('sprat-condensedthin-webfont.woff2') format('woff2'),
-         url('sprat-condensedthin-webfont.woff') format('woff');
-    font-weight: thin;
-    font-style: normal;
-
-}
-
-@font-face {
-  font-family: 'spratextended_bold';
-  src: url('sprat-extendedbold-webfont.woff2') format('woff2'),
-       url('sprat-extendedbold-webfont.woff') format('woff');
+  font-family: 'spratcondensed_thin';
+  src: url('sprat-condensedthin-webfont.woff2') format('woff2'),
+       url('sprat-condensedthin-webfont.woff') format('woff');
   font-weight: thin;
   font-style: normal;
 
 }
 
 @font-face {
-  font-family: 'PressStart2P-Regular';
-  src: url('PressStart2P-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
+font-family: 'spratextended_bold';
+src: url('sprat-extendedbold-webfont.woff2') format('woff2'),
+     url('sprat-extendedbold-webfont.woff') format('woff');
+font-weight: thin;
+font-style: normal;
 
 }
 
 @font-face {
-  font-family: 'KonstantGrotesk';
-  src: url('KonstantGrotesk.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
+font-family: 'PressStart2P-Regular';
+src: url('PressStart2P-Regular.woff') format('woff');
+font-weight: normal;
+font-style: normal;
+
+}
+
+@font-face {
+font-family: 'KonstantGrotesk';
+src: url('KonstantGrotesk.woff') format('woff');
+font-weight: normal;
+font-style: normal;
 
 }
 
@@ -36,42 +36,31 @@ body {
   max-width: 100%;
   overflow-x: hidden;
   font-family: 'KonstantGrotesk' !important;
-  background-color: #000000;
   margin: 0;
   padding: 0;
   text-align: center;
 }
 
+
 body::-webkit-scrollbar {
-  display: none;
+display: none;
 }
 
 #canvasContainer {  
-  top: 0;
-  position: absolute;
-  left: 0;
-  z-index: 1;
+top: 0;
+position: absolute;
+left: 0;
+z-index: 1;
 }
 
 #canvasContainer2 {  
-  top: 0;
-  position: absolute;
-  left: 0;
-  z-index: 3;
+top: 0;
+position: absolute;
+left: 0;
+z-index: 3;
 }
 
-#videoContainer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh; /* Occupy the whole viewport height */
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
+
 
 #textContainer {
   text-align: left;
@@ -86,197 +75,210 @@ body::-webkit-scrollbar {
 }
 
 .letter {
-  position: relative;
-  display: inline-block;
+position: relative;
+display: inline-block;
 }
 
-#otherTextContainer {
-  position: absolute;
-  z-index: 19;
-  font-size: 0.7em;
-  color: white;
-  padding: 20px;
-  text-align: left; 
-  top: 400px; 
-  left: 40%;
-}
-
-#myVideo {
-  position: absolute;
-  min-width: 100%;
-  min-height: 100%;
-}
-#header {
-  font-size: 1em;
-  z-index: 20;
-  position: fixed;
-  top: 10px;
-  left: 2%;
-  right: 2%;
-  height: 30px; /* adjust to your preference */
-  width: 1180px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #ffffff;
-  border-radius: 15px;
-  backdrop-filter: blur(30px);
-  padding: 0 20px; /* add padding on the sides */
-  box-shadow: 0 0 10px 2px white; /* horizontal offset, vertical offset, blur radius, spread radius */
-}
-
-#header:hover{
-  background: rgb(2, 255, 2);
-}
-
-#name {
-  /* Style for 'My Name' text */
-  
-  color: #000000;
-}
-
-#links a {
-  color: #000000;
-  margin-left: 20px; /* add some space between the links */
-  text-decoration: none; /* remove the underline */
-}
-
-#links a:hover {
-  color: #ffffff;
-}
-
-#blur-overlay {
+#videoContainer {
   position: absolute;
   top: 0;
   left: 0;
-  width: 1080px;
-  height: 1620px;
-  backdrop-filter: blur(20px);
-  pointer-events: none; /* to allow mouse events to go through the overlay */
-  display: none; /* initially hidden */
-  background-color: rgba(0, 0, 0, 0.1); /* make sure there is some transparency */
-  z-index: 10; /* set z-index between the content and the fullscreen image */
+  width: 100%;
+  height: 100vh; /* Occupy the whole viewport height */
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  }
+  
+#otherTextContainer {
+position: absolute;
+z-index: 19;
+font-size: 0.7em;
+color: white;
+padding: 20px;
+text-align: left; 
+top: 400px; 
+left: 40%;
+}
+
+#myVideo {
+position: absolute;
+min-width: 100%;
+min-height: 100%;
+}
+#header {
+font-size: 1em;
+z-index: 20;
+position: fixed;
+top: 10px;
+left: 2%;
+right: 2%;
+height: 30px; /* adjust to your preference */
+width: 1180px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: #ffffff;
+border-radius: 15px;
+backdrop-filter: blur(30px);
+padding: 0 20px; /* add padding on the sides */
+box-shadow: 0 0 10px 2px white; /* horizontal offset, vertical offset, blur radius, spread radius */
+}
+
+#header:hover{
+background: rgb(2, 255, 2);
+}
+
+#name {
+/* Style for 'My Name' text */
+
+color: #000000;
+}
+
+#links a {
+color: #000000;
+margin-left: 20px; /* add some space between the links */
+text-decoration: none; /* remove the underline */
+}
+
+#links a:hover {
+color: #ffffff;
+}
+
+#blur-overlay {
+position: absolute;
+top: 0;
+left: 0;
+width: 1080px;
+height: 1620px;
+backdrop-filter: blur(20px);
+pointer-events: none; /* to allow mouse events to go through the overlay */
+display: none; /* initially hidden */
+background-color: rgba(0, 0, 0, 0.1); /* make sure there is some transparency */
+z-index: 10; /* set z-index between the content and the fullscreen image */
 }
 
 #navigation {
-  color: #ffffff;
-  z-index: 10;
+color: #ffffff;
+z-index: 10;
 }
 
 button {
-  
-  all: unset;
+
+all: unset;
 }
 
 #buttonsContainer {
-  font-family: 'KonstantGrotesk';
-  position: absolute;
-  top: 150%;  
-  left: 0;  
-  right: 0;  
-  z-index: 10;
-  display: flex;
-  justify-content: space-around; 
-  flex-direction: column;
-  align-items: center;
- }
+font-family: 'KonstantGrotesk';
+position: absolute;
+bottom: 0;  
+left: 0;  
+right: 0;  
+z-index: 10;
+display: flex;
+justify-content: space-around; 
+flex-direction: column;
+align-items: center;
+}
 
 #buttonsContainer button {
-  /* initial styles */
-  height: 30px;
-  margin-bottom: 30px;
-  width: 130px;
-  text-align: center;
-  border: 1px solid #ffffff;
-  background-color: #ffffff;
-  color: #000000;
-  font-family: 'KonstantGrotesk';
-  border-radius: 15px;
-  backdrop-filter: blur(30px);
-  padding: 0 20px; /* add padding on the sides */
-  box-shadow: 0 0 10px 2px white;
+/* initial styles */
+height: 30px;
+margin-bottom: 30px;
+width: 130px;
+text-align: center;
+border: 1px solid #ffffff;
+background-color: #ffffff;
+color: #000000;
+font-family: 'KonstantGrotesk';
+border-radius: 15px;
+backdrop-filter: blur(30px);
+padding: 0 20px; /* add padding on the sides */
+box-shadow: 0 0 10px 2px white;
 }
 
 #buttonsContainer p {
-  color: #ffffff;
-  font-size: 0.7em;
-  line-height: 1.5;
+color: #ffffff;
+font-size: 0.7em;
+line-height: 1.5;
 }
 
 #buttonsContainer button.alt {
-  /* alternate styles */
-  width: 200px;
-  border: 1pxsolid #ffffff00;
-  background-color: #ff00d0; /* Change color to red */
-  border-radius: 0px; /* Less round edges */
-  font-family: 'spratextended_bold'; /* Different font */
+/* alternate styles */
+width: 200px;
+border: 1pxsolid #ffffff00;
+background-color: #ff00d0; /* Change color to red */
+border-radius: 0px; /* Less round edges */
+font-family: 'spratextended_bold'; /* Different font */
 }
 
 #buttonsContainer button:hover {
-  color: #ffffff;
-  cursor: pointer;
-  background-color: rgb(0, 255, 0);
+color: #ffffff;
+cursor: pointer;
+background-color: rgb(0, 255, 0);
 }
 
 .transparent-input {
-  background-color: transparent;
-  border: 1px solid #ffffff;
-  color: #ffffff;
-  z-index: 4;
+background-color: transparent;
+border: 1px solid #ffffff;
+color: #ffffff;
+z-index: 4;
 }
 
 
 .marquee-top {
-  font-family: 'spratcondensed_thin';
-  top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  position: fixed;
-  z-index: 5;
-  border-bottom: 1px solid #fff;
-  background-color: #00000000;
-  transition: background-color 2s,
+font-family: 'spratcondensed_thin';
+top: 0;
+overflow: hidden;
+white-space: nowrap;
+position: fixed;
+z-index: 5;
+border-bottom: 1px solid #fff;
+background-color: #00000000;
+transition: background-color 2s,
 }
 
 .marquee-top.alt {
-  font-family: 'spratcondensed_thin';
-  background-color: #ff0000;
+font-family: 'spratcondensed_thin';
+background-color: #ff0000;
 }
 
 .marquee-bottom {
-  font-family: 'spratcondensed_thin';
-  bottom: 0;
-  overflow: hidden;
-  position: fixed;
-  white-space: nowrap;
-  z-index: 5;
-  border-top: 1px solid #fff;
-  background-color: #00000000;
-  transition: background-color 1s;  
+font-family: 'spratcondensed_thin';
+bottom: 0;
+overflow: hidden;
+position: fixed;
+white-space: nowrap;
+z-index: 5;
+border-top: 1px solid #fff;
+background-color: #00000000;
+transition: background-color 1s;  
 }
 
 .marquee-bottom.alt {
-  font-family: 'spratcondensed_thin';
-  background-color: #ff0000;
+font-family: 'spratcondensed_thin';
+background-color: #ff0000;
 }
 
 .marquee-content {
-  width: fit-content;
-  display: flex;
-  animation: marquee 40s linear infinite;
-  color:#ffffff;
+width: fit-content;
+display: flex;
+animation: marquee 40s linear infinite;
+color:#ffffff;
 }
 
 .marquee-content span {
-  padding-right: 50px; /* Give some space between the two identical pieces of text */
+padding-right: 50px; /* Give some space between the two identical pieces of text */
 }
 
 @keyframes marquee {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+0% {
+  transform: translateX(0%);
+}
+100% {
+  transform: translateX(-100%);
+}
 }
 

@@ -195,10 +195,10 @@ renderer.domElement.addEventListener("mouseleave", () => {
 
 
   window.addEventListener('resize', function(){
-    videoContainer.style.width = `${window.innerWidth}px`;
+    /*videoContainer.style.width = `${window.innerWidth}px`;
   videoContainer.style.height = `${window.innerHeight}px`;
   document.getElementById('canvasContainer').style.top = `${window.innerHeight}px`;
-  document.getElementById('canvasContainer2').style.top = `${window.innerHeight}px`;
+  document.getElementById('canvasContainer2').style.top = `${window.innerHeight}px`;*/
 
     renderer.setSize(window.innerWidth, window.innerWidth * 1.5);
     camera.aspect = window.innerWidth / (window.innerWidth * 1.5);
@@ -290,7 +290,7 @@ const loadModel = (url) => {
     
     if (my3DModel) scene.remove(my3DModel);
     my3DModel = model;
-    my3DModel.position.y = -1.5;
+    my3DModel.position.y = 1;
     // Scale down the model by a factor of 3
     my3DModel.scale.set(1/4, 1/4, 1/4);
 
