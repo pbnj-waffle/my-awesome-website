@@ -9,7 +9,11 @@ let renderer, scene, camera, loader;
 let isDragging3DModel = false;
 let lastMouseWheelDelta = 0;
 const raycaster = new THREE.Raycaster();
-
+let isScrolling;
+//let lastScrollPosition = 0;
+let baselineScrollPos = window.scrollY || window.pageYOffset;
+const otherTextContainer = document.getElementById("otherTextContainer");
+const initialTopPosition = otherTextContainer.offsetTop;
 
 
 function isAnyImageActive() {
@@ -57,7 +61,6 @@ function isMouseOver3DObject(event) {
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObject(my3DModel, true);
-  console.log(intersects);
 
   return intersects.length > 0;
 }
@@ -153,7 +156,50 @@ renderer.domElement.addEventListener("mouseleave", () => {
 });
 
   // Move the event listeners here, after the renderer is created.
+  window.addEventListener('scroll', function() {
+    // Clear our timeout throughout the scroll
+    window.clearTimeout(isScrolling);
+  
+    const currentScrollPos = window.scrollY || window.pageYOffset;
+    const isScrollingDown = currentScrollPos > baselineScrollPos;
+    baselineScrollPos = currentScrollPos;
+  
+    const parallaxFactor = isScrollingDown ? 0.5 : -0.5; // Change direction based on scroll direction
+    const parallaxOffset = currentScrollPos * parallaxFactor;
+    const maxOffset = 2;  // Adjust this value as necessary
+    const minOffset = -2;  // Adjust this value as necessary
+
+     // The element will move up as the window scrolls down
+  otherTextContainer.style.transform = `translateY(-${parallaxOffset}px)`;
+  
+    if(my3DModel) {
+      let targetY;
+      if (isScrollingDown) {
+        targetY = Math.min(parallaxOffset / 100, maxOffset);
+      } else {
+        targetY = Math.max(parallaxOffset / 100, minOffset);
+      }
+  
+      new TWEEN.Tween(my3DModel.position)
+        .to({ y: targetY }, 150)
+        .start();
+    }
+  
+    // Set a timeout to run after scrolling ends
+    isScrolling = setTimeout(function() {
+      // scrolling has stopped.
+      TWEEN.removeAll();
+    }, 66);
+  
+  }, false);
+
+
   window.addEventListener('resize', function(){
+    videoContainer.style.width = `${window.innerWidth}px`;
+  videoContainer.style.height = `${window.innerHeight}px`;
+  document.getElementById('canvasContainer').style.top = `${window.innerHeight}px`;
+  document.getElementById('canvasContainer2').style.top = `${window.innerHeight}px`;
+
     renderer.setSize(window.innerWidth, window.innerWidth * 1.5);
     camera.aspect = window.innerWidth / (window.innerWidth * 1.5);
     camera.updateProjectionMatrix();
@@ -207,6 +253,7 @@ renderer.domElement.addEventListener("mouseleave", () => {
 };
 
 const animate3D = () => {
+  TWEEN.update();
   requestAnimationFrame(animate3D);
 
   if (my3DModel) {
@@ -240,9 +287,10 @@ const animate3D = () => {
 
 const loadModel = (url) => {
   loader.load(url, (model) => {
+    
     if (my3DModel) scene.remove(my3DModel);
     my3DModel = model;
-    
+    my3DModel.position.y = -1.5;
     // Scale down the model by a factor of 3
     my3DModel.scale.set(1/4, 1/4, 1/4);
 
@@ -256,7 +304,7 @@ const loadModel = (url) => {
   });
 };
 
-document.getElementById('upload3DObject').addEventListener('click', () => {
+/*document.getElementById('upload3DObject').addEventListener('click', () => {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.obj';
@@ -266,6 +314,6 @@ document.getElementById('upload3DObject').addEventListener('click', () => {
     loadModel(objectURL);
   };
   input.click();
-});
+});*/
 
 init3D();

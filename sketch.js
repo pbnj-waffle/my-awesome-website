@@ -10,6 +10,7 @@ let squareTrailBuffer;
 let squareBuffer;
 let blurredBgBuffer = null;
 let bgBuffer;
+let textBuffer;
 let square;
 let squareTrail = [];
 let sketchInstance;
@@ -47,13 +48,6 @@ let showExtraImages = false;
 let isExtraImagesLoaded = false;
 
 
-document.addEventListener('click', function () {
-  clickCounter++;
-
-  if (clickCounter >= 10) { //the amount of clicks
-    toggleTransition();
-  }
-});
 
 
 
@@ -67,6 +61,48 @@ const sketch2D = (p) => {
   p.mouseReleased = () => {
     mouseReleased(p);
   };
+
+  /*p.createLetters = function(text, x, y) {
+    x = parseFloat(x);
+    y = parseFloat(y);
+    const shouldAllFall = Math.random() < 0.5;
+    const textSize = parseFloat(inputField.elt.style.fontSize);
+    p.textSize(textSize);
+  
+    let offsetX = 0; // Offset for x position
+  
+    for (let i = 0; i < text.length; i++) {
+      letters.push({
+        char: text[i],
+        x: x + offsetX,
+        y: y,
+        vy: 0,
+        shouldFall: shouldAllFall,
+        fallDelay: i * Math.random() * 100, 
+        time: 0, 
+        font: selectedFont,
+      });
+      offsetX += p.textWidth(text[i]); // Increase offset by current letter's width
+    }
+  }
+
+  p.updateLetter = function(letter) {
+    if (letter.shouldFall && letter.time > letter.fallDelay) {
+      letter.y += letter.vy;
+      letter.vy += 0.05; // Gravity
+    }
+    if (letter.y > p.height) {
+      letter.y = 0;
+      letter.vy = 0;
+    }
+    letter.time++; // Increase time for each frame
+  }
+
+  p.createLettersFromDiv = function() {
+    const textContainer = p.select('#textContainer');
+    let text = textContainer.html();
+    p.createLetters(text, 0, 0);
+  };*/
 
   p.preload = () => {
     /*for (let i = 0; i < videoNames.length; i++) { //BACKGROUND VIDEO
@@ -96,8 +132,8 @@ const sketch2D = (p) => {
   
   
   p.setup = () => {    
-    bgColor = p.color(0);
-    targetColor = p.color(0, 0, 0);
+    bgColor = p.color(236,245,230);
+    targetColor = p.color(0);
     const canvas2D = p.createCanvas(p.windowWidth, canvasHeight); // Store the canvas
     canvas2D.parent('canvasContainer');
     buffer = p.createGraphics(p.windowWidth, canvasHeight);
@@ -105,7 +141,8 @@ const sketch2D = (p) => {
     squareBuffer = p.createGraphics(p.windowWidth, canvasHeight);
     bgBuffer = p.createGraphics(p.windowWidth, canvasHeight);
     blurredBgBuffer = p.createGraphics(p.windowWidth, canvasHeight);
-    
+    textBuffer = p.createGraphics(p.windowWidth, canvasHeight);
+   // p.createLettersFromDiv();
     /*const randomIndex = Math.floor(p.random(bgVideos.length));
     chosenVideo = bgVideos[randomIndex];
     chosenVideo.volume(0);  // Mute the video by setting volume to 0
@@ -141,7 +178,7 @@ const sketch2D = (p) => {
   }
   
     p.draw = () => {
-      
+      textBuffer.clear();
       if (showFullScreenImage) {
         //p.background(0, 0, 0, 150);
         p.fill(0);
@@ -191,23 +228,18 @@ const sketch2D = (p) => {
         bgColor = p.lerpColor(bgColor, targetColor, transitionSpeed);
         p.background(bgColor);
         bgBuffer.clear(); // Clear bgBuffer here, after checking showFullScreenImage
+        
         p.image(bgBuffer, 0, 0, p.windowWidth, canvasHeight);
       //currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
      // bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, canvasHeight);
 
     // TEXT
     p.fill(255);
-    for (const letter of letters) {
-      p.text(letter.char, letter.x, letter.y);
-      updateLetter(p, letter);
-    }
-  
+
     for (let letter of letters) {
       updateLetter(letter, p);
-      p.textFont(letter.font);
-      p.text(letter.char, letter.x, letter.y);
+      p.text(letter.char, letter.x, letter.y); // Draw the letter
     }
-
     //IMAGES
     const framesBetweenTrail = 15;   
 
@@ -252,12 +284,19 @@ imgData.y = p.constrain(imgData.y, 0, canvasHeight - imgData.height);
       const imgToDraw = imgData.processedImg || imgData.img;
   
       // Trail
-      for (const trailPosition of imgData.trail) {
-        buffer.image(imgToDraw, trailPosition.x, trailPosition.y, imgData.width, imgData.height);
-      }
+for (const trailPosition of imgData.trail) {
+  buffer.image(imgToDraw, trailPosition.x, trailPosition.y, imgData.width, imgData.height);
+}
+// Main image
+buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
 
-    // Main image
-    buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
+// Draw the image filename to the textBuffer
+textBuffer.textSize(10); // Set the text size. Adjust as needed.
+textBuffer.fill(255); // Set the text color. Adjust as needed.
+textBuffer.text(imgData.filename, imgData.x, imgData.y - 10);
+
+
+
 
     }
     }
@@ -280,6 +319,9 @@ if (hoveredImgData) {
 
 // Display the buffer
 p.image(buffer, 0, 0);
+
+// Display the textBuffer
+p.image(textBuffer, 0, 0);
 
 // Check if the mouse is still over the hovered image
 let mouseOverHoveredImage = false;
@@ -335,30 +377,11 @@ if (hoveredImgData && mouseOverHoveredImage) {
 };
 const my2D = new p5(sketch2D);
 
-function getRandomColor(p) {
-  return p.color(p.random(255), p.random(255), p.random(255));
-}
+document.addEventListener('click', function () {
+  clickCounter++;
 
-function toggleTransition() {
-  var buttons = document.querySelectorAll('#buttonsContainer button');
-
-  for (var i = 0; i < buttons.length; i++) {
-    buttons[i].classList.add('alt');
+  if (clickCounter >= 10) { //the amount of clicks
+    toggleTransition();
   }
+});
 
-  var marqueeTop = document.querySelector('.marquee-top');
-  var marqueeBottom = document.querySelector('.marquee-bottom');
-  
-  marqueeTop.classList.add('alt');
-  marqueeBottom.classList.add('alt');
-
-  targetColor = getRandomColor(sketchInstance);  // assuming p is globally accessible
-
-  // Reset the click counter
-  clickCounter = 0;
-}
-
-
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-}

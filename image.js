@@ -17,10 +17,14 @@ function imageLoaded(image, p, imageName) {
   const shouldTrail = p.random() < 0.3; // NOT WORKING
   const noBlending = p.random() < 0.5;
 
+  // Only place images below 100vh.
+  const minImageY = p.windowHeight; // 100vh in pixels
+  const maxImageY = canvasHeight - image.height;
+
   images.push({
     img: image,
     x: p.random(0, p.windowWidth - image.width),
-    y: p.random(0, canvasHeight - image.height),
+    y: p.random(minImageY, maxImageY),
     width: image.width / scaleFactor,
     height: image.height / scaleFactor,
     aspectRatio: image.width / image.height,
@@ -48,6 +52,7 @@ function imageLoaded(image, p, imageName) {
     shouldTrail: shouldTrail,
     noBlending: noBlending,
     text: imageTexts[imageName] || '',
+    filename: imageName,
   });
 }
 
@@ -63,7 +68,6 @@ function extraImageLoaded(image, p, imageName) {
   
   let randomX = p.random(0, p.windowWidth - image.width / scaleFactor);
   let randomY = p.random(maxHeight, p.windowHeight - image.height / scaleFactor);
-  console.log(extraImages);
   extraImages.push({
     img: image,
     width: image.width / scaleFactor,
@@ -108,6 +112,11 @@ function mousePressed(p) {
   const closeClicked = p.mouseX >= iconX && p.mouseX <= iconX + closingIconSize &&
     p.mouseY >= iconY && p.mouseY <= iconY + closingIconSize;
   if (closeClicked) {
+     // Show elements
+  document.getElementById('header').style.display = '';
+  document.getElementById('textContainer').style.display = '';
+  document.getElementById('otherTextContainer').style.display = '';
+  document.getElementById('canvasContainer').style.top = '100vh';
     showFullScreenImage = false;
     window.set3DObjectVisibility(true);
     return;
@@ -121,7 +130,11 @@ for (let i = images.length - 1; i >= 0; i--) {
   if (imageClicked && !isBlurApplied) {//IMAGE CLICKED
     showExtraImages = true;
 
-    
+    // Hide elements
+  document.getElementById('header').style.display = 'none';
+  document.getElementById('textContainer').style.display = 'none';
+  document.getElementById('otherTextContainer').style.display = 'none';
+  document.getElementById('canvasContainer').style.top = '0';
       // Find the associated extra images for the clicked image
     const imageName = `img (${i+1})`;  // Construct the image name
     const associatedExtraImages = extraImagesData[imageName];
