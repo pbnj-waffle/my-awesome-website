@@ -9,7 +9,7 @@ const EDGE_THRESHOLD = 5;
 function imageLoaded(image, p, imageName) {
   const scaleFactor = p.random(1, 3);
   const effectRandom = p.floor(p.random(1, 101));
-  console.log('Random number:', effectRandom);
+  //console.log('Random number:', effectRandom);
   const shouldMove = 0 < effectRandom && effectRandom <= 100;
   const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
   //const initialX = p.random(0, p.windowWidth - image.width);
@@ -134,7 +134,7 @@ function mousePressed(p) {
       document.getElementById('header').style.display = 'none';
       document.getElementById('textContainer').style.display = 'none';
       document.getElementById('otherTextContainer').style.display = 'none';
-
+      document.body.scrollTop = document.documentElement.scrollTop = 0;
       // Find the associated extra images for the clicked image
       const imageName = `img (${i + 1})`;  // Construct the image name
       const associatedExtraImages = extraImagesData[imageName];
@@ -192,36 +192,6 @@ function mouseReleased(p) {
     }, 100); // wait 100 milliseconds before closing the image
   }
 };
-
-/* function drawFrame(imgData, p) {
- const frameThickness = 5;
- topBuffer.noFill();
- topBuffer.strokeWeight(frameThickness);
- topBuffer.stroke(0,0,255);
- topBuffer.rect(imgData.x + frameThickness / 2, imgData.y + frameThickness / 2, imgData.width - frameThickness, imgData.height - frameThickness);
- }
- 
- function drawHandle(imgData, p) {
- p.stroke(0,0,255);
- p.noFill();
- p.rect(imgData.x, imgData.y, imgData.width, imgData.height);
- }
- 
- function isMouseOnLeftEdge(imgData, p) {
- return p.abs(p.mouseX - imgData.x) <= EDGE_THRESHOLD;
- }
- 
- function isMouseOnRightEdge(imgData, p) {
- return p.abs(p.mouseX - (imgData.x + imgData.width)) <= EDGE_THRESHOLD;
- }
- 
- function isMouseOnTopEdge(imgData, p) {
- return p.abs(p.mouseY - imgData.y) <= EDGE_THRESHOLD;
- }
- 
- function isMouseOnBottomEdge(imgData, p) {
- return p.abs(p.mouseY - (imgData.y + imgData.height)) <= EDGE_THRESHOLD;
- }*/
 
 function setCursor(cursor) {
   document.body.style.setProperty('cursor', cursor, 'important');

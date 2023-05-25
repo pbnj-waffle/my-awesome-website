@@ -74,7 +74,7 @@ const getTransitionProgress = () => {
   const timePassed = (new Date()).getTime() - transitionBeginning.getTime();
   const progress = timePassed / transitionSpeed;
 
-  console.log(timePassed, progress)
+  //console.log(timePassed, progress)
   if (progress >= 1) {
     transitionFinished = true;
     return 1;

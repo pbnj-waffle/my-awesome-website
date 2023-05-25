@@ -14,6 +14,7 @@ let squareBuffer;
 let blurredBgBuffer = null;
 let bgBuffer;
 let textBuffer;
+let textTrailBuffer;
 let square;
 let squareTrail = [];
 let sketchInstance;
@@ -50,6 +51,7 @@ let extraImagesData = {};
 let showExtraImages = false;
 let isExtraImagesLoaded = false;
 let letters = [];
+let texts = [];
 
 
 
@@ -105,7 +107,7 @@ const sketch2D = (p) => {
     bgBuffer = p.createGraphics(p.windowWidth, canvasHeight);
     blurredBgBuffer = p.createGraphics(p.windowWidth, canvasHeight);
     textBuffer = p.createGraphics(p.windowWidth, canvasHeight);
-
+    textTrailBuffer = p.createGraphics(p.windowWidth, canvasHeight);
     /*const randomIndex = Math.floor(p.random(bgVideos.length));
     chosenVideo = bgVideos[randomIndex];
     chosenVideo.volume(0);  // Mute the video by setting volume to 0
@@ -114,6 +116,22 @@ const sketch2D = (p) => {
 
     /*const randomIndex = Math.floor(p.random(bgImages.length));
     chosenBgImage = bgImages[randomIndex];*/
+    let textElement = document.querySelector("#textContainer");
+    let textPos = textElement.getBoundingClientRect();
+    texts.push({
+        img: textElement,
+        x: textPos.x,
+        y: textPos.y,
+        shouldMove: true,
+        startTime: p.millis() + 5000,
+        stopAfter: p.random([5, 10, 30, 60, 300, Infinity]) * 1000,
+        trail: [],
+        noiseSeedX: p.random(1000),
+        noiseSeedY: p.random(1000),
+        noiseOffset: 0,
+        framesSinceLastTrail: 0
+    });
+  
 
     if (Math.random() > 0.1) {
       square = {
@@ -200,7 +218,15 @@ const sketch2D = (p) => {
      // bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, canvasHeight);
 
     // TEXT
+    // Display the text trail buffer
+    p.image(textTrailBuffer, 0, 0);
     p.fill(255);
+
+    for (const textData of texts) { 
+      processText(textData, p); 
+      //p.text(textData.img.textContent, textData.x, textData.y);
+      //console.log("Drawing text:", textData.x, textData.y);
+    }
 
     //IMAGES
     const framesBetweenTrail = 15;   
@@ -216,6 +242,7 @@ const sketch2D = (p) => {
       if (activeImage === imgData) {
         drawFrame(imgData, p);
       }
+
       if (imgData.shouldDuplicate) duplicateImage(imgData, p);// DUPLICATE
   
   
@@ -232,36 +259,32 @@ const sketch2D = (p) => {
         imgData.noiseOffset += speed;
   
         // Perlin noise for moving
-const noiseX = p.map(p.noise(imgData.noiseSeedX + imgData.noiseOffset), 0, 1, -1, 1);
-const noiseY = p.map(p.noise(imgData.noiseSeedY + imgData.noiseOffset), 0, 1, -1, 1);
-imgData.x += noiseX;
-imgData.y += noiseY;
+        const noiseX = p.map(p.noise(imgData.noiseSeedX + imgData.noiseOffset), 0, 1, -1, 1);
+        const noiseY = p.map(p.noise(imgData.noiseSeedY + imgData.noiseOffset), 0, 1, -1, 1);
+        imgData.x += noiseX;
+        imgData.y += noiseY;
 
-// Make sure the image doesn't go off the screen
-imgData.x = p.constrain(imgData.x, 0, p.windowWidth - imgData.width);
-imgData.y = p.constrain(imgData.y, 0, canvasHeight - imgData.height);
+        // Make sure the image doesn't go off the screen
+        imgData.x = p.constrain(imgData.x, 0, p.windowWidth - imgData.width);
+        imgData.y = p.constrain(imgData.y, 0, canvasHeight - imgData.height);
       }
   
       // Define imgToDraw inside the loop
       const imgToDraw = imgData.processedImg || imgData.img;
   
       // Trail
-for (const trailPosition of imgData.trail) {
-  buffer.image(imgToDraw, trailPosition.x, trailPosition.y, imgData.width, imgData.height);
-}
-// Main image
-buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
+      for (const trailPosition of imgData.trail) {
+        buffer.image(imgToDraw, trailPosition.x, trailPosition.y, imgData.width, imgData.height);
+      }
+      // Main image
+      buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
 
-// Draw the image filename to the textBuffer
-textBuffer.textSize(10); // Set the text size. Adjust as needed.
-textBuffer.fill(255); // Set the text color. Adjust as needed.
-textBuffer.text(imgData.filename, imgData.x, imgData.y - 10);
-
-
-
-
+      // Draw the image filename to the textBuffer
+      textBuffer.textSize(10); // Set the text size. Adjust as needed.
+      textBuffer.fill(255); // Set the text color. Adjust as needed.
+      textBuffer.text(imgData.filename, imgData.x, imgData.y - 10);
     }
-    }
+  }
 
 // After processing all other images, process the hovered image
 if (hoveredImgData) {
@@ -346,4 +369,35 @@ document.addEventListener('click', function () {
     toggleTransition();
   }
 });
+
+function processText(textData, p) {
+  if (textData.shouldMove && p.millis() > textData.startTime && (p.millis() - textData.startTime) < textData.stopAfter) {
+    const speed = 0.001;
+    textData.noiseOffset += speed;
+    // Perlin noise for moving
+    const noiseX = p.map(p.noise(textData.noiseSeedX + textData.noiseOffset), 0, 1, -10, 10);
+    const noiseY = p.map(p.noise(textData.noiseSeedY + textData.noiseOffset), 0, 1, -10, 10);
+    textData.x += noiseX;
+    textData.y += noiseY;
+
+    // Constrain the text to stay within the window
+    textData.x = p.constrain(textData.x, 0, p.windowWidth - textData.img.clientWidth);
+    textData.y = p.constrain(textData.y, 0, p.windowHeight - textData.img.clientHeight);
+
+    // Update the text position
+    textData.img.style.left = textData.x + "px";
+    textData.img.style.top = textData.y + "px";
+
+    // Draw the current position of the text to the trail buffer
+    // Draw the current position of the text to the trail buffer
+textTrailBuffer.fill(255); // Set the text color
+textTrailBuffer.textSize(50); // Set the text size
+textTrailBuffer.textFont('KonstantGrotesk'); // Set the font
+textTrailBuffer.text(textData.img.textContent, textData.x, textData.y);
+  }
+}
+
+
+
+
 

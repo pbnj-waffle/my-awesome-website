@@ -23,18 +23,61 @@ window.onload = function() {
   let letters = document.querySelectorAll('.letter');
 
   // Create a timeline for the animation
-  let tl = gsap.timeline();
+  let tl = gsap.timeline({paused: true});
 
-  // Calculate the distance to fall
-  const distanceToFall = document.getElementById('canvasGlobalContainer').clientHeight - textContainer.getBoundingClientRect().top - textContainer.clientHeight + 20;
+  var randomNumber = Math.floor(Math.random() * 100);
 
-  // Add the animation to the timeline for each letter
-  letters.forEach((letter, i) => {
-    tl.to(letter, {
-      y: distanceToFall,
-      duration: 2,
-      delay: Math.random() * 2, 
-      ease: "power1.inOut"
-    }, 0);
-  });
+  if(randomNumber >= 0 && randomNumber <= 10) {
+    // Calculate the distance to fall
+    const distanceToFall = document.getElementById('canvasGlobalContainer').clientHeight - textContainer.getBoundingClientRect().top - textContainer.clientHeight + 20;
+
+    // Add the animation to the timeline for each letter
+    letters.forEach((letter, i) => {
+      let letterLineHeight = letter.parentNode.offsetHeight;
+      let lineOffset = letter.offsetTop - textContainer.offsetTop;
+      let letterHeight = letter.offsetHeight;
+      let distanceToFallLetter = distanceToFall - lineOffset + letterLineHeight / 2 - letterHeight;
+
+      tl.to(letter, {
+        y: distanceToFallLetter,
+        x: "+=" + (Math.random() - 0.5) * 50, // add random horizontal motion
+        rotation: Math.random() * 360, // add random rotation
+        duration: 2,
+        delay: Math.random() * 2, 
+        ease: "power1.inOut"
+      }, 0);
+    });
+  }
+
+  var randomNumber2 = Math.floor(Math.random() * 100);
+
+  if(randomNumber2 >= 10 && randomNumber2 <= 100) {
+    // Select a random letter as the "center"
+    let centerIndex = Math.floor(Math.random() * letters.length);
+    let centerLetter = letters[centerIndex];
+
+    // Add the animation to the timeline for each letter
+    letters.forEach((letter, i) => {
+      let maxSizeMultiplier = 10;
+      let growthDuration = 2;
+      let spreading = 500; // maximum distance a letter can move horizontally
+
+      let direction = i < centerIndex ? -1 : 1; // Determine direction based on whether the letter is before or after the center
+
+      tl.to(letter, {
+        scale: Math.random() * maxSizeMultiplier, // add random scaling up to 10x original size
+        x: "+=" + direction * (Math.random() * spreading), // add random horizontal motion
+        rotation: Math.random() * 10,
+        duration: growthDuration,
+        ease: "power1.inOut"
+      }, 0);
+    });
+  }
+
+  // Delay the start of the animation by 5 seconds
+  setTimeout(() => {
+    tl.play();
+  }, 5500);
 };
+
+

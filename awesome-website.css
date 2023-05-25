@@ -66,13 +66,14 @@ z-index: 3;
   text-align: left;
   left: 3%;
   top: 100px;
-  position: relative;
-  z-index: 20; 
+  position: absolute;
+  z-index: 10; 
   font-size: 3.7em;
   color: white;
   padding: 20px;
   line-height: 1.3;
 }
+
 
 .letter {
 position: relative;
@@ -281,4 +282,3 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   transform: translateX(-100%);
 }
 }
-
