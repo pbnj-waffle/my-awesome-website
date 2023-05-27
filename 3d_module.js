@@ -36,12 +36,14 @@ function isAnyImageActive() {
 }
 
 function isMouseOverImage(event) {
+  console.log(event);
+  console.log(images)
   for (const imgData of images) {
     if (
-      event.clientX > imgData.x &&
-      event.clientX < imgData.x + imgData.width &&
-      event.clientY > imgData.y &&
-      event.clientY < imgData.y + imgData.height
+      event.offsetX > imgData.x &&
+      event.offsetX < imgData.x + imgData.width &&
+      event.offsetY > imgData.y &&
+      event.offsetY < imgData.y + imgData.height
     ) {
       return true;
     }

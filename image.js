@@ -195,6 +195,7 @@ function mouseReleased(p) {
 };
 
 function setCursor(cursor) {
+  console.log(cursor)
   if(cursor === 'arrow'){
     document.body.style.setProperty('cursor', `url(./midfinger.cur), auto`, 'important');
   }
@@ -225,10 +226,10 @@ function updateCursor(p) {
     }
   }
 
-  if (overAnyImage) {
+  /*if (overAnyImage) {
 
     setCursor('pointer');
   } else {
     setCursor('arrow');
-  }
+  }*/
 }

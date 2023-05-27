@@ -49,30 +49,29 @@ display: none;
 }
 
 .rectangle-wrapper {
-  display: flex;
-  justify-content: center;
-  transform: rotate(-2deg);
-  transform-origin: center;
-  position: relative;
-  z-index: 20; /* It's higher than the z-index of any other element */
-  top: -50px;
+    display: flex;
+    justify-content: center;
+    transform: rotate(-2deg);
+    transform-origin: center;
+    position: absolute;
+    z-index: 20;
+    top: -50px;
+    width: 100%;
+    backface-visibility: hidden;
 }
 
 .rectangle {
   width: 70%;
   background-color: white;
-  z-index:21;
   
 }
 
 .rectangle1 {
-  height: 100px;
-  z-index:21;
+  height: 120px;
 }
 
 .rectangle2 {
-  height: 120px;
-  z-index:21;
+  height: 140px;
 }
 
 .rectangle1::after {
@@ -148,20 +147,12 @@ min-width: 100%;
 min-height: 100%;
 }
 #header {
-  font-size: 1em;
-  z-index: 21;
-  position: fixed;
-  top: 10px;
-  left: 2%;
-  right: 2%;
-  height: 30px; 
-  width: 1180px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: transparent;
-  padding: 0 20px; 
-
+    font-size: 1em;
+    z-index: 21;
+    position: fixed;
+    height: 30px;
+    width: 100%;
+    background: transparent;
 }
 /* #header {
 font-size: 1em;
@@ -187,22 +178,36 @@ background: rgb(2, 255, 2);
 } */
 
 #name {
-  z-index: inherit;
-/* Style for 'My Name' text */
+  margin-left: 45px;
 
-color: #000000;
+}
+
+#links {
+  position: absolute;
+  z-index: 50;
+  top: 32px;
+  text-align: initial;
+  width: 100%;
+}
+
+#links > * {
+  display: inline-block;
+  color: #000000;
 }
 
 #links a {
-  z-index: inherit;
-color: #000000;
-margin-left: 20px; /* add some space between the links */
-text-decoration: none; /* remove the underline */
+  color: #000000;
+  margin-left: 20px; /* add some space between the links */
+  text-decoration: none; /* remove the underline */
 }
 
 #links a:hover {
-  z-index: inherit;
-color: #ffffff;
+  color: #ffffff;
+}
+
+#links-2 {
+  position: absolute;
+  right: 50px;
 }
 
 #blur-overlay {
