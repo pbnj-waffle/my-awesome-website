@@ -116,7 +116,7 @@ function mousePressed(p) {
       document.getElementById('header').style.display = '';
       document.getElementById('textContainer').style.display = '';
       document.getElementById('otherTextContainer').style.display = '';
-
+      document.getElementsByClassName('rectangle-wrapper')[0].style.display = '';
       showFullScreenImage = false;
       window.set3DObjectVisibility(true);
       return;
@@ -134,6 +134,7 @@ function mousePressed(p) {
       document.getElementById('header').style.display = 'none';
       document.getElementById('textContainer').style.display = 'none';
       document.getElementById('otherTextContainer').style.display = 'none';
+      document.getElementsByClassName('rectangle-wrapper')[0].style.display = 'none';
       document.body.scrollTop = document.documentElement.scrollTop = 0;
       // Find the associated extra images for the clicked image
       const imageName = `img (${i + 1})`;  // Construct the image name
@@ -194,8 +195,20 @@ function mouseReleased(p) {
 };
 
 function setCursor(cursor) {
-  document.body.style.setProperty('cursor', cursor, 'important');
+  if(cursor === 'arrow'){
+    document.body.style.setProperty('cursor', `url(./midfinger.cur), auto`, 'important');
+  }
+  else if(cursor === 'grab'){
+    document.body.style.setProperty('cursor', `url(./shrek.cur), auto`, 'important');
+  }
+  else if(cursor === 'pointer'){
+    document.body.style.setProperty('cursor', `url(./paw.cur), auto`, 'important');
+  }
+  else{
+    document.body.style.setProperty('cursor', 'default', 'important');
+  }
 }
+
 
 function updateCursor(p) {
   let overAnyImage = false;
@@ -213,9 +226,9 @@ function updateCursor(p) {
   }
 
   if (overAnyImage) {
-    console.log("over")
+
     setCursor('pointer');
   } else {
-    setCursor('default');
+    setCursor('arrow');
   }
 }

@@ -61,8 +61,9 @@ function isMouseOver3DObject(event) {
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObject(my3DModel, true);
-
+  console.log(intersects);
   return intersects.length > 0;
+  
 }
 
 function set3DObjectVisibility(visible) {
@@ -104,25 +105,26 @@ document.addEventListener("mousedown", (event) => {
     lastMousePosition = { x: event.clientX, y: event.clientY };
 
     isMousePressedOn3D = true;
-    // prevent the event from being passed to the 2D canvas
     event.stopPropagation();
-  } else {
-    isDragging3DModel = false;
   }
 });
 
 document.addEventListener('mouseup', () => {
+  if (isDragging3DModel) {
+    isDragging3DModel = false;
+  }
   isMousePressedOn3D = false;
-  isDragging3DModel = false;
 });
 
 renderer.domElement.addEventListener("mousemove", (event) => {
+  console.log(`isMouseOver3DObject: ${isMouseOver3DObject(event)}`);
+  console.log(`isMouseOverImage: ${isMouseOverImage(event)}`);
   if (isMouseOver3DObject(event)) {
-    renderer.domElement.style.cursor = "grab";
+    setCursor('grab');  // use custom setCursor function
   } else if (isMouseOverImage(event)) {
-    renderer.domElement.style.cursor = "pointer";
+    setCursor('pointer');  // use custom setCursor function
   } else {
-    renderer.domElement.style.cursor = "default";
+    setCursor('arrow');  // use custom setCursor function
   }
 
   if (isDragging3DModel) {
@@ -138,21 +140,22 @@ renderer.domElement.addEventListener("mousemove", (event) => {
 
   lastMousePosition = { x: event.clientX, y: event.clientY };
 });
+
  
 renderer.domElement.addEventListener("mouseup", () => {
   if (isAnyImageActive()) return;
 
   isDragging3DModel = false;
   isMousePressedOn3D = false;
-  renderer.domElement.style.cursor = "default";
+  renderer.domElement.style.cursor = "arrow";
 });
-  
+
 renderer.domElement.addEventListener("mouseleave", () => {
   if (isAnyImageActive()) return;
-  
+
   isDragging3DModel = false;
   isMousePressedOn3D = false;
-  renderer.domElement.style.cursor = "default";
+  renderer.domElement.style.cursor = "arrow";
 });
 
   // Move the event listeners here, after the renderer is created.

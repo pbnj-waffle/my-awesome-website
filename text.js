@@ -27,7 +27,7 @@ window.onload = function() {
 
   var randomNumber = Math.floor(Math.random() * 100);
 
-  if(randomNumber >= 0 && randomNumber <= 10) {
+  if(randomNumber >= 0 && randomNumber <= 100) {
     // Calculate the distance to fall
     const distanceToFall = document.getElementById('canvasGlobalContainer').clientHeight - textContainer.getBoundingClientRect().top - textContainer.clientHeight + 20;
 
@@ -51,7 +51,7 @@ window.onload = function() {
 
   var randomNumber2 = Math.floor(Math.random() * 100);
 
-  if(randomNumber2 >= 10 && randomNumber2 <= 100) {
+  if(randomNumber2 >= 0 && randomNumber2 <= 50) {
     // Select a random letter as the "center"
     let centerIndex = Math.floor(Math.random() * letters.length);
     let centerLetter = letters[centerIndex];
@@ -74,10 +74,11 @@ window.onload = function() {
     });
   }
 
-  // Delay the start of the animation by 5 seconds
   setTimeout(() => {
-    tl.play();
-  }, 5500);
-};
-
+    tl.play().then(() => {
+      // GSAP animation is finished, show the original element
+      textElement.style.display = 'block';
+    });
+  }, 0);
+}
 

@@ -21,7 +21,6 @@ let sketchInstance;
 let mouseOver3DObject = false;
 let textInputMode = false;
 let inputField;
-
 let textSizeSlider;
 var clickCounter = 0;
 var currentMarquee = 0;
@@ -52,10 +51,23 @@ let showExtraImages = false;
 let isExtraImagesLoaded = false;
 let letters = [];
 let texts = [];
+let bubbleX, bubbleY;
+let xOff = 0.0, yOff = 1000.0; // offsets for noise() function to generate different values for x and y
+let bubbleSize = 500;
+let noiseScale = 0.02; // The scale of the noise. Adjust this value to get different effects
+let bubbleAlpha = 0.5; // The transparency of the bubble
+let gif;
 
 
-
-const sketch2D = (p) => {
+let sketch2D = new p5((p) => {
+  /*let bubblePoints = Array(20).fill().map((_, i, arr) => {
+    let angle = p.map(i, 0, arr.length, 0, p.TWO_PI);
+    return {
+        angle: angle,
+        r: bubbleSize / 2,
+        noiseSeed: p.random(0, 100) // each point has its own seed value
+    };
+});*/
   sketchInstance = p;
   canvasHeight = document.getElementById('canvasGlobalContainer').offsetHeight;
   p.mousePressed = () => {
@@ -69,6 +81,7 @@ const sketch2D = (p) => {
   
 
   p.preload = () => {
+    //gif = p.loadImage('./test.gif');//GIF
     /*for (let i = 0; i < videoNames.length; i++) { //BACKGROUND VIDEO
       let video = p.createVideo(videoNames[i]);
       bgVideos.push(video);
@@ -108,6 +121,11 @@ const sketch2D = (p) => {
     blurredBgBuffer = p.createGraphics(p.windowWidth, canvasHeight);
     textBuffer = p.createGraphics(p.windowWidth, canvasHeight);
     textTrailBuffer = p.createGraphics(p.windowWidth, canvasHeight);
+
+    /*for(let angle = 0; angle < 2 * p.PI; angle += 0.3){ //BUBBLE
+      bubblePoints.push({angle: angle, r: bubbleSize/2});
+    }*/
+
     /*const randomIndex = Math.floor(p.random(bgVideos.length));
     chosenVideo = bgVideos[randomIndex];
     chosenVideo.volume(0);  // Mute the video by setting volume to 0
@@ -116,8 +134,14 @@ const sketch2D = (p) => {
 
     /*const randomIndex = Math.floor(p.random(bgImages.length));
     chosenBgImage = bgImages[randomIndex];*/
-    let textElement = document.querySelector("#textContainer");
-    let textPos = textElement.getBoundingClientRect();
+
+    
+  /*let randomNumber3 = Math.floor(Math.random() * 100);
+
+  let textElement = document.querySelector("#textContainer");
+  let textPos = textElement.getBoundingClientRect();
+
+  if(randomNumber3 >= 10 && randomNumber3 <= 100) { // only add text to array for p5.js processing if randomNumber3 is in this range
     texts.push({
         img: textElement,
         x: textPos.x,
@@ -131,7 +155,16 @@ const sketch2D = (p) => {
         noiseOffset: 0,
         framesSinceLastTrail: 0
     });
-  
+    html2canvas(textElement, {backgroundColor: null}).then(canvas => {
+      let imgSnapshot = p.createImage(canvas.width, canvas.height);
+      imgSnapshot.drawingContext.drawImage(canvas, 0, 0);
+      texts[texts.length - 1].imgSnapshot = imgSnapshot;
+    });
+  } else {
+    // If the number is not between 30 and 40, hide the text element
+    textElement.style.visibility = 'hidden';
+  } */
+
 
     if (Math.random() > 0.1) {
       square = {
@@ -217,17 +250,34 @@ const sketch2D = (p) => {
       //currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
      // bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, canvasHeight);
 
+     
+
+
+
     // TEXT
-    // Display the text trail buffer
+    /*// Display the text trail buffer
     p.image(textTrailBuffer, 0, 0);
     p.fill(255);
 
-    for (const textData of texts) { 
-      processText(textData, p); 
-      //p.text(textData.img.textContent, textData.x, textData.y);
-      //console.log("Drawing text:", textData.x, textData.y);
-    }
+  
+      for (const textData of texts) { 
+        processText(textData, p); 
+      
+        if (textData.imgSnapshot) {
+          p.image(textData.imgSnapshot, textData.x, textData.y);
+        } else {
+          // Draw text as fallback
+          p.text(textData.img.textContent, textData.x, textData.y);
+        }
+      }*/
 
+      /*//BUBBLE
+      bubbleX = p.map(p.noise(xOff), 0, 1, 0, p.width);
+      bubbleY = p.map(p.noise(yOff), 0, 1, 0, p.height);
+      
+      xOff += 0.001;
+      yOff += 0.001;*/
+      
     //IMAGES
     const framesBetweenTrail = 15;   
 
@@ -345,6 +395,33 @@ if (hoveredImgData && mouseOverHoveredImage) {
         p.image(imgData.processedImg || imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
       }*/
     } 
+    /*p.push();//gif
+    p.blendMode(p.DARKEST);
+    p.image(gif, 0, 0, p.width, p.height);  
+    p.blendMode(p.BLEND); // Reset the blend mode to default  
+    p.pop();
+    
+    p.push();//bubble
+    p.blendMode(p.SOFT_LIGHT);
+    p.fill(255);
+    p.beginShape();
+    bubblePoints.forEach((point, i) => {
+      // Skip the noise for the last point and set it to the same position as the first point
+      if(i == bubblePoints.length - 1) {
+          point.r = bubblePoints[0].r;
+      }
+      else {
+          // modulate the distance of each point from the center
+          point.r = bubbleSize / 2 + smoothingFunction(p.map(p.noise(point.noiseSeed, p.frameCount * 0.0002), 0, 1, -bubbleSize/4, bubbleSize/4));
+      }
+  
+      let x = bubbleX + point.r * p.cos(point.angle);
+      let y = bubbleY + point.r * p.sin(point.angle);
+      p.curveVertex(x, y);
+  });
+    p.endShape(p.CLOSE);
+    p.blendMode(p.BLEND);
+    p.pop();*/
 
     p.push(); // Create a separate context for square drawing
     p.blendMode(p.BLEND); // Reset the blend mode to BLEND
@@ -357,10 +434,17 @@ if (hoveredImgData && mouseOverHoveredImage) {
 
     p.pop(); // Restore the previous context
     
-  }
-}
+  };
 };
-const my2D = new p5(sketch2D);
+// Smoothing function
+function smoothingFunction(x) {
+  let y = 0.5 * p.sin(x * p.PI - p.HALF_PI) + 0.5; // map to sine wave for smooth oscillation
+  return y * bubbleSize / 20;
+}
+
+});
+
+//const my2D = new p5(sketch2D);
 
 document.addEventListener('click', function () {
   clickCounter++;
@@ -374,30 +458,32 @@ function processText(textData, p) {
   if (textData.shouldMove && p.millis() > textData.startTime && (p.millis() - textData.startTime) < textData.stopAfter) {
     const speed = 0.001;
     textData.noiseOffset += speed;
+
     // Perlin noise for moving
     const noiseX = p.map(p.noise(textData.noiseSeedX + textData.noiseOffset), 0, 1, -10, 10);
     const noiseY = p.map(p.noise(textData.noiseSeedY + textData.noiseOffset), 0, 1, -10, 10);
     textData.x += noiseX;
     textData.y += noiseY;
 
-    // Constrain the text to stay within the window
-    textData.x = p.constrain(textData.x, 0, p.windowWidth - textData.img.clientWidth);
-    textData.y = p.constrain(textData.y, 0, p.windowHeight - textData.img.clientHeight);
+    // Get the global canvas container size
+    let globalCanvasContainer = document.getElementById('canvasGlobalContainer');
+    let containerSize = globalCanvasContainer.getBoundingClientRect();
+
+    // Constrain the text to stay within the global canvas container
+    textData.x = p.constrain(textData.x, 0, containerSize.width - textData.img.clientWidth);
+    textData.y = p.constrain(textData.y, 0, containerSize.height - textData.img.clientHeight);
 
     // Update the text position
     textData.img.style.left = textData.x + "px";
     textData.img.style.top = textData.y + "px";
 
-    // Draw the current position of the text to the trail buffer
-    // Draw the current position of the text to the trail buffer
-textTrailBuffer.fill(255); // Set the text color
-textTrailBuffer.textSize(50); // Set the text size
-textTrailBuffer.textFont('KonstantGrotesk'); // Set the font
-textTrailBuffer.text(textData.img.textContent, textData.x, textData.y);
+    //Draw the current position of the text to the trail buffer
+  if (textData.imgSnapshot) {
+    textTrailBuffer.image(textData.imgSnapshot, textData.x, textData.y);
+  } else {
+    textTrailBuffer.fill(255); // Set the text color
+    textTrailBuffer.text(textData.img.textContent, textData.x, textData.y);
+  }
   }
 }
-
-
-
-
 
