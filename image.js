@@ -56,24 +56,24 @@ function imageLoaded(image, p, imageName) {
   });
 }
 
-function extraImageLoaded(image, p, imageName) {
+function extraImageLoaded(image, p, imageName, parentImage) {
   const scaleFactor = 1;
   // Calculate the maximum possible height for the main images
   let maxHeight = 0;
-  for (let img of images) {
+  /*for (let img of images) {
     if (img.height > maxHeight) {
       maxHeight = img.height;
     }
-  }
+  }*/
 
+  const canvasHeight = document.getElementById('defaultCanvas0').style.height;
   let randomX = p.random(0, p.windowWidth - image.width / scaleFactor);
-  let randomY = p.random(maxHeight, p.windowHeight - image.height / scaleFactor);
+  let randomY = p.random(45 + parentImage.height, parseInt(canvasHeight) - parseInt(image.height));
   extraImages.push({
     img: image,
     width: image.width / scaleFactor,
     height: image.height / scaleFactor,
     aspectRatio: image.width / image.height,
-    text: imageTexts[imageName] || '',
     x: randomX,  // random x
     y: randomY,  // random y, but always greater than the height of the tallest image in the gallery
   });
@@ -116,6 +116,7 @@ function mousePressed(p) {
       document.getElementById('header').style.display = '';
       document.getElementById('textContainer').style.display = '';
       document.getElementById('otherTextContainer').style.display = '';
+      document.getElementById('buttonsContainer').style.display = '';
       document.getElementsByClassName('rectangle-wrapper')[0].style.display = '';
       showFullScreenImage = false;
       window.set3DObjectVisibility(true);
@@ -134,6 +135,7 @@ function mousePressed(p) {
       document.getElementById('header').style.display = 'none';
       document.getElementById('textContainer').style.display = 'none';
       document.getElementById('otherTextContainer').style.display = 'none';
+      document.getElementById('buttonsContainer').style.display = 'none';
       document.getElementsByClassName('rectangle-wrapper')[0].style.display = 'none';
       document.body.scrollTop = document.documentElement.scrollTop = 0;
       // Find the associated extra images for the clicked image
@@ -147,12 +149,12 @@ function mousePressed(p) {
       for (let i = 0; i < associatedExtraImages.length; i++) {
         const extraImageName = associatedExtraImages[i];
         p.loadImage(`./images/extra/${extraImageName}.png`, (img) => {
-          extraImageLoaded(img, p, extraImageName);
+          extraImageLoaded(img, p, extraImageName, imgData);
         });
       }
 
       // Assign random positions to the extra images
-      for (let i = 0; i < extraImages.length; i++) {
+      /*for (let i = 0; i < extraImages.length; i++) {
         let extraImage = extraImages[i];
         extraImage.x = p.random(0, p.windowWidth - extraImage.width);  // Random x position
 
@@ -164,7 +166,7 @@ function mousePressed(p) {
           let previousExtraImage = extraImages[i - 1];
           extraImage.y = previousExtraImage.y + previousExtraImage.height + p.random(0, p.height - (previousExtraImage.y + previousExtraImage.height + extraImage.height));
         }
-      }
+      }*/
       // Apply the blur and update the flag only when image is clicked and blur is not yet applied
       //buffer.filter(p.BLUR, 10); 
       //blurredBgBuffer.image(buffer, 0, 0); 
@@ -195,6 +197,7 @@ function mouseReleased(p) {
 };
 
 function setCursor(cursor) {
+  console.log(cursor)
   if(cursor === 'arrow'){
     document.body.style.setProperty('cursor', `url(./midfinger.cur), auto`, 'important');
   }
@@ -225,10 +228,10 @@ function updateCursor(p) {
     }
   }
 
-  if (overAnyImage) {
+  /*if (overAnyImage) {
 
     setCursor('pointer');
   } else {
     setCursor('arrow');
-  }
+  }*/
 }

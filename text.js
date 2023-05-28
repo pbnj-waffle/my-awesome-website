@@ -1,6 +1,6 @@
 window.onload = function() {
   // Array of possible continuations
-  let continuations = ['can design stuff', "like to do things the unconventional way", 'believe I can fly'];
+  let continuations = ['CAN DESIGN STUFF', "LIKE THE UNCONVENTIONAL", 'BELIEVE I CAN FLY'];
 
   // Function to select a random item from an array
   function getRandomContinuation(array) {
@@ -17,7 +17,7 @@ window.onload = function() {
   let textContainer = document.getElementById('textContainer');
 
   // Append "Hello, I " and a random continuation to the textContainer
-  textContainer.innerHTML = Array.from('Hello, I').map(c => c !== ' ' ? `<span class="letter">${c}</span>` : '&nbsp;').join('') + '<br>' + getRandomContinuation(continuations);
+  textContainer.innerHTML = Array.from('HELLO, I').map(c => c !== ' ' ? `<span class="letter">${c}</span>` : '&nbsp;').join('') + '<br>' + getRandomContinuation(continuations);
 
   // Select all the letters
   let letters = document.querySelectorAll('.letter');
@@ -79,6 +79,6 @@ window.onload = function() {
       // GSAP animation is finished, show the original element
       textElement.style.display = 'block';
     });
-  }, 0);
+  }, 5000);
 }
 

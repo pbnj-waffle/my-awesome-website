@@ -279,7 +279,7 @@ let sketch2D = new p5((p) => {
       yOff += 0.001;*/
       
     //IMAGES
-    const framesBetweenTrail = 15;   
+    const framesBetweenTrail = 25;   
 
     for (const imgData of images) {    
       

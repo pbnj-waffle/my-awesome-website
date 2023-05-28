@@ -1,5 +1,6 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
-import { OBJLoader } from './OBJLoader.js';
+//import { OBJLoader } from './OBJLoader.js';
+import { FBXLoader } from './FBXLoader.js';
 
 let lastMousePosition = new THREE.Vector2();
 let my3DModel;
@@ -36,12 +37,14 @@ function isAnyImageActive() {
 }
 
 function isMouseOverImage(event) {
+  console.log(event);
+  console.log(images)
   for (const imgData of images) {
     if (
-      event.clientX > imgData.x &&
-      event.clientX < imgData.x + imgData.width &&
-      event.clientY > imgData.y &&
-      event.clientY < imgData.y + imgData.height
+      event.offsetX > imgData.x &&
+      event.offsetX < imgData.x + imgData.width &&
+      event.offsetY > imgData.y &&
+      event.offsetY < imgData.y + imgData.height
     ) {
       return true;
     }
@@ -242,7 +245,7 @@ renderer.domElement.addEventListener("mouseleave", () => {
   camera.aspect = window.innerWidth / (window.innerWidth * 1.5);  // set aspect ratio here
   camera.updateProjectionMatrix();  // update the camera projection matrix
 
-  loader = new OBJLoader();
+  loader = new FBXLoader();
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
@@ -251,7 +254,7 @@ renderer.domElement.addEventListener("mouseleave", () => {
   camera.add(pointLight);
   scene.add(camera);
 
-  loadModel('./3d (4).obj');
+  loadModel('./memoir.fbx');
   animate3D();
 };
 
@@ -294,8 +297,8 @@ const loadModel = (url) => {
     if (my3DModel) scene.remove(my3DModel);
     my3DModel = model;
     my3DModel.position.y = 1;
-    // Scale down the model by a factor of 3
-    my3DModel.scale.set(1/4, 1/4, 1/4);
+    // Scale 
+    my3DModel.scale.set(3, 3, 3);
 
     // Create a new bounding box
     const boundingBox = new THREE.Box3().setFromObject(my3DModel);
