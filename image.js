@@ -4,7 +4,7 @@ let extraImages = [];
 let extraImagesData = {};
 let showExtraImages = false;
 let isExtraImagesLoaded = false;
-const imageNames = ["coterie"];
+const imageNames = ["coterie - a collaborative project brought together at Biography Design in Toronto - merch design for Coterie - a Cannabis Brand"];
 let extraVideos = [];
 let extraVideosData = {};
 /*function fileSelected(event, p) {
@@ -63,6 +63,25 @@ function imageLoaded(image, p, imageName) {
   });
 }
 
+function wrapText(p, text, maxWidth) {
+  let words = text.split(' ');
+  let lines = [];
+  let currentLine = words[0];
+
+  for (let i = 1; i < words.length; i++) {
+    let word = words[i];
+    let width = p.textWidth(currentLine + " " + word);
+    if (width < maxWidth) {
+      currentLine += " " + word;
+    } else {
+      lines.push(currentLine);
+      currentLine = word;
+    }
+  }
+  lines.push(currentLine);
+  return lines;
+}
+
 function extraImageLoaded(image, p, imageName, parentImage) {
   const scaleFactor = 5;
 
@@ -74,13 +93,14 @@ function extraImageLoaded(image, p, imageName, parentImage) {
     width: image.width / scaleFactor,
     height: image.height / scaleFactor,
     aspectRatio: image.width / image.height,
-    x: randomX,  // random x
-    y: randomY,  // random y, but always greater than the height of the tallest image in the gallery
+    x: randomX,  
+    y: randomY,  
+    isDragging: false,
   });
 }
 
 function extraVideoLoaded(videoPath, p, videoName, parentImage) {
-  const scaleFactor = 3;
+  const scaleFactor = 2;
 
   const canvasHeight = document.getElementById('defaultCanvas0').style.height;
 
@@ -96,6 +116,7 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
       video: video,
       x: randomX,  
       y: randomY,  
+      isDragging: false,
     });
   });
 
@@ -125,7 +146,32 @@ function duplicateImage(imgData, p) {
   }
 }
 
-function mousePressed(p) {
+function mousePressed(p) {  
+ // Check for images
+ for (let i = 0; i < extraImages.length; i++) {
+  const imgData = extraImages[i];
+  const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
+    p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
+  if (imageClicked) {
+    imgData.isDragging = true;
+    imgData.dragOffsetX = p.mouseX - imgData.x;
+    imgData.dragOffsetY = p.mouseY - imgData.y;
+    console.log("Image clicked");
+  }
+}
+
+// Check for videos
+for (let i = 0; i < extraVideos.length; i++) {
+  const vidData = extraVideos[i];
+  const videoClicked = p.mouseX >= vidData.x && p.mouseX <= vidData.x + vidData.video.width &&
+    p.mouseY >= vidData.y && p.mouseY <= vidData.y + vidData.video.height;
+  if (videoClicked) {
+    vidData.isDragging = true;
+    vidData.dragOffsetX = p.mouseX - vidData.x;
+    vidData.dragOffsetY = p.mouseY - vidData.y;
+    console.log("Video clicked");
+  }
+}
 
   if (isMousePressedOn3D) {
     // If the 3D object is being interacted with, do nothing in this function.
@@ -206,7 +252,43 @@ function mouseReleased(p) {
       fullScreenImage = null;
     }, 100); // wait 100 milliseconds before closing the image
   }
+
+  // Stop dragging any images
+  for (let i = 0; i < extraImages.length; i++) {
+    extraImages[i].isDragging = false;
+    extraImages[i].dragOffsetX = 0;
+    extraImages[i].dragOffsetY = 0;
+  }
+
+  // Stop dragging any videos
+  for (let i = 0; i < extraVideos.length; i++) {
+    extraVideos[i].isDragging = false;
+    extraVideos[i].dragOffsetX = 0;
+    extraVideos[i].dragOffsetY = 0;
+  }
 };
+
+function mouseDragged(p) {
+  // Move any images that are being dragged
+  for (let i = 0; i < extraImages.length; i++) {
+    const imgData = extraImages[i];
+    if (imgData.isDragging) {
+      imgData.x = p.mouseX - imgData.dragOffsetX;
+      imgData.y = p.mouseY - imgData.dragOffsetY;
+    }
+  }
+
+  // Move any videos that are being dragged
+  for (let i = 0; i < extraVideos.length; i++) {
+    const vidData = extraVideos[i];
+    if (vidData.isDragging) {
+      vidData.x = p.mouseX - vidData.dragOffsetX;
+      vidData.y = p.mouseY - vidData.dragOffsetY;
+      vidData.video.position(vidData.x, vidData.y);
+    }
+  }
+}
+
 
 function setCursor(cursor) {
 

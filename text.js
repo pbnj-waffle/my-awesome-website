@@ -82,4 +82,3 @@ window.onload = function() {
     });
   }, 5000);
 }
-
