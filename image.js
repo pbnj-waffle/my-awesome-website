@@ -224,6 +224,7 @@ for (let i = 0; i < extraVideos.length; i++) {
       }
 
       //EXTRA VIDEOS:
+      console.log(extraVideosData, imageNames)
       const associatedExtraVideos = extraVideosData[imageNames];
       for (let i = 0; i < associatedExtraVideos.length; i++) {
         const extraVideoName = associatedExtraVideos[i];

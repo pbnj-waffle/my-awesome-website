@@ -340,7 +340,7 @@ let sketch2D = new p5((p) => {
     textBuffer.fill(255); 
     let lines = wrapText(p, imgData.filename, imgData.width);
     for (let i = 0; i < lines.length; i++) {
-      textBuffer.text(lines[i], imgData.x, imgData.y - 10 - i * 12); 
+      textBuffer.text(lines[i], imgData.x, imgData.y - 10 - (lines.length - 1 - i) * 12); 
     }
     }
   }
