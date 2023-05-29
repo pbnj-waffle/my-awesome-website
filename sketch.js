@@ -45,7 +45,7 @@ let hoveredImage = null;
 let hoveredImgData = null;
 const ARROW = 'default';
 let cursorType = ARROW;
-
+let myFont;
 let letters = [];
 let texts = [];
 let bubbleX, bubbleY;
@@ -213,10 +213,10 @@ let sketch2D = new p5((p) => {
         const textStart = p.windowWidth / 2 + 100; 
         const textWidth = p.windowWidth / 2 - 100; 
         p.textFont(myFont); 
-        p.textSize(24);
+        p.textSize(50);
         p.textAlign(p.LEFT, p.TOP); 
+        p.fill(255);
         p.text(fullScreenImageText, textStart, imageY, textWidth);
-        p.fill(255); 
     
         // Draw closing icon
         p.push(); 

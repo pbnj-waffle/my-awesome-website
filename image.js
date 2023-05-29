@@ -68,7 +68,7 @@ function extraImageLoaded(image, p, imageName, parentImage) {
 
   const canvasHeight = document.getElementById('defaultCanvas0').style.height;
   let randomX = p.random(0, p.windowWidth - image.width / scaleFactor);
-  let randomY = p.random(45 + parentImage.height, parseInt(canvasHeight) - parseInt(image.height));
+  let randomY = p.random(45 + parentImage.img.height, parseInt(canvasHeight) - (parseInt(image.height) / scaleFactor));
   extraImages.push({
     img: image,
     width: image.width / scaleFactor,
@@ -83,21 +83,22 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
   const scaleFactor = 3;
 
   const canvasHeight = document.getElementById('defaultCanvas0').style.height;
-  let randomX = p.random(0, p.windowWidth / scaleFactor);
-  let randomY = p.random(45 + parentImage.height, parseInt(canvasHeight) / scaleFactor);
 
   let video = p.createVideo([`./images/extra_videos/${videoPath}.mp4`], () => {
     video.size(video.width / scaleFactor, video.height / scaleFactor);
+    let randomX = p.random(0, p.windowWidth / scaleFactor);
+    let randomY = p.random(45 + parentImage.img.height, parseInt(canvasHeight) - (parseInt(video.height) / scaleFactor));
     video.position(randomX, randomY);
     video.loop();
     video.hide();
+
+    extraVideos.push({
+      video: video,
+      x: randomX,  
+      y: randomY,  
+    });
   });
 
-  extraVideos.push({
-    video: video,
-    x: randomX,  
-    y: randomY,  
-  });
 }
 
 
