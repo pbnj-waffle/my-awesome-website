@@ -38,17 +38,14 @@ let canvasHeight;
 let bgImagesNames = ["thunder.png", "thunder.png"];
 let bgImages = [];
 let chosenBgImage;
-let videoNames = ["1.mp4", "3.mp4"];
+let videoNames = ["bg.mp4"];
 let bgVideos = [];
 let chosenVideo;
 let hoveredImage = null;
 let hoveredImgData = null;
 const ARROW = 'default';
 let cursorType = ARROW;
-let extraImages = [];
-let extraImagesData = {};
-let showExtraImages = false;
-let isExtraImagesLoaded = false;
+
 let letters = [];
 let texts = [];
 let bubbleX, bubbleY;
@@ -82,18 +79,19 @@ let sketch2D = new p5((p) => {
 
   p.preload = () => {
     //gif = p.loadImage('./test.gif');//GIF
-    /*for (let i = 0; i < videoNames.length; i++) { //BACKGROUND VIDEO
-      let video = p.createVideo(videoNames[i]);
-      bgVideos.push(video);
-    }*/
-    for (let i = 0; i < bgImagesNames.length; i++) { //BACKGROUND IMAGES
+   /* const randomIndex = Math.floor(p.random(videoNames.length));
+    chosenVideo = p.createVideo([videoNames[randomIndex]], () => {
+      chosenVideo.elt.muted = true;
+      chosenVideo.play();
+  });*/
+    /*for (let i = 0; i < bgImagesNames.length; i++) { //BACKGROUND IMAGES
       let img = p.loadImage(bgImagesNames[i]);
       bgImages.push(img);
-    }
+    }*/
     
-    for (let i = 1; i <= 7; i++) { //MAIN IMAGES
-      const img = p.loadImage(`./images/img (${i}).png`, () => {
-          imageLoaded(img, p, `img (${i})`);
+    for (let i = 0; i < imageNames.length; i++) { // MAIN IMAGES
+      const img = p.loadImage(`./images/${imageNames[i]}.png`, () => {
+          imageLoaded(img, p, imageNames[i]);
       });
     }
     /*for (let i = 1; i <= 3; i++) { //EXTRA IMAGES
@@ -104,6 +102,7 @@ let sketch2D = new p5((p) => {
 
   imageTexts = p.loadJSON('imageTexts.json');
   extraImagesData = p.loadJSON('extraImages.json');
+  extraVideosData = p.loadJSON('extraVideos.json');
   myFont = p.loadFont('Sprat-Regular.otf');
   }
   
@@ -126,11 +125,9 @@ let sketch2D = new p5((p) => {
       bubblePoints.push({angle: angle, r: bubbleSize/2});
     }*/
 
-    /*const randomIndex = Math.floor(p.random(bgVideos.length));
-    chosenVideo = bgVideos[randomIndex];
-    chosenVideo.volume(0);  // Mute the video by setting volume to 0
-    chosenVideo.loop();
-    chosenVideo.hide();*/
+   /* chosenVideo.loop();
+    chosenVideo.hide();
+    chosenVideo.volume(0);*/
 
     /*const randomIndex = Math.floor(p.random(bgImages.length));
     chosenBgImage = bgImages[randomIndex];*/
@@ -192,6 +189,8 @@ let sketch2D = new p5((p) => {
   }
   
     p.draw = () => {
+     // p.background(0);
+      //p.image(chosenVideo, 0, 0,  p.windowWidth, canvasHeight);
       textBuffer.clear();
       if (showFullScreenImage) {
         //p.background(0, 0, 0, 150);
@@ -237,9 +236,16 @@ let sketch2D = new p5((p) => {
             p.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
           }
         }
+
+        for (let i = 0; i < extraVideos.length; i++) {
+          let vid = extraVideos[i].video;
+          let x = extraVideos[i].x;
+          let y = extraVideos[i].y;
+          p.image(vid, x, y); // Assumes p is your p5 instance
+        }
       } else {
         isBlurApplied = false;
-        if (!transitionFinished) {
+       if (!transitionFinished) {
           initTransitionIfNeeded();
           bgColor = p.lerpColor(transitionBeginColor, targetColor, getTransitionProgress());
         }
@@ -446,13 +452,13 @@ function smoothingFunction(x) {
 
 //const my2D = new p5(sketch2D);
 
-document.addEventListener('click', function () {
+/*document.addEventListener('click', function () {
   clickCounter++;
 
   if (clickCounter >= 10) { //the amount of clicks
     toggleTransition();
   }
-});
+});*/
 
 function processText(textData, p) {
   if (textData.shouldMove && p.millis() > textData.startTime && (p.millis() - textData.startTime) < textData.stopAfter) {

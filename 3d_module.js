@@ -11,10 +11,10 @@ let isDragging3DModel = false;
 let lastMouseWheelDelta = 0;
 const raycaster = new THREE.Raycaster();
 let isScrolling;
-//let lastScrollPosition = 0;
 let baselineScrollPos = window.scrollY || window.pageYOffset;
+let lastScrollPos = 0;
 const otherTextContainer = document.getElementById("otherTextContainer");
-const initialTopPosition = otherTextContainer.offsetTop;
+
 
 
 function isAnyImageActive() {
@@ -37,8 +37,7 @@ function isAnyImageActive() {
 }
 
 function isMouseOverImage(event) {
-  console.log(event);
-  console.log(images)
+
   for (const imgData of images) {
     if (
       event.offsetX > imgData.x &&
@@ -64,7 +63,7 @@ function isMouseOver3DObject(event) {
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObject(my3DModel, true);
-  console.log(intersects);
+
   return intersects.length > 0;
   
 }
@@ -120,8 +119,8 @@ document.addEventListener('mouseup', () => {
 });
 
 renderer.domElement.addEventListener("mousemove", (event) => {
-  console.log(`isMouseOver3DObject: ${isMouseOver3DObject(event)}`);
-  console.log(`isMouseOverImage: ${isMouseOverImage(event)}`);
+  /*console.log(`isMouseOver3DObject: ${isMouseOver3DObject(event)}`);
+  console.log(`isMouseOverImage: ${isMouseOverImage(event)}`);*/
   if (isMouseOver3DObject(event)) {
     setCursor('grab');  // use custom setCursor function
   } else if (isMouseOverImage(event)) {
@@ -162,44 +161,49 @@ renderer.domElement.addEventListener("mouseleave", () => {
 });
 
   // Move the event listeners here, after the renderer is created.
-  window.addEventListener('scroll', function() {
-    // Clear our timeout throughout the scroll
-    window.clearTimeout(isScrolling);
-  
+  /*window.addEventListener('scroll', function() {
+    let maxUpwardOffset = 8;
+    let initialObjectPosition = 2;
+    let thresholdScrollPos = 500;
+    
     const currentScrollPos = window.scrollY || window.pageYOffset;
-    const isScrollingDown = currentScrollPos > baselineScrollPos;
-    baselineScrollPos = currentScrollPos;
+    let scrollDelta = lastScrollPos - currentScrollPos;
   
-    const parallaxFactor = isScrollingDown ? 0.5 : -0.5; // Change direction based on scroll direction
-    const parallaxOffset = currentScrollPos * parallaxFactor;
-    const maxOffset = 2;  // Adjust this value as necessary
-    const minOffset = -2;  // Adjust this value as necessary
-
-     // The element will move up as the window scrolls down
-  otherTextContainer.style.transform = `translateY(-${parallaxOffset}px)`;
+    // Limit the maximum value of scrollDelta
+    const maxScrollDelta = 1000;  // Adjust this value as necessary
+    scrollDelta = Math.max(Math.min(scrollDelta, maxScrollDelta), -maxScrollDelta);
+    
+    // Update lastScrollPos
+    lastScrollPos = currentScrollPos;
+    
+    const isScrollingDown = scrollDelta < 0;
   
-    if(my3DModel) {
-      let targetY;
-      if (isScrollingDown) {
-        targetY = Math.min(parallaxOffset / 100, maxOffset);
-      } else {
-        targetY = Math.max(parallaxOffset / 100, minOffset);
-      }
+    // Only positive offset, as we want parallax effect upwards.
+    const parallaxOffset = Math.abs(scrollDelta) / 1000;  
   
-      new TWEEN.Tween(my3DModel.position)
-        .to({ y: targetY }, 150)
-        .start();
+    // The element will move up as the window scrolls down
+    otherTextContainer.style.transform = `translateY(-${parallaxOffset}px)`;
+  
+    if(my3DModel && currentScrollPos < thresholdScrollPos) {
+        let targetY;
+  
+        if (isScrollingDown) {
+            // We go upwards only
+            targetY = Math.max(my3DModel.position.y - parallaxOffset, maxUpwardOffset);
+        } else {
+            // We return back to the initial position
+            targetY = Math.min(my3DModel.position.y + parallaxOffset, initialObjectPosition);
+        }
+    
+        new TWEEN.Tween(my3DModel.position)
+            .to({ y: targetY }, 500)
+            .easing(TWEEN.Easing.Circular.Out)  
+            .start();
     }
+  }, false);*/
   
-    // Set a timeout to run after scrolling ends
-    isScrolling = setTimeout(function() {
-      // scrolling has stopped.
-      TWEEN.removeAll();
-    }, 66);
   
-  }, false);
-
-
+  
   window.addEventListener('resize', function(){
     /*videoContainer.style.width = `${window.innerWidth}px`;
   videoContainer.style.height = `${window.innerHeight}px`;
@@ -247,12 +251,17 @@ renderer.domElement.addEventListener("mouseleave", () => {
 
   loader = new FBXLoader();
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
   scene.add(ambientLight);
 
-  const pointLight = new THREE.PointLight(0xffffff, 0.5);
-  camera.add(pointLight);
-  scene.add(camera);
+  const spotLight = new THREE.SpotLight(0xffffff, 1);
+  spotLight.angle = Math.PI / 6;
+  spotLight.penumbra = 0.2;
+  spotLight.distance =800;
+  spotLight.decay = 2;
+  spotLight.position.set(50, 50, 50);
+  scene.add(spotLight);
+  
 
   loadModel('./memoir.fbx');
   animate3D();
@@ -296,9 +305,9 @@ const loadModel = (url) => {
     
     if (my3DModel) scene.remove(my3DModel);
     my3DModel = model;
-    my3DModel.position.y = 1;
+    my3DModel.position.y = 2.5;
     // Scale 
-    my3DModel.scale.set(3, 3, 3);
+    my3DModel.scale.set(1/10, 1/10, 1/10);
 
     // Create a new bounding box
     const boundingBox = new THREE.Box3().setFromObject(my3DModel);
@@ -309,6 +318,7 @@ const loadModel = (url) => {
     scene.add(my3DModel);
   });
 };
+
 
 /*document.getElementById('upload3DObject').addEventListener('click', () => {
   const input = document.createElement('input');

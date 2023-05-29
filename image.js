@@ -1,5 +1,12 @@
 const EDGE_THRESHOLD = 5;
-
+const associatedExtraImages = ["coterie1", "coterie2", "coterie3", "coterie4"];
+let extraImages = [];
+let extraImagesData = {};
+let showExtraImages = false;
+let isExtraImagesLoaded = false;
+const imageNames = ["coterie"];
+let extraVideos = [];
+let extraVideosData = {};
 /*function fileSelected(event, p) {
   const newImage = p.loadImage(URL.createObjectURL(event.target.files[0]), () => {
     imageLoaded(newImage, p);
@@ -7,7 +14,7 @@ const EDGE_THRESHOLD = 5;
 }*/
 
 function imageLoaded(image, p, imageName) {
-  const scaleFactor = p.random(1, 3);
+  const scaleFactor = p.random(2, 5);
   const effectRandom = p.floor(p.random(1, 101));
   //console.log('Random number:', effectRandom);
   const shouldMove = 0 < effectRandom && effectRandom <= 100;
@@ -57,14 +64,7 @@ function imageLoaded(image, p, imageName) {
 }
 
 function extraImageLoaded(image, p, imageName, parentImage) {
-  const scaleFactor = 1;
-  // Calculate the maximum possible height for the main images
-  let maxHeight = 0;
-  /*for (let img of images) {
-    if (img.height > maxHeight) {
-      maxHeight = img.height;
-    }
-  }*/
+  const scaleFactor = 5;
 
   const canvasHeight = document.getElementById('defaultCanvas0').style.height;
   let randomX = p.random(0, p.windowWidth - image.width / scaleFactor);
@@ -78,6 +78,28 @@ function extraImageLoaded(image, p, imageName, parentImage) {
     y: randomY,  // random y, but always greater than the height of the tallest image in the gallery
   });
 }
+
+function extraVideoLoaded(videoPath, p, videoName, parentImage) {
+  const scaleFactor = 3;
+
+  const canvasHeight = document.getElementById('defaultCanvas0').style.height;
+  let randomX = p.random(0, p.windowWidth / scaleFactor);
+  let randomY = p.random(45 + parentImage.height, parseInt(canvasHeight) / scaleFactor);
+
+  let video = p.createVideo([`./images/extra_videos/${videoPath}.mp4`], () => {
+    video.size(video.width / scaleFactor, video.height / scaleFactor);
+    video.position(randomX, randomY);
+    video.loop();
+    video.hide();
+  });
+
+  extraVideos.push({
+    video: video,
+    x: randomX,  
+    y: randomY,  
+  });
+}
+
 
 function processImage(imgData, p) {
   if (imgData.timeElapsed < 300) {
@@ -115,7 +137,7 @@ function mousePressed(p) {
       // Show elements
       document.getElementById('header').style.display = '';
       document.getElementById('textContainer').style.display = '';
-      document.getElementById('otherTextContainer').style.display = '';
+      //document.getElementById('otherTextContainer').style.display = '';
       document.getElementById('buttonsContainer').style.display = '';
       document.getElementsByClassName('rectangle-wrapper')[0].style.display = '';
       showFullScreenImage = false;
@@ -134,16 +156,17 @@ function mousePressed(p) {
       // Hide elements
       document.getElementById('header').style.display = 'none';
       document.getElementById('textContainer').style.display = 'none';
-      document.getElementById('otherTextContainer').style.display = 'none';
+      //document.getElementById('otherTextContainer').style.display = 'none';
       document.getElementById('buttonsContainer').style.display = 'none';
       document.getElementsByClassName('rectangle-wrapper')[0].style.display = 'none';
       document.body.scrollTop = document.documentElement.scrollTop = 0;
-      // Find the associated extra images for the clicked image
+
+      /*// Find the associated extra images for the clicked image
       const imageName = `img (${i + 1})`;  // Construct the image name
       const associatedExtraImages = extraImagesData[imageName];
 
       // Reinitialize extraImages to be an empty array
-      extraImages = [];
+      extraImages = [];*/
 
       // Only load the associated extra images
       for (let i = 0; i < associatedExtraImages.length; i++) {
@@ -153,24 +176,12 @@ function mousePressed(p) {
         });
       }
 
-      // Assign random positions to the extra images
-      /*for (let i = 0; i < extraImages.length; i++) {
-        let extraImage = extraImages[i];
-        extraImage.x = p.random(0, p.windowWidth - extraImage.width);  // Random x position
-
-        if (i === 0) {
-          // Position the first extra image right below the clicked image
-          extraImage.y = clickedImageData.y + clickedImageData.height + p.random(0, p.height - (clickedImageData.y + clickedImageData.height + extraImage.height));
-        } else {
-          // Position the subsequent extra images randomly but below the clicked image
-          let previousExtraImage = extraImages[i - 1];
-          extraImage.y = previousExtraImage.y + previousExtraImage.height + p.random(0, p.height - (previousExtraImage.y + previousExtraImage.height + extraImage.height));
-        }
-      }*/
-      // Apply the blur and update the flag only when image is clicked and blur is not yet applied
-      //buffer.filter(p.BLUR, 10); 
-      //blurredBgBuffer.image(buffer, 0, 0); 
-      //isBlurApplied = true;
+      //EXTRA VIDEOS:
+      const associatedExtraVideos = extraVideosData[imageNames];
+      for (let i = 0; i < associatedExtraVideos.length; i++) {
+        const extraVideoName = associatedExtraVideos[i];
+        extraVideoLoaded(extraVideoName, p, extraVideoName, imgData);
+      }
 
       showFullScreenImage = true;
       fullScreenImage = imgData.img;
@@ -197,12 +208,12 @@ function mouseReleased(p) {
 };
 
 function setCursor(cursor) {
-  console.log(cursor)
+
   if(cursor === 'arrow'){
     document.body.style.setProperty('cursor', `url(./midfinger.cur), auto`, 'important');
   }
   else if(cursor === 'grab'){
-    document.body.style.setProperty('cursor', `url(./shrek.cur), auto`, 'important');
+    document.body.style.setProperty('cursor', `url(./grab.cur), auto`, 'important');
   }
   else if(cursor === 'pointer'){
     document.body.style.setProperty('cursor', `url(./paw.cur), auto`, 'important');
@@ -227,11 +238,4 @@ function updateCursor(p) {
       hoveredImage = imgData; // Save the hovered image
     }
   }
-
-  /*if (overAnyImage) {
-
-    setCursor('pointer');
-  } else {
-    setCursor('arrow');
-  }*/
 }
