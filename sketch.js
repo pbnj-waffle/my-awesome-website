@@ -336,8 +336,8 @@ let sketch2D = new p5((p) => {
       buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
 
     // Draw the image filename to the textBuffer
-    textBuffer.textSize(10); // Set the text size.
-    textBuffer.fill(255); // Set the text color.
+    textBuffer.textSize(10); 
+    textBuffer.fill(255); 
     let lines = wrapText(p, imgData.filename, imgData.width);
     for (let i = 0; i < lines.length; i++) {
       textBuffer.text(lines[i], imgData.x, imgData.y - 10 - i * 12); 
