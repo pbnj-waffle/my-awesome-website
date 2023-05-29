@@ -62,8 +62,32 @@ function imageLoaded(image, p, imageName) {
     filename: imageName,
   });
 }
+/*
 
+43.34765625
+image.js:74 53.35546875
+image.js:74 124.060546875
+image.js:74 163.412109375
+image.js:74 207.4453125
+image.js:74 254.8125
+image.js:74 268.154296875
+image.js:74 325.5234375
+image.js:74 94.72265625
+image.js:74 107.396484375
+image.js:74 150.755859375
+image.js:74 158.0859375
+image.js:74 194.759765625
+image.js:74 233.455078125
+image.js:74 250.79296875
+image.js:74 292.810546875
+image.js:74 300.140625
+image.js:74 310.1484375
+image.js:74 364.18359375
+image.js:74 86.056640625
+*/
 function wrapText(p, text, maxWidth) {
+  p.textSize(12);
+  p.textFont(myFont)
   let words = text.split(' ');
   let lines = [];
   let currentLine = words[0];
