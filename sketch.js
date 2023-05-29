@@ -335,13 +335,13 @@ let sketch2D = new p5((p) => {
       // Main image
       buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
 
-// Draw the image filename to the textBuffer
-textBuffer.textSize(10); // Set the text size. Adjust as needed.
-textBuffer.fill(255); // Set the text color. Adjust as needed.
-let lines = wrapText(p, imgData.filename, imgData.width);
-for (let i = 0; i < lines.length; i++) {
-  textBuffer.text(lines[i], imgData.x, imgData.y - 10 - i * 12); // Adjust line spacing as needed.
-}
+    // Draw the image filename to the textBuffer
+    textBuffer.textSize(10); // Set the text size.
+    textBuffer.fill(255); // Set the text color.
+    let lines = wrapText(p, imgData.filename, imgData.width);
+    for (let i = 0; i < lines.length; i++) {
+      textBuffer.text(lines[i], imgData.x, imgData.y - 10 - i * 12); 
+    }
     }
   }
 
@@ -353,8 +353,6 @@ if (hoveredImgData) {
     drawFrame(hoveredImgData, p);
   }
   if (hoveredImgData.shouldDuplicate) duplicateImage(hoveredImgData, p);
-
-  // ... (rest of your processing code for hovered image)
 
   // Draw the image onto the buffer
   const imgToDrawHovered = hoveredImgData.processedImg || hoveredImgData.img;
