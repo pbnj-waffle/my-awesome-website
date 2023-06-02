@@ -34,7 +34,7 @@ let fullScreenImageText = '';
 let isMousePressedOn3D = false;
 let clickedImageData = null;
 let isBlurApplied = false;
-let canvasHeight;
+//let canvasHeight;
 let bgImagesNames = ["thunder.png", "thunder.png"];
 let bgImages = [];
 let chosenBgImage;
@@ -66,7 +66,7 @@ let sketch2D = new p5((p) => {
     };
 });*/
   sketchInstance = p;
-  canvasHeight = document.getElementById('canvasGlobalContainer').offsetHeight;
+  //canvasHeight = document.getElementById('canvasGlobalContainer').offsetHeight;
   p.mousePressed = () => {
     mousePressed(p);
   };
@@ -111,15 +111,15 @@ let sketch2D = new p5((p) => {
     bgColor = p.color(236,245,230);
     transitionBeginColor = bgColor;
     targetColor = p.color(0);
-    const canvas2D = p.createCanvas(p.windowWidth, canvasHeight); // Store the canvas
+    const canvas2D = p.createCanvas(p.windowWidth, p.windowHeight); // Store the canvas
     canvas2D.parent('canvasContainer');
-    buffer = p.createGraphics(p.windowWidth, canvasHeight);
-    squareTrailBuffer = p.createGraphics(p.windowWidth, canvasHeight);
-    squareBuffer = p.createGraphics(p.windowWidth, canvasHeight);
-    bgBuffer = p.createGraphics(p.windowWidth, canvasHeight);
-    blurredBgBuffer = p.createGraphics(p.windowWidth, canvasHeight);
-    textBuffer = p.createGraphics(p.windowWidth, canvasHeight);
-    textTrailBuffer = p.createGraphics(p.windowWidth, canvasHeight);
+    buffer = p.createGraphics(p.windowWidth, p.windowHeight);
+    squareTrailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
+    squareBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
+    bgBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
+    blurredBgBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
+    textBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
+    textTrailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
 
     /*for(let angle = 0; angle < 2 * p.PI; angle += 0.3){ //BUBBLE
       bubblePoints.push({angle: angle, r: bubbleSize/2});
@@ -166,8 +166,8 @@ let sketch2D = new p5((p) => {
     if (Math.random() > 0.1) {
       square = {
         x: p.random(p.windowWidth - 50),
-        y: p.random(canvasHeight - 50),
-        size: 50,
+        y: p.random(p.windowHeight - 50),
+        size: 20,
         vx: p.random(-3, 3),
         vy: p.random(-3, 3),
         color: [p.random(255), p.random(255), p.random(255)],
@@ -182,9 +182,9 @@ let sketch2D = new p5((p) => {
        
       square.edgeHitsToStop = p.random([15, 30, 45, 60, 75]);
     }
-      squareTrailBuffer = p.createGraphics(p.windowWidth, canvasHeight);
-      squareTrailBufferBlend = p.createGraphics(p.windowWidth, canvasHeight);
-      squareBuffer = p.createGraphics(p.windowWidth, canvasHeight);
+      squareTrailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
+      squareTrailBufferBlend = p.createGraphics(p.windowWidth, p.windowHeight);
+      squareBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     
   }
   
@@ -193,18 +193,14 @@ let sketch2D = new p5((p) => {
       //p.image(chosenVideo, 0, 0,  p.windowWidth, canvasHeight);
       textBuffer.clear();
       if (showFullScreenImage) {
-        //p.background(0, 0, 0, 150);
-        p.fill(0);
+
+      p.fill(0);
        p.rect(0, 0, p.width, p.height);
-        // Draw the blurred buffer only when isBlurApplied is true
-        /*if(isBlurApplied) {
-            p.image(blurredBgBuffer, 0, 0, p.windowWidth, canvasHeight);
-        }*/
-    
-        // Draw the non-blurred image and other UI elements...
+
+        // Draw the main image
         const aspectRatio = fullScreenImage.width / fullScreenImage.height;
         const imageWidth = p.windowWidth / 2; 
-        const displayHeight = Math.min(canvasHeight, imageWidth / aspectRatio);
+        const displayHeight = Math.min(p.windowHeight, imageWidth / aspectRatio);
         const imageX = 45;
         const imageY = 45;
         p.image(fullScreenImage, imageX, imageY, imageWidth, displayHeight);
@@ -252,7 +248,7 @@ let sketch2D = new p5((p) => {
         p.background(bgColor);
         bgBuffer.clear(); // Clear bgBuffer here, after checking showFullScreenImage
         
-        p.image(bgBuffer, 0, 0, p.windowWidth, canvasHeight);
+        p.image(bgBuffer, 0, 0, p.windowWidth, p.windowHeight);
       //currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
      // bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, canvasHeight);
 
@@ -285,8 +281,8 @@ let sketch2D = new p5((p) => {
       yOff += 0.001;*/
       
     //IMAGES
-    const framesBetweenTrail = 25;   
-
+    //const framesBetweenTrail = 25;   
+    
     for (const imgData of images) {    
       
       if (hoveredImage === imgData) {
@@ -302,13 +298,18 @@ let sketch2D = new p5((p) => {
       if (imgData.shouldDuplicate) duplicateImage(imgData, p);// DUPLICATE
   
   
-      if (imgData.shouldMove && p.millis() > imgData.startTime && (p.millis() - imgData.startTime) < imgData.stopAfter) { // MOVE
+      if (imgData.shouldMove && p.millis() > imgData.startTime && (p.millis() - imgData.startTime) < imgData.stopAfter) {
         imgData.framesSinceLastTrail++;
-  
-        if (imgData.framesSinceLastTrail >= framesBetweenTrail) {
-          // Save the current position in the trail
+        console.log(`Image frames since last trail: ${imgData.framesSinceLastTrail}`);
+      
+        if (imgData.framesSinceLastTrail >= imgData.framesBetweenTrail) {
           imgData.trail.push({ x: imgData.x, y: imgData.y });
           imgData.framesSinceLastTrail = 0;
+      
+          // Set framesBetweenTrail to a random value
+          const trailFrames = [10, 25, 100];
+          imgData.framesBetweenTrail = trailFrames[Math.floor(Math.random() * trailFrames.length)];
+          console.log(`Selected frame interval: ${imgData.framesBetweenTrail}`);
         }
   
         const speed = 0.001;
@@ -322,7 +323,7 @@ let sketch2D = new p5((p) => {
 
         // Make sure the image doesn't go off the screen
         imgData.x = p.constrain(imgData.x, 0, p.windowWidth - imgData.width);
-        imgData.y = p.constrain(imgData.y, 0, canvasHeight - imgData.height);
+        imgData.y = p.constrain(imgData.y, 0, p.windowHeight - imgData.height);
       }
   
       // Define imgToDraw inside the loop
@@ -342,7 +343,10 @@ let sketch2D = new p5((p) => {
     let lines = wrapText(p, imgData.filename, imgData.width);
     for (let i = 0; i < lines.length; i++) {
       textBuffer.text(lines[i], imgData.x, imgData.y - 10 - (lines.length - 1 - i) * 12); 
+      let textY = imgData.y - 10 - (lines.length - 1 - i) * 12; //TEXT GOING OFF SCREEN NOT WORKING
+      textY = p.constrain(textY, 0, p.windowHeight - 10); 
     }
+    
     }
   }
 
@@ -362,7 +366,6 @@ if (hoveredImgData) {
 
 // Display the buffer
 p.image(buffer, 0, 0);
-
 // Display the textBuffer
 p.image(textBuffer, 0, 0);
 
@@ -475,11 +478,11 @@ function processText(textData, p) {
 
     // Get the global canvas container size
     let globalCanvasContainer = document.getElementById('canvasGlobalContainer');
-    let containerSize = globalCanvasContainer.getBoundingClientRect();
+    //let containerSize = globalCanvasContainer.getBoundingClientRect();
 
     // Constrain the text to stay within the global canvas container
-    textData.x = p.constrain(textData.x, 0, containerSize.width - textData.img.clientWidth);
-    textData.y = p.constrain(textData.y, 0, containerSize.height - textData.img.clientHeight);
+    textData.x = p.constrain(textData.x, 0, p.windowWidth - textData.img.clientWidth);
+    textData.y = p.constrain(textData.y, 0, p.windowHeight - textData.img.clientHeight);
 
     // Update the text position
     textData.img.style.left = textData.x + "px";

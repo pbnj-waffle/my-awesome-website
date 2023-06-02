@@ -77,7 +77,7 @@ window.set3DObjectVisibility = set3DObjectVisibility;
 const init3D = () => {
   renderer = new THREE.WebGLRenderer({ alpha: true });
 
-  renderer.setSize(window.innerWidth,window.innerWidth * 1.5);
+  renderer.setSize(window.innerWidth,window.innerHeight);
   renderer.domElement.style.position = 'absolute';
 document.getElementById('canvasContainer2').appendChild(renderer.domElement);
 
@@ -210,8 +210,8 @@ renderer.domElement.addEventListener("mouseleave", () => {
   document.getElementById('canvasContainer').style.top = `${window.innerHeight}px`;
   document.getElementById('canvasContainer2').style.top = `${window.innerHeight}px`;*/
 
-    renderer.setSize(window.innerWidth, window.innerWidth * 1.5);
-    camera.aspect = window.innerWidth / (window.innerWidth * 1.5);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / (window.innerHeight);
     camera.updateProjectionMatrix();
   });
 
@@ -243,10 +243,10 @@ renderer.domElement.addEventListener("mouseleave", () => {
   });
 
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / (window.innerWidth * 1.5), 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.z = 5;
 
-  camera.aspect = window.innerWidth / (window.innerWidth * 1.5);  // set aspect ratio here
+  camera.aspect = window.innerWidth / window.innerHeight;  // set aspect ratio here
   camera.updateProjectionMatrix();  // update the camera projection matrix
 
   loader = new FBXLoader();
@@ -273,14 +273,14 @@ const animate3D = () => {
 
   if (my3DModel) {
     if (isMousePressedOn3D && isMouseOver3DObject({ clientX: lastMousePosition.x, clientY: lastMousePosition.y })) {
-      const deltaX = (lastMousePosition.x - renderer.domElement.clientWidth / 2) * 0.00001;//speed
-      const deltaY = (lastMousePosition.y - renderer.domElement.clientHeight / 2) * 0.00001;//speed
+      const deltaX = (lastMousePosition.x - renderer.domElement.clientWidth / 2) * 0.00005;//speed
+      const deltaY = (lastMousePosition.y - renderer.domElement.clientHeight / 2) * 0.00005;//speed
 
       objectRotation.x += deltaY;
       objectRotation.y += deltaX;
 
-      my3DModel.rotation.x = objectRotation.x;
-      my3DModel.rotation.y = objectRotation.y;
+      my3DModel.rotation.x += deltaY;
+      my3DModel.rotation.y += deltaX;
     } else {
       // auto-rotation effect
       my3DModel.rotation.x += 0.001; //speed
@@ -305,9 +305,11 @@ const loadModel = (url) => {
     
     if (my3DModel) scene.remove(my3DModel);
     my3DModel = model;
-    my3DModel.position.y = 2.5;
+    my3DModel.position.y = 1;
+    
     // Scale 
-    my3DModel.scale.set(1/10, 1/10, 1/10);
+    const scale = Math.random() * (0.25 - 0.1) + 0.05;
+    my3DModel.scale.set(scale, scale, scale);
 
     // Create a new bounding box
     const boundingBox = new THREE.Box3().setFromObject(my3DModel);

@@ -14,24 +14,18 @@ let extraVideosData = {};
 }*/
 
 function imageLoaded(image, p, imageName) {
-  const scaleFactor = p.random(2, 5);
+  const scaleFactor = p.random(6, 8);
   const effectRandom = p.floor(p.random(1, 101));
-  //console.log('Random number:', effectRandom);
   const shouldMove = 0 < effectRandom && effectRandom <= 100;
-  const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
-  //const initialX = p.random(0, p.windowWidth - image.width);
-  //const initialY = p.random(0, p.windowHeight - image.height);
+  //const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
   const shouldTrail = p.random() < 0.3; // NOT WORKING
   const noBlending = p.random() < 0.5;
 
-  // Only place images below 100vh.
-  const minImageY = p.windowHeight; // 100vh in pixels
-  const maxImageY = canvasHeight - image.height;
 
   images.push({
     img: image,
-    x: p.random(0, p.windowWidth - image.width),
-    y: p.random(minImageY, maxImageY),
+    x: p.random(0, p.windowWidth - image.width / scaleFactor),
+    y: p.random(0, p.windowHeight - image.height / scaleFactor),
     width: image.width / scaleFactor,
     height: image.height / scaleFactor,
     aspectRatio: image.width / image.height,
@@ -44,7 +38,7 @@ function imageLoaded(image, p, imageName) {
     resizeMargin: 10,
     shouldMove: !noBlending && shouldMove,
     startTime: p.millis() + 5000,
-    stopAfter: p.random([5, 10, 30, 60, 300, Infinity]) * 1000,
+    stopAfter: p.random([10, 30, 60, 300, Infinity]) * 1000,
     trail: [],
     noiseSeedX: p.random(1000),
     noiseSeedY: p.random(1000),
@@ -62,29 +56,7 @@ function imageLoaded(image, p, imageName) {
     filename: imageName,
   });
 }
-/*
 
-43.34765625
-image.js:74 53.35546875
-image.js:74 124.060546875
-image.js:74 163.412109375
-image.js:74 207.4453125
-image.js:74 254.8125
-image.js:74 268.154296875
-image.js:74 325.5234375
-image.js:74 94.72265625
-image.js:74 107.396484375
-image.js:74 150.755859375
-image.js:74 158.0859375
-image.js:74 194.759765625
-image.js:74 233.455078125
-image.js:74 250.79296875
-image.js:74 292.810546875
-image.js:74 300.140625
-image.js:74 310.1484375
-image.js:74 364.18359375
-image.js:74 86.056640625
-*/
 function wrapText(p, text, maxWidth) {
   p.textSize(12);
   p.textFont(myFont)
@@ -107,11 +79,11 @@ function wrapText(p, text, maxWidth) {
 }
 
 function extraImageLoaded(image, p, imageName, parentImage) {
-  const scaleFactor = 5;
+  const scaleFactor = 10;
 
-  const canvasHeight = document.getElementById('defaultCanvas0').style.height;
+  //const canvasHeight = document.getElementById('defaultCanvas0').style.height;
   let randomX = p.random(0, p.windowWidth - image.width / scaleFactor);
-  let randomY = p.random(45 + parentImage.img.height, parseInt(canvasHeight) - (parseInt(image.height) / scaleFactor));
+  let randomY = p.random(45 + parentImage.img.height, parseInt(p.windowHeight) - (parseInt(image.height) / scaleFactor));
   extraImages.push({
     img: image,
     width: image.width / scaleFactor,
@@ -126,12 +98,12 @@ function extraImageLoaded(image, p, imageName, parentImage) {
 function extraVideoLoaded(videoPath, p, videoName, parentImage) {
   const scaleFactor = 2;
 
-  const canvasHeight = document.getElementById('defaultCanvas0').style.height;
+  //const canvasHeight = document.getElementById('defaultCanvas0').style.height;
 
   let video = p.createVideo([`./images/extra_videos/${videoPath}.mp4`], () => {
     video.size(video.width / scaleFactor, video.height / scaleFactor);
     let randomX = p.random(0, p.windowWidth / scaleFactor);
-    let randomY = p.random(45 + parentImage.img.height, parseInt(canvasHeight) - (parseInt(video.height) / scaleFactor));
+    let randomY = p.random(45 + parentImage.img.height, parseInt(p.windowHeight) - (parseInt(video.height) / scaleFactor));
     video.position(randomX, randomY);
     video.loop();
     video.hide();
@@ -206,11 +178,11 @@ for (let i = 0; i < extraVideos.length; i++) {
       p.mouseY >= iconY && p.mouseY <= iconY + closingIconSize;
     if (closeClicked) {
       // Show elements
-      document.getElementById('header').style.display = '';
+      //document.getElementById('header').style.display = '';
       document.getElementById('textContainer').style.display = '';
       //document.getElementById('otherTextContainer').style.display = '';
       document.getElementById('buttonsContainer').style.display = '';
-      document.getElementsByClassName('rectangle-wrapper')[0].style.display = '';
+      //document.getElementsByClassName('rectangle-wrapper')[0].style.display = '';
       showFullScreenImage = false;
       window.set3DObjectVisibility(true);
       return;
@@ -225,11 +197,11 @@ for (let i = 0; i < extraVideos.length; i++) {
       showExtraImages = true;
 
       // Hide elements
-      document.getElementById('header').style.display = 'none';
+      //document.getElementById('header').style.display = 'none';
       document.getElementById('textContainer').style.display = 'none';
       //document.getElementById('otherTextContainer').style.display = 'none';
       document.getElementById('buttonsContainer').style.display = 'none';
-      document.getElementsByClassName('rectangle-wrapper')[0].style.display = 'none';
+     // document.getElementsByClassName('rectangle-wrapper')[0].style.display = 'none';
       document.body.scrollTop = document.documentElement.scrollTop = 0;
 
       /*// Find the associated extra images for the clicked image
