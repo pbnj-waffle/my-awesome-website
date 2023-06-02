@@ -297,7 +297,7 @@ let sketch2D = new p5((p) => {
 
       if (imgData.shouldDuplicate) duplicateImage(imgData, p);// DUPLICATE
   
-  
+      let lines = wrapText(p, imgData.filename, imgData.width);
       if (imgData.shouldMove && p.millis() > imgData.startTime && (p.millis() - imgData.startTime) < imgData.stopAfter) {
         imgData.framesSinceLastTrail++;
         console.log(`Image frames since last trail: ${imgData.framesSinceLastTrail}`);
@@ -307,8 +307,7 @@ let sketch2D = new p5((p) => {
           imgData.framesSinceLastTrail = 0;
       
           // Set framesBetweenTrail to a random value
-          const trailFrames = [10, 25, 100];
-          imgData.framesBetweenTrail = trailFrames[Math.floor(Math.random() * trailFrames.length)];
+          
           console.log(`Selected frame interval: ${imgData.framesBetweenTrail}`);
         }
   
@@ -323,7 +322,7 @@ let sketch2D = new p5((p) => {
 
         // Make sure the image doesn't go off the screen
         imgData.x = p.constrain(imgData.x, 0, p.windowWidth - imgData.width);
-        imgData.y = p.constrain(imgData.y, 0, p.windowHeight - imgData.height);
+        imgData.y = p.constrain(imgData.y, 10 + lines.length * 12, p.windowHeight - imgData.height);
       }
   
       // Define imgToDraw inside the loop
@@ -340,7 +339,7 @@ let sketch2D = new p5((p) => {
     textBuffer.textSize(10);
     textBuffer.textFont(myFont);
     textBuffer.fill(255); 
-    let lines = wrapText(p, imgData.filename, imgData.width);
+    
     for (let i = 0; i < lines.length; i++) {
       textBuffer.text(lines[i], imgData.x, imgData.y - 10 - (lines.length - 1 - i) * 12); 
       let textY = imgData.y - 10 - (lines.length - 1 - i) * 12; //TEXT GOING OFF SCREEN NOT WORKING

@@ -44,6 +44,12 @@ function imageLoaded(image, p, imageName) {
     noiseSeedY: p.random(1000),
     noiseOffset: 0,
     framesSinceLastTrail: 0,
+    framesBetweenTrail: null,
+    initFramesBetweenTrail: function() {
+      const trailFrames = [10, 25, 100];
+      this.framesBetweenTrail = trailFrames[Math.floor(Math.random() * trailFrames.length)];
+      return this;
+    },
     processedImg: null,
     timeElapsed: 0,
     //shouldDuplicate: shouldDuplicate,
@@ -54,7 +60,11 @@ function imageLoaded(image, p, imageName) {
     noBlending: noBlending,
     text: imageTexts[imageName] || '',
     filename: imageName,
-  });
+    init: function() {
+      this.initFramesBetweenTrail();
+      return this;
+    }
+  }.init());
 }
 
 function wrapText(p, text, maxWidth) {
