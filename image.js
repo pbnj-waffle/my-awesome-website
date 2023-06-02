@@ -1,5 +1,5 @@
 const EDGE_THRESHOLD = 5;
-const associatedExtraImages = ["coterie1", "coterie2", "coterie3", "coterie4"];
+//const associatedExtraImages = ["coterie1", "coterie2", "coterie3", "coterie4"];
 let extraImages = [];
 let extraImagesData = {};
 let showExtraImages = false;
@@ -204,12 +204,9 @@ for (let i = 0; i < extraVideos.length; i++) {
      // document.getElementsByClassName('rectangle-wrapper')[0].style.display = 'none';
       document.body.scrollTop = document.documentElement.scrollTop = 0;
 
-      /*// Find the associated extra images for the clicked image
-      const imageName = `img (${i + 1})`;  // Construct the image name
-      const associatedExtraImages = extraImagesData[imageName];
-
-      // Reinitialize extraImages to be an empty array
-      extraImages = [];*/
+      // Find the associated extra images for the clicked image
+      const associatedExtraImages = extraImagesData[imgData.filename];
+      extraImagesData[imgData.filename] = [];
 
       // Only load the associated extra images
       for (let i = 0; i < associatedExtraImages.length; i++) {
@@ -220,8 +217,8 @@ for (let i = 0; i < extraVideos.length; i++) {
       }
 
       //EXTRA VIDEOS:
-      console.log(extraVideosData, imageNames)
       const associatedExtraVideos = extraVideosData[imageNames];
+      extraVideosData[imageNames] = [];
       for (let i = 0; i < associatedExtraVideos.length; i++) {
         const extraVideoName = associatedExtraVideos[i];
         extraVideoLoaded(extraVideoName, p, extraVideoName, imgData);
