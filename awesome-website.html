@@ -18,6 +18,7 @@
     <!--<script src="imageTexts.json" defer></script>-->
     <script type="module" src="3d_module.js" defer></script>
     <script src="image.js" defer></script>
+    <script src="balance.js" defer></script>
   </head>
   <body>
     
@@ -39,17 +40,28 @@
     <!--<div id="otherTextContainer">is this what you're looking for? <br><br> if not, try
     <img src="./f51.webp" style="height: 50px; width: 50px;">
     </div>-->
-    <div id="canvasGlobalContainer" style="width: 100%; height: 100%; position: absolute; top: 0">
+    <div id="overlay">
+      <div id="balanceContainer">
+        <div id="balance">
+          <span id="leftWord"></span>
+          <div id="ball"></div>
+          <div id="ball1" class="hidden"></div>
+          <div id="ball2" class="hidden"></div>
+          <span id="rightWord"></span>
+        </div>
+      </div>
+   </div>
+    <div id="canvasGlobalContainer" style="overflow: hidden; width: 100%; height: 100%; position: absolute; top: 0">
       <div id="canvasContainer2"></div>
       <!--<div id="videoContainer">
         <video id="myVideo" autoplay></video>
       </div>-->
       <div id="canvasContainer"></div>
       <div id="trailContainer"></div>
-      <div id="buttonsContainer">
+      <!--<div id="buttonsContainer">
         <p>This portfolio was created as a part of my diploma project,<br> resulting in the creation of an anti-design tool,<br> capable of surprising you.<br>Try it here: </p>
         <button onclick="window.location.href = 'GodMode.html';">god mode</button>  
-      </div>
+      </div>-->
     </div>
     <!--<div class="marquee-top">
       <div class="marquee-content">

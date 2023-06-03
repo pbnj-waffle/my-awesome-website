@@ -16,6 +16,7 @@ let extraVideosData = {};
 function imageLoaded(image, p, imageName) {
   const scaleFactor = p.random(6, 8);
   const effectRandom = p.floor(p.random(1, 101));
+  console.log('Random number generated:', effectRandom);
   const shouldMove = 0 < effectRandom && effectRandom <= 100;
   //const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
   const shouldTrail = p.random() < 0.3; // NOT WORKING
@@ -162,7 +163,6 @@ function mousePressed(p) {
     imgData.isDragging = true;
     imgData.dragOffsetX = p.mouseX - imgData.x;
     imgData.dragOffsetY = p.mouseY - imgData.y;
-    console.log("Image clicked");
   }
 }
 
@@ -175,7 +175,6 @@ for (let i = 0; i < extraVideos.length; i++) {
     vidData.isDragging = true;
     vidData.dragOffsetX = p.mouseX - vidData.x;
     vidData.dragOffsetY = p.mouseY - vidData.y;
-    console.log("Video clicked");
   }
 }
 
@@ -191,7 +190,7 @@ for (let i = 0; i < extraVideos.length; i++) {
       //document.getElementById('header').style.display = '';
       document.getElementById('textContainer').style.display = '';
       //document.getElementById('otherTextContainer').style.display = '';
-      document.getElementById('buttonsContainer').style.display = '';
+      //document.getElementById('buttonsContainer').style.display = '';
       //document.getElementsByClassName('rectangle-wrapper')[0].style.display = '';
       showFullScreenImage = false;
       window.set3DObjectVisibility(true);
@@ -210,7 +209,7 @@ for (let i = 0; i < extraVideos.length; i++) {
       //document.getElementById('header').style.display = 'none';
       document.getElementById('textContainer').style.display = 'none';
       //document.getElementById('otherTextContainer').style.display = 'none';
-      document.getElementById('buttonsContainer').style.display = 'none';
+      //document.getElementById('buttonsContainer').style.display = 'none';
      // document.getElementsByClassName('rectangle-wrapper')[0].style.display = 'none';
       document.body.scrollTop = document.documentElement.scrollTop = 0;
 

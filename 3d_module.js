@@ -273,8 +273,8 @@ const animate3D = () => {
 
   if (my3DModel) {
     if (isMousePressedOn3D && isMouseOver3DObject({ clientX: lastMousePosition.x, clientY: lastMousePosition.y })) {
-      const deltaX = (lastMousePosition.x - renderer.domElement.clientWidth / 2) * 0.00005;//speed
-      const deltaY = (lastMousePosition.y - renderer.domElement.clientHeight / 2) * 0.00005;//speed
+      const deltaX = (lastMousePosition.x - renderer.domElement.clientWidth / 2) * 0.0001;//speed
+      const deltaY = (lastMousePosition.y - renderer.domElement.clientHeight / 2) * 0.0001;//speed
 
       objectRotation.x += deltaY;
       objectRotation.y += deltaX;

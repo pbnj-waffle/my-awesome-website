@@ -12,6 +12,7 @@ let buffer; //IMPORTANT to use to keep browser from crashing
 let squareTrailBuffer;
 let squareBuffer;
 let blurredBgBuffer = null;
+let logBuffer;
 let bgBuffer;
 let textBuffer;
 let textTrailBuffer;
@@ -35,7 +36,7 @@ let isMousePressedOn3D = false;
 let clickedImageData = null;
 let isBlurApplied = false;
 //let canvasHeight;
-let bgImagesNames = ["thunder.png", "thunder.png"];
+let bgImagesNames = ["cat_tv.png", "cat_tv.png"];
 let bgImages = [];
 let chosenBgImage;
 let videoNames = ["bg.mp4"];
@@ -54,9 +55,105 @@ let bubbleSize = 500;
 let noiseScale = 0.02; // The scale of the noise. Adjust this value to get different effects
 let bubbleAlpha = 0.5; // The transparency of the bubble
 let gif;
+let storedLogs = [];
+let lastLogTime = 0;
+let logDisplayDuration = 10;
+let logCreationInterval = 5000; 
+let logQueue = [];
+
+
+
+
+function LogData(message, x, y, move, speed, angle, stopMovingAfter, timestamp) {
+  this.message = message;
+  this.x = x;
+  this.y = y;
+  this.speed = speed;
+  this.angle = angle;
+  this.move = move;
+  this.trail = [];
+  this.framesSinceLastTrail = 0;
+  this.framesBetweenTrail = this.randomFramesBetweenTrail();
+  this.noiseSeedX = Math.random() * 100;
+  this.noiseSeedY = Math.random() * 100;
+  this.noiseOffset = 0;
+  this.stopMovingAfter = stopMovingAfter;
+  this.timestamp = timestamp;
+}
+
+
+LogData.prototype.randomFramesBetweenTrail = function() {
+  const minFrames = 10; // Minimum frames between trail
+  const maxFrames = 100; // Maximum frames between trail
+  return Math.floor(Math.random() * (maxFrames - minFrames + 1) + minFrames);
+};
 
 
 let sketch2D = new p5((p) => {
+ window.p = p;
+  console.log("sketch created");
+    // Store original console.log function
+    const originalLog = console.log;
+    // Overwrite the console.log
+    console.log = function(...messages) {
+      originalLog(...messages);
+      let stopMovingAfterOptions = [5000, 10000, 15000];
+      let stopMovingAfter = stopMovingAfterOptions[Math.floor(Math.random() * stopMovingAfterOptions.length)];
+  
+      let messageObject = new LogData(
+        messages.join(' '),
+        Math.random() * (window.innerWidth - 50), 
+        Math.random() * (window.innerHeight - 50),
+        Math.random() < 1,
+        Math.random() * 5,
+        Math.random() * Math.PI * 2,
+        stopMovingAfter,
+        p.millis() 
+      );
+      logQueue.push(messageObject); 
+    }
+
+    p.updateMessage = function(log) {
+      if (log.move && p.millis() - log.timestamp < log.stopMovingAfter) {
+        
+        log.noiseOffset += 0.01;
+        
+        // Perlin noise for moving
+        const noiseX = p.map(p.noise(log.noiseSeedX + log.noiseOffset), 0, 1, -1, 1);
+        const noiseY = p.map(p.noise(log.noiseSeedY + log.noiseOffset), 0, 1, -1, 1);
+        log.x += noiseX;
+        log.y += noiseY;
+    
+        // Make sure the message doesn't go off the screen
+        log.x = p.constrain(log.x, 0, p.windowWidth);
+        log.y = p.constrain(log.y, 0, p.windowHeight);
+      }
+      
+      // Always add a trail point, even if the text is not moving
+      log.framesSinceLastTrail++;
+      if (log.framesSinceLastTrail >= log.framesBetweenTrail) {
+        let textWidth = p.textWidth(log.message);
+        let adjustedX = p.constrain(log.x, 0, p.windowWidth - textWidth);
+        log.trail.push({ x: adjustedX, y: log.y });
+        log.framesSinceLastTrail = 0;
+      }
+      
+      p.fill(255);
+      p.textSize(10);
+       // Calculate text width
+  let textWidth = p.textWidth(log.message);
+  
+  // Adjust x position based on text width
+  let adjustedX = p.constrain(log.x, 0, p.windowWidth - textWidth);
+
+// Draw the message trail
+for (const trailPosition of log.trail) {
+  p.text(log.message, trailPosition.x, trailPosition.y);
+}
+  
+  // Draw the message
+  p.text(log.message, adjustedX, log.y);
+}
   /*let bubblePoints = Array(20).fill().map((_, i, arr) => {
     let angle = p.map(i, 0, arr.length, 0, p.TWO_PI);
     return {
@@ -65,7 +162,7 @@ let sketch2D = new p5((p) => {
         noiseSeed: p.random(0, 100) // each point has its own seed value
     };
 });*/
-  sketchInstance = p;
+
   //canvasHeight = document.getElementById('canvasGlobalContainer').offsetHeight;
   p.mousePressed = () => {
     mousePressed(p);
@@ -75,8 +172,6 @@ let sketch2D = new p5((p) => {
     mouseReleased(p);
   };
 
-  
-
   p.preload = () => {
     //gif = p.loadImage('./test.gif');//GIF
    /* const randomIndex = Math.floor(p.random(videoNames.length));
@@ -84,10 +179,10 @@ let sketch2D = new p5((p) => {
       chosenVideo.elt.muted = true;
       chosenVideo.play();
   });*/
-    /*for (let i = 0; i < bgImagesNames.length; i++) { //BACKGROUND IMAGES
+    for (let i = 0; i < bgImagesNames.length; i++) { //BACKGROUND IMAGES
       let img = p.loadImage(bgImagesNames[i]);
       bgImages.push(img);
-    }*/
+    }
     
     for (let i = 0; i < imageNames.length; i++) { // MAIN IMAGES
       const img = p.loadImage(`./images/${imageNames[i]}.png`, () => {
@@ -103,7 +198,7 @@ let sketch2D = new p5((p) => {
   imageTexts = p.loadJSON('imageTexts.json');
   extraImagesData = p.loadJSON('extraImages.json');
   extraVideosData = p.loadJSON('extraVideos.json');
-  myFont = p.loadFont('Sprat-Regular.otf');
+  myFont = p.loadFont('SourceCodePro-Regular.ttf');
   }
   
   
@@ -120,7 +215,7 @@ let sketch2D = new p5((p) => {
     blurredBgBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     textBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     textTrailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
-
+    logBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     /*for(let angle = 0; angle < 2 * p.PI; angle += 0.3){ //BUBBLE
       bubblePoints.push({angle: angle, r: bubbleSize/2});
     }*/
@@ -129,8 +224,8 @@ let sketch2D = new p5((p) => {
     chosenVideo.hide();
     chosenVideo.volume(0);*/
 
-    /*const randomIndex = Math.floor(p.random(bgImages.length));
-    chosenBgImage = bgImages[randomIndex];*/
+    const randomIndex = Math.floor(p.random(bgImages.length));
+    chosenBgImage = bgImages[randomIndex];
 
     
   /*let randomNumber3 = Math.floor(Math.random() * 100);
@@ -187,15 +282,18 @@ let sketch2D = new p5((p) => {
       squareBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     
   }
+
+  
+
   
     p.draw = () => {
+      
      // p.background(0);
-      //p.image(chosenVideo, 0, 0,  p.windowWidth, canvasHeight);
+      p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
       textBuffer.clear();
       if (showFullScreenImage) {
 
-      p.fill(0);
-       p.rect(0, 0, p.width, p.height);
+        p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
 
         // Draw the main image
         const aspectRatio = fullScreenImage.width / fullScreenImage.height;
@@ -241,14 +339,15 @@ let sketch2D = new p5((p) => {
         }
       } else {
         isBlurApplied = false;
-       if (!transitionFinished) {
+       /*if (!transitionFinished) {
           initTransitionIfNeeded();
           bgColor = p.lerpColor(transitionBeginColor, targetColor, getTransitionProgress());
         }
-        p.background(bgColor);
+        p.background(bgColor);*/
         bgBuffer.clear(); // Clear bgBuffer here, after checking showFullScreenImage
         
         p.image(bgBuffer, 0, 0, p.windowWidth, p.windowHeight);
+
       //currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
      // bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, canvasHeight);
 
@@ -300,15 +399,10 @@ let sketch2D = new p5((p) => {
       let lines = wrapText(p, imgData.filename, imgData.width);
       if (imgData.shouldMove && p.millis() > imgData.startTime && (p.millis() - imgData.startTime) < imgData.stopAfter) {
         imgData.framesSinceLastTrail++;
-        console.log(`Image frames since last trail: ${imgData.framesSinceLastTrail}`);
       
         if (imgData.framesSinceLastTrail >= imgData.framesBetweenTrail) {
           imgData.trail.push({ x: imgData.x, y: imgData.y });
           imgData.framesSinceLastTrail = 0;
-      
-          // Set framesBetweenTrail to a random value
-          
-          console.log(`Selected frame interval: ${imgData.framesBetweenTrail}`);
         }
   
         const speed = 0.001;
@@ -388,6 +482,16 @@ if (hoveredImgData && mouseOverHoveredImage) {
     p.drawingContext.shadowColor = 'rgba(0,0,0,0)';
 }
 
+let currentTime = p.millis();
+if (currentTime - lastLogTime >= logCreationInterval && logQueue.length > 0) {
+  storedLogs.push(logQueue.shift());
+  lastLogTime = currentTime;
+}
+
+for (let i = 0; i < storedLogs.length; i++) {
+  let log = storedLogs[i];
+  p.updateMessage(log);
+}
 
     updateCursor(p)
  
@@ -441,7 +545,7 @@ if (hoveredImgData && mouseOverHoveredImage) {
       drawMovingSquare(p);
       drawMainSquare(p); // Add this line to draw the main square
     }
-
+    p.image(logBuffer, 0, 0);
     p.pop(); // Restore the previous context
     
   };

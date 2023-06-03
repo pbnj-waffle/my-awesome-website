@@ -45,6 +45,7 @@ font-style: normal;
   }  
 
 body {
+  background-color: #000000;
   max-width: 100%;
   font-family: 'NeueMetanaMono-SemiBold' !important;
   margin: 0;
@@ -54,6 +55,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: url(./midfinger.cur) 4 12, auto;
+  overflow: hidden;
 }
 
 body::-webkit-scrollbar {
@@ -115,7 +117,7 @@ z-index: 3;
   text-align: center;
   left: 45px;
   right: 45px;
-  top: 100px;
+  top: 10px;
   position: absolute;
   font-size: 4em;
   color: white;
@@ -369,4 +371,104 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
 100% {
   transform: translateX(-100%);
 }
+}
+
+#balanceContainer {
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#balance {
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  width: 70%;
+  position: relative;
+}
+
+#leftWord, #rightWord {
+  z-index: 20;
+  position: absolute;
+}
+
+#leftWord {
+  z-index: 20;
+  color: #ffffff;
+  left: 30px;
+  font-size: 2em;
+  white-space: nowrap;
+}
+
+#rightWord {
+  z-index: 20;
+  right: 30px;
+  color:#ffffff;
+  font-size: 2em;
+  white-space: nowrap;
+}
+
+#line {
+  z-index: 20;
+  height: 2px;
+  background: white;
+  position: relative;
+  width: 50%;
+}
+
+#ball {
+  z-index: 20;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgb(255, 255, 255);
+  border-radius: 50%;
+  top: -10px;  /* half the height */
+  left: 50%;
+}
+
+#ball1 {
+  z-index: 20;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgb(255, 255, 255);
+  border-radius: 50%;
+  top: -10px;  /* half the height */
+  left: 50%;
+
+}
+
+#ball2 {
+  z-index: 20;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgb(255, 255, 255);
+  border-radius: 50%;
+  top: -10px;  /* half the height */
+  left: 50%;
+}
+
+.hidden-ball {
+  display: none;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000000;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
