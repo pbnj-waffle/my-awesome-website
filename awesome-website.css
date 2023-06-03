@@ -398,26 +398,24 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   display: table-cell;
 }
 
-#leftWord {
+#leftWord, #rightWord {
   color: #ffffff;
   /*left: 30px;*/
   font-size: 2em;
   white-space: nowrap;
-  width: 40%;
+  width: calc((100vw - 500px) / 2);
+}
+
+#leftWord {
   text-align: right;
 }
 
 #rightWord {
-  /*right: 30px;*/
-  color:#ffffff;
-  font-size: 2em;
-  white-space: nowrap;
-  width: 40vw;
   text-align: left;
 }
 
 #ball-container {
-  width: 20vw;
+  width: 500px;
 }
 
 #ball-container > * {

@@ -158,7 +158,7 @@ balanceTl.to("#ball", {
 }, 5)
 // Move the new balls to the opposite sides
 .to("#ball1", {
-  xPercent: -900,
+  xPercent: -1200,
   duration: 1,
   ease: "power1.inOut",
   onStart: () => {
@@ -167,7 +167,7 @@ balanceTl.to("#ball", {
   }
 }, 5)
 .to("#ball2", {
-  xPercent: 900,
+  xPercent: 1200,
   duration: 1,
   ease: "power1.inOut",
   onStart: () => {
