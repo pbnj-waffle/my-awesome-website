@@ -379,77 +379,65 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   justify-content: center;
   align-items: center;
   height: 100vh;
+  width: 100%;
+}
+
+#balance-wrapper {
+  display: table;
+  width: 100%;
 }
 
 #balance {
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  width: 70%;
+  display: table-row;
+  width: 100%;
   position: relative;
 }
 
-#leftWord, #rightWord {
-  z-index: 20;
-  position: absolute;
+
+#leftWord, #ball-container, #rightWord {
+  display: table-cell;
 }
 
 #leftWord {
-  z-index: 20;
   color: #ffffff;
-  left: 30px;
+  /*left: 30px;*/
   font-size: 2em;
   white-space: nowrap;
+  width: 40%;
+  text-align: right;
 }
 
 #rightWord {
-  z-index: 20;
-  right: 30px;
+  /*right: 30px;*/
   color:#ffffff;
   font-size: 2em;
   white-space: nowrap;
+  width: 40vw;
+  text-align: left;
 }
 
-#line {
-  z-index: 20;
-  height: 2px;
-  background: white;
-  position: relative;
-  width: 50%;
+#ball-container {
+  width: 20vw;
+}
+
+#ball-container > * {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgb(255, 255, 255);
+  border-radius: 50%;
+  top: 6px;  /* half the height */
+  left: calc(50% - 10px);
 }
 
 #ball {
-  z-index: 20;
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: rgb(255, 255, 255);
-  border-radius: 50%;
-  top: -10px;  /* half the height */
-  left: 50%;
 }
 
 #ball1 {
-  z-index: 20;
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: rgb(255, 255, 255);
-  border-radius: 50%;
-  top: -10px;  /* half the height */
-  left: 50%;
 
 }
 
 #ball2 {
-  z-index: 20;
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: rgb(255, 255, 255);
-  border-radius: 50%;
-  top: -10px;  /* half the height */
-  left: 50%;
 }
 
 .hidden-ball {
