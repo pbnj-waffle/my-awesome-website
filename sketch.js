@@ -29,16 +29,18 @@ let isBlackBg = true;
 let isBgAnimationEnabled = true; 
 let showFullScreenImage = false;
 let fullScreenImage = null;
-const closingIconSize = 50;
+const closingIconSize = 60;
 let imageTexts;
 let fullScreenImageText = '';
 let isMousePressedOn3D = false;
 let clickedImageData = null;
 let isBlurApplied = false;
 //let canvasHeight;
-let bgImagesNames = ["cat_tv.png", "cat_tv.png"];
+let bgImagesNames = ["cat_tv.png", "no_fun_tv.png", "armchair_tv.png"];
 let bgImages = [];
-let chosenBgImage;
+let overlayImagesNames = ["loading_screen_cat_tv.png", "loading_screen_no_fun_tv.png", "loading_screen_armchair_tv.png"];
+let overlayImages = [];
+let chosenBgImage, chosenOverlayImageName;
 let videoNames = ["bg.mp4"];
 let bgVideos = [];
 let chosenVideo;
@@ -46,7 +48,8 @@ let hoveredImage = null;
 let hoveredImgData = null;
 const ARROW = 'default';
 let cursorType = ARROW;
-let myFont;
+let mainFont;
+let secondaryFont;
 let letters = [];
 let texts = [];
 let bubbleX, bubbleY;
@@ -60,8 +63,9 @@ let lastLogTime = 0;
 let logDisplayDuration = 10;
 let logCreationInterval = 5000; 
 let logQueue = [];
-
-
+let imageX, imageY; 
+let showAboutSection = false;
+let showContactSection = false;
 
 
 function LogData(message, x, y, move, speed, angle, stopMovingAfter, timestamp) {
@@ -164,25 +168,28 @@ for (const trailPosition of log.trail) {
 });*/
 
   //canvasHeight = document.getElementById('canvasGlobalContainer').offsetHeight;
-  p.mousePressed = () => {
-    mousePressed(p);
-  };
+p.mousePressed = () => {
+  mousePressed(p);
+};
   
-  p.mouseReleased = () => {
-    mouseReleased(p);
-  };
+p.mouseReleased = () => {
+  mouseReleased(p);
+};
 
-  p.preload = () => {
+p.preload = () => {
     //gif = p.loadImage('./test.gif');//GIF
    /* const randomIndex = Math.floor(p.random(videoNames.length));
     chosenVideo = p.createVideo([videoNames[randomIndex]], () => {
       chosenVideo.elt.muted = true;
       chosenVideo.play();
   });*/
-    for (let i = 0; i < bgImagesNames.length; i++) { //BACKGROUND IMAGES
-      let img = p.loadImage(bgImagesNames[i]);
-      bgImages.push(img);
-    }
+  for (let i = 0; i < bgImagesNames.length; i++) { //BACKGROUND AND LOADING SCREEN IMAGES
+    let bgImg = p.loadImage(bgImagesNames[i]);
+    let overlayImg = p.loadImage(`loading_screen_${bgImagesNames[i]}`); // Load corresponding overlay image
+
+    bgImages.push(bgImg);
+    overlayImages.push(overlayImg);
+  }
     
     for (let i = 0; i < imageNames.length; i++) { // MAIN IMAGES
       const img = p.loadImage(`./images/${imageNames[i]}.png`, () => {
@@ -198,7 +205,8 @@ for (const trailPosition of log.trail) {
   imageTexts = p.loadJSON('imageTexts.json');
   extraImagesData = p.loadJSON('extraImages.json');
   extraVideosData = p.loadJSON('extraVideos.json');
-  myFont = p.loadFont('SourceCodePro-Regular.ttf');
+  mainFont = p.loadFont('00BusinessHistory-Regular.otf');
+  secondaryFont = p.loadFont('SourceCodePro-Regular.ttf');
   }
   
   
@@ -226,7 +234,21 @@ for (const trailPosition of log.trail) {
 
     const randomIndex = Math.floor(p.random(bgImages.length));
     chosenBgImage = bgImages[randomIndex];
-
+     /*chosenOverlayImageName = `loading_screen_${bgImagesNames[randomIndex]}`;
+  
+    document.getElementById('overlay').style.backgroundImage = `url(${chosenOverlayImageName})`;
+ 
+    // Fade out the mask after a delay
+    setTimeout(() => {
+      const mask = document.getElementById('mask');
+      mask.style.transition = 'opacity 1s ease-out';
+      mask.style.opacity = 0;
+  
+      // remove the mask from the DOM completely after the fade-out animation
+      setTimeout(() => {
+        mask.parentNode.removeChild(mask);
+      }, 200); //match the transition duration above
+    }, 200); // delay in milliseconds*/
     
   /*let randomNumber3 = Math.floor(Math.random() * 100);
 
@@ -287,41 +309,49 @@ for (const trailPosition of log.trail) {
 
   
     p.draw = () => {
+      p.clear()
+      if (showAboutSection || showContactSection) {
+         // show only the background and the header
+    p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
+  } else {
       
      // p.background(0);
       p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
       textBuffer.clear();
+ 
       if (showFullScreenImage) {
 
         p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
 
         // Draw the main image
         const aspectRatio = fullScreenImage.width / fullScreenImage.height;
-        const imageWidth = p.windowWidth / 2; 
-        const displayHeight = Math.min(p.windowHeight, imageWidth / aspectRatio);
-        const imageX = 45;
-        const imageY = 45;
-        p.image(fullScreenImage, imageX, imageY, imageWidth, displayHeight);
+        const imageWidth = Math.min(p.windowWidth / 1.5, aspectRatio * p.windowHeight / 1.5);
+        const imageHeight = imageWidth / aspectRatio;
+        imageX = 45;
+        imageY = (p.windowHeight - imageHeight) / 2;
+        p.image(fullScreenImage, imageX, imageY, imageWidth, imageHeight);
+
     
         // Draw the associated text on the right half of the screen
         const textStart = p.windowWidth / 2 + 100; 
-        const textWidth = p.windowWidth / 2 - 100; 
-        p.textFont(myFont); 
-        p.textSize(50);
-        p.textAlign(p.LEFT, p.TOP); 
+        const textWidth = p.windowWidth / 1.5 ; 
+        p.textLeading(50);
+        p.textFont(mainFont); 
+        p.textSize(45);
+        p.textAlign(p.CENTER, p.TOP); 
         p.fill(255);
         p.text(fullScreenImageText, textStart, imageY, textWidth);
-    
+
         // Draw closing icon
-        p.push(); 
-        p.stroke(255);
-        p.strokeWeight(4);
         iconX = ( p.windowWidth - 20 ) - closingIconSize; // make this a global variable
-        iconY = imageY;  // Adjust the iconY to match the top of the image. Make this a global variable too.
-        p.line(iconX, iconY, iconX + closingIconSize, iconY + closingIconSize);
-        p.line(iconX + closingIconSize, iconY, iconX, iconY + closingIconSize);
+        iconY = 60;  
+        p.push();
+        p.textFont(mainFont);
+        p.textSize(closingIconSize);
+        p.fill(255, 0, 0);
+        p.text("X", iconX, iconY);
         p.pop();
-        
+
         if (showExtraImages) {
           const validExtraImages = extraImages.filter(imgData => imgData != null);
         
@@ -429,16 +459,16 @@ for (const trailPosition of log.trail) {
       // Main image
       buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
 
-    // Draw the image filename to the textBuffer
+    /*// Draw the image filename to the textBuffer
     textBuffer.textSize(10);
-    textBuffer.textFont(myFont);
-    textBuffer.fill(255); 
+    textBuffer.textFont(secondaryFont);
+    textBuffer.fill(255, 0, 0); 
     
     for (let i = 0; i < lines.length; i++) {
       textBuffer.text(lines[i], imgData.x, imgData.y - 10 - (lines.length - 1 - i) * 12); 
       let textY = imgData.y - 10 - (lines.length - 1 - i) * 12; //TEXT GOING OFF SCREEN NOT WORKING
       textY = p.constrain(textY, 0, p.windowHeight - 10); 
-    }
+    } */
     
     }
   }
@@ -549,6 +579,7 @@ for (let i = 0; i < storedLogs.length; i++) {
     p.pop(); // Restore the previous context
     
   };
+};
 };
 // Smoothing function
 function smoothingFunction(x) {

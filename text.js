@@ -87,12 +87,14 @@ window.onload = function() {
 
     });
   }
-
+/*
   // Define the array of word pairs
 const wordPairs = [
   ["experience", "message"],
-  ["go with the flow", "stand out"],
-  ["planning", "discovery"]
+  ["conform", "stand out"],
+  ["planning", "discovery"],
+  ["details", "big picture"],
+  ["meet expectations", "surprise"]
 ];
 
 // Choose a random pair of words
@@ -174,9 +176,9 @@ balanceTl.to("#ball", {
     // Set the xPercent to 0 to avoid the initial "jump"
     gsap.set("#ball2", { xPercent: 0 });
   }
-}, 5);
+}, 5);*/
 
-  
+ 
   
     setTimeout(() => {
       tl.play().then(() => {
@@ -185,5 +187,5 @@ balanceTl.to("#ball", {
         textElement.style.display = 'block';
     
       });
-    }, 10000);
+    }, 20000);
 }

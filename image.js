@@ -4,7 +4,7 @@ let extraImages = [];
 let extraImagesData = {};
 let showExtraImages = false;
 let isExtraImagesLoaded = false;
-const imageNames = ["coterie - a collaborative project brought together at Biography Design in Toronto - merch design for Coterie - a Cannabis Brand"];
+const imageNames = ["coterie"];
 let extraVideos = [];
 let extraVideosData = {};
 /*function fileSelected(event, p) {
@@ -70,7 +70,7 @@ function imageLoaded(image, p, imageName) {
 
 function wrapText(p, text, maxWidth) {
   p.textSize(12);
-  p.textFont(myFont)
+  p.textFont(secondaryFont)
   let words = text.split(' ');
   let lines = [];
   let currentLine = words[0];
@@ -90,11 +90,10 @@ function wrapText(p, text, maxWidth) {
 }
 
 function extraImageLoaded(image, p, imageName, parentImage) {
-  const scaleFactor = 10;
+  const scaleFactor = 8;
 
-  //const canvasHeight = document.getElementById('defaultCanvas0').style.height;
   let randomX = p.random(0, p.windowWidth - image.width / scaleFactor);
-  let randomY = p.random(45 + parentImage.img.height, parseInt(p.windowHeight) - (parseInt(image.height) / scaleFactor));
+  let randomY = p.random(0, p.windowHeight - image.height / scaleFactor);
   extraImages.push({
     img: image,
     width: image.width / scaleFactor,
@@ -107,14 +106,12 @@ function extraImageLoaded(image, p, imageName, parentImage) {
 }
 
 function extraVideoLoaded(videoPath, p, videoName, parentImage) {
-  const scaleFactor = 2;
-
-  //const canvasHeight = document.getElementById('defaultCanvas0').style.height;
+  const scaleFactor = 6;
 
   let video = p.createVideo([`./images/extra_videos/${videoPath}.mp4`], () => {
     video.size(video.width / scaleFactor, video.height / scaleFactor);
-    let randomX = p.random(0, p.windowWidth / scaleFactor);
-    let randomY = p.random(45 + parentImage.img.height, parseInt(p.windowHeight) - (parseInt(video.height) / scaleFactor));
+    let randomX = p.random(0, p.windowWidth - video.width / scaleFactor);
+    let randomY = p.random(0, p.windowHeight - video.height / scaleFactor);
     video.position(randomX, randomY);
     video.loop();
     video.hide();
@@ -126,7 +123,6 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
       isDragging: false,
     });
   });
-
 }
 
 
@@ -187,11 +183,7 @@ for (let i = 0; i < extraVideos.length; i++) {
       p.mouseY >= iconY && p.mouseY <= iconY + closingIconSize;
     if (closeClicked) {
       // Show elements
-      //document.getElementById('header').style.display = '';
       document.getElementById('textContainer').style.display = '';
-      //document.getElementById('otherTextContainer').style.display = '';
-      //document.getElementById('buttonsContainer').style.display = '';
-      //document.getElementsByClassName('rectangle-wrapper')[0].style.display = '';
       showFullScreenImage = false;
       window.set3DObjectVisibility(true);
       return;
@@ -206,12 +198,7 @@ for (let i = 0; i < extraVideos.length; i++) {
       showExtraImages = true;
 
       // Hide elements
-      //document.getElementById('header').style.display = 'none';
       document.getElementById('textContainer').style.display = 'none';
-      //document.getElementById('otherTextContainer').style.display = 'none';
-      //document.getElementById('buttonsContainer').style.display = 'none';
-     // document.getElementsByClassName('rectangle-wrapper')[0].style.display = 'none';
-      document.body.scrollTop = document.documentElement.scrollTop = 0;
 
       // Find the associated extra images for the clicked image
       const associatedExtraImages = extraImagesData[imgData.filename];
@@ -296,13 +283,13 @@ function mouseDragged(p) {
 function setCursor(cursor) {
 
   if(cursor === 'arrow'){
-    document.body.style.setProperty('cursor', `url(./midfinger.cur), auto`, 'important');
+    document.body.style.setProperty('cursor', `url(./arrow.cur), auto`, 'important');
   }
   else if(cursor === 'grab'){
     document.body.style.setProperty('cursor', `url(./grab.cur), auto`, 'important');
   }
   else if(cursor === 'pointer'){
-    document.body.style.setProperty('cursor', `url(./paw.cur), auto`, 'important');
+    document.body.style.setProperty('cursor', `url(./midfinger.cur), auto`, 'important');
   }
   else{
     document.body.style.setProperty('cursor', 'default', 'important');
