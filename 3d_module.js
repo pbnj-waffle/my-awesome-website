@@ -37,15 +37,17 @@ function isAnyImageActive() {
 }
 
 function isMouseOverImage(event) {
-
-  for (const imgData of images) {
-    if (
-      event.offsetX > imgData.x &&
-      event.offsetX < imgData.x + imgData.width &&
-      event.offsetY > imgData.y &&
-      event.offsetY < imgData.y + imgData.height
-    ) {
-      return true;
+  // Only perform the check if not in fullscreen mode
+  if (!showFullScreenImage) {
+    for (const imgData of images) {
+      if (
+        event.offsetX > imgData.x &&
+        event.offsetX < imgData.x + imgData.width &&
+        event.offsetY > imgData.y &&
+        event.offsetY < imgData.y + imgData.height
+      ) {
+        return true;
+      }
     }
   }
   return false;
@@ -97,36 +99,13 @@ renderer.domElement.addEventListener("wheel", (event) => {
   }
 });
 
-document.addEventListener("mousedown", (event) => {
-  if (textInputMode) {
-    return;
-  }
-
-  if (event.target === renderer.domElement && isMouseOver3DObject(event)) {
-    isDragging3DModel = true;
-    lastMousePosition = { x: event.clientX, y: event.clientY };
-
-    isMousePressedOn3D = true;
-    event.stopPropagation();
-  }
-});
-
-document.addEventListener('mouseup', () => {
-  if (isDragging3DModel) {
-    isDragging3DModel = false;
-  }
-  isMousePressedOn3D = false;
-});
-
-renderer.domElement.addEventListener("mousemove", (event) => {
-  /*console.log(`isMouseOver3DObject: ${isMouseOver3DObject(event)}`);
-  console.log(`isMouseOverImage: ${isMouseOverImage(event)}`);*/
+document.addEventListener("mousemove", (event) => {
   if (isMouseOver3DObject(event)) {
-    setCursor('grab');  // use custom setCursor function
+    setCursor('grab');
   } else if (isMouseOverImage(event)) {
-    setCursor('pointer');  // use custom setCursor function
+    setCursor('pointer'); 
   } else {
-    setCursor('arrow');  // use custom setCursor function
+    setCursor('arrow');
   }
 
   if (isDragging3DModel) {
@@ -144,12 +123,22 @@ renderer.domElement.addEventListener("mousemove", (event) => {
 });
 
  
-renderer.domElement.addEventListener("mouseup", () => {
+renderer.domElement.addEventListener("mouseup",(event) => {
   if (isAnyImageActive()) return;
-
-  isDragging3DModel = false;
+  if (isDragging3DModel) {
+    isDragging3DModel = false;
+  }
   isMousePressedOn3D = false;
-  renderer.domElement.style.cursor = "arrow";
+
+  
+  if (isMouseOver3DObject(event)) {
+    setCursor('grab');  
+  } else if (isMouseOverImage(event)) {
+    setCursor('arrow');  // change cursor back to arrow after image is clicked
+  } else {
+    setCursor('arrow');  
+  }
+  
 });
 
 renderer.domElement.addEventListener("mouseleave", () => {
@@ -215,11 +204,7 @@ renderer.domElement.addEventListener("mouseleave", () => {
     camera.updateProjectionMatrix();
   });
 
-  renderer.domElement.addEventListener('mousemove', (event) => {
-    lastMousePosition.x = event.clientX;
-    lastMousePosition.y = event.clientY;
-    
-  });
+
 
   renderer.domElement.addEventListener("mousedown", (event) => {
   if (textInputMode) {
@@ -234,13 +219,6 @@ renderer.domElement.addEventListener("mouseleave", () => {
   }
 });
 
-  renderer.domElement.addEventListener('mouseup', () => {
-    isMousePressedOn3D = false;
-  });
-
-  renderer.domElement.addEventListener('mouseleave', () => {
-    isMousePressedOn3D = false;
-  });
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -283,7 +261,7 @@ const animate3D = () => {
       my3DModel.rotation.y += deltaX;
     } else {
       // auto-rotation effect
-      my3DModel.rotation.x += 0.001; //speed
+      my3DModel.rotation.x += 0.0015; //speed
     }
 
     if (lastMouseWheelDelta !== 0 && isMouseOver3DObject({ clientX: lastMousePosition.x, clientY: lastMousePosition.y })) {

@@ -34,7 +34,7 @@ let imageTexts;
 let fullScreenImageText = '';
 let isMousePressedOn3D = false;
 let clickedImageData = null;
-let isBlurApplied = false;
+//let isBlurApplied = false;
 //let canvasHeight;
 let bgImagesNames = ["cat_tv.png", "no_fun_tv.png", "armchair_tv.png"];
 let bgImages = [];
@@ -312,10 +312,9 @@ p.preload = () => {
       p.clear()
       if (showAboutSection || showContactSection) {
          // show only the background and the header
-    p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
-  } else {
-      
-     // p.background(0);
+       p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
+       } else {      
+      // p.background(0);
       p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
       textBuffer.clear();
  
@@ -330,28 +329,6 @@ p.preload = () => {
         imageX = 45;
         imageY = (p.windowHeight - imageHeight) / 2;
         p.image(fullScreenImage, imageX, imageY, imageWidth, imageHeight);
-
-    
-        // Draw the associated text on the right half of the screen
-        const textStart = p.windowWidth / 2 - 300; 
-        const textWidth = p.windowWidth / 1.5 ; 
-        p.textLeading(50);
-        p.textFont(mainFont); 
-        p.textSize(45);
-        p.textAlign(p.RIGHT, p.TOP); 
-        p.fill(255);
-        p.text(fullScreenImageText, textStart, imageY, textWidth);
-
-        // Draw closing icon
-        p.push();
-        p.textFont(mainFont);
-        p.textSize(closingIconSize);
-        p.fill(255, 0, 0);
-        p.textAlign(p.LEFT, p.TOP); 
-        iconX = p.windowWidth / 2 - p.textWidth("X") / 2; // make this a global variable
-        iconY = 30;
-        p.text("X", iconX, iconY);
-        p.pop();
 
         if (showExtraImages) {
           const validExtraImages = extraImages.filter(imgData => imgData != null);
@@ -368,13 +345,19 @@ p.preload = () => {
           let y = extraVideos[i].y;
           p.image(vid, x, y); // Assumes p is your p5 instance
         }
+
+        // Draw the associated text on the right half of the screen
+        const textStart = p.windowWidth / 2 - 300; 
+        const textWidth = p.windowWidth / 1.5 ; 
+        p.textLeading(50);
+        p.textFont(mainFont); 
+        p.textSize(45);
+        p.textAlign(p.RIGHT, p.TOP); 
+        p.fill(255);
+        p.text(fullScreenImageText, textStart, imageY, textWidth);
+
       } else {
-        isBlurApplied = false;
-       /*if (!transitionFinished) {
-          initTransitionIfNeeded();
-          bgColor = p.lerpColor(transitionBeginColor, targetColor, getTransitionProgress());
-        }
-        p.background(bgColor);*/
+
         bgBuffer.clear(); // Clear bgBuffer here, after checking showFullScreenImage
         
         p.image(bgBuffer, 0, 0, p.windowWidth, p.windowHeight);

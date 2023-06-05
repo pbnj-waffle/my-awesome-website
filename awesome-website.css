@@ -137,7 +137,7 @@ min-height: 100%;
 }
 #header {
     font-size: 1.3em;
-    z-index: 30;
+    z-index: 50;
     position: fixed;
     height: 30px;
     width: 90%;
@@ -167,18 +167,6 @@ box-shadow: 0 0 10px 2px white;
 background: rgb(2, 255, 2);
 } */
 
-#name {
-  margin-left: 45px;
-  border-left: 20px solid transparent; /* add invisible border on the left */
-  border-right: 20px solid transparent; /* add invisible border on the right */
-  box-sizing: border-box; /* include border in element's total width and height */
-}
-
-#name:hover {
-  padding: 0 20px; /* add padding on the sides */
-  border-width: 0; /* remove border on hover */
-
-}
 
 #links {
   position: absolute;
@@ -192,7 +180,7 @@ background: rgb(2, 255, 2);
 #links > * {
   display: inline-block;
   color: #000000;
-}
+} 
 
 #links a {
   color: #ff0000;
@@ -414,13 +402,17 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
 
 #about-section {
   position: absolute;
-  top: 30px;  /* Adjust this as necessary */
+  top: 0;
   left: 0;
+  bottom: 0;
   right: 0;
   color: #ffffff;
   display: none; 
-  z-index: 50; 
+  z-index: 49; 
   font-size: 2em;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .btn {
@@ -451,7 +443,7 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
 
 #close-icon-about {
   position: absolute;
-  top: -50px;
+  top: 0px;
   left: 50%;
   cursor: url('./midfinger.cur'), auto;
   color: red;
@@ -459,19 +451,45 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
 
 #contact-section {
   position: absolute;
-  top: 30px;  /* Adjust this as necessary */
+  top: 0;
   left: 0;
+  bottom: 0;
   right: 0;
   color: #ffffff;
   display: none; 
-  z-index: 50; 
+  z-index: 49; 
   font-size: 2em;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 #close-icon-contact {
   position: absolute;
-  top: -50px;
+  top: 0px;
   left: 50%;
   cursor: url('./midfinger.cur'), auto;
   color: red;
+}
+
+#close-icon-image {
+  font-size: 2em;
+  z-index:100;
+  display: none;
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  cursor: url('./midfinger.cur'), auto;
+  color: red;
+}
+
+svg{
+  position:absolute;
+  width:150vw;
+  top:-100px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#path{
+  fill:none;
 }

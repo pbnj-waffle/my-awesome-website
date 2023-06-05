@@ -1,35 +1,64 @@
 
-document.getElementById('about').addEventListener('click', function (event) {
+document.getElementById('about').addEventListener('click', function (event) { //HIDE THE ELEMENTS
   event.preventDefault();
-  document.getElementById('about-section').style.display = 'block';
+  document.getElementById('about-section').style.display = 'flex';
   document.getElementById('textContainer').style.display = 'none';
   document.getElementById('canvasContainer2').style.display = 'none';
   document.getElementById('contact-section').style.display = 'none';
+  document.body.classList.add('hide-letters');
   showAboutSection = true;
-});
-
-document.getElementById('close-icon-about').addEventListener('click', function () {
-  document.getElementById('about-section').style.display = 'none';
-  document.getElementById('textContainer').style.display = 'block';
-  document.getElementById('canvasContainer2').style.display = 'block';
-  showAboutSection = false; 
-});
-
-document.getElementById('contact').addEventListener('click', function (event) {
-  event.preventDefault();
-  document.getElementById('contact-section').style.display = 'block';
-  document.getElementById('textContainer').style.display = 'none';
-  document.getElementById('canvasContainer2').style.display = 'none';
-  document.getElementById('about-section').style.display = 'none';
-  showContactSection = true;
-});
-
-document.getElementById('close-icon-contact').addEventListener('click', function () {
-  document.getElementById('contact-section').style.display = 'none';
-  document.getElementById('textContainer').style.display = 'block';
-  document.getElementById('canvasContainer2').style.display = 'block';
   showContactSection = false; 
 });
+
+document.getElementById('close-icon-about').addEventListener('click', function () { //REVEAL THE ELEMENTS
+  document.getElementById('about-section').style.display = 'none';
+  document.getElementById('textContainer').style.display = 'block';
+  document.getElementById('canvasContainer2').style.display = 'block';
+  document.body.classList.remove('hide-letters'); 
+  showAboutSection = false;
+});
+
+
+document.getElementById('contact').addEventListener('click', function (event) { //HIDE THE ELEMENTS
+  event.preventDefault();
+  document.getElementById('contact-section').style.display = 'flex';
+  document.getElementById('textContainer').style.display = 'none';
+  document.getElementById('canvasContainer2').style.display = 'none';
+  document.getElementById('about-section').style.display = 'none';
+  document.body.classList.add('hide-letters');
+  showContactSection = true;
+  showAboutSection = false;
+});
+
+document.getElementById('close-icon-contact').addEventListener('click', function () { //REVEAL THE ELEMENTS
+  document.getElementById('contact-section').style.display = 'none';
+  document.getElementById('textContainer').style.display = 'block';
+  document.getElementById('canvasContainer2').style.display = 'block';
+  document.body.classList.remove('hide-letters');
+  showContactSection = false; 
+});
+
+document.getElementById('close-icon-image').addEventListener('click', function(event) { //REVEAL THE ELEMENTS
+  event.preventDefault();
+  
+  // Hide the HTML closing icon
+  this.style.display = 'none';
+  
+  // Hide the full screen image and related elements
+  showFullScreenImage = false;
+  fullScreenImage = null;
+
+  document.getElementById('canvasContainer2').style.display = 'block';
+  document.getElementById('textContainer').style.display = 'block';
+  document.getElementById('header').style.display = 'block';
+  window.set3DObjectVisibility(true);
+  
+  // Reset fullscreen mode flag
+  isFullScreenMode = false;
+
+  return;
+});
+
 
 const initTransitionIfNeeded = () => {
   if (transitionBeginning == null)

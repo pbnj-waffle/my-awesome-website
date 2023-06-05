@@ -4,9 +4,10 @@ let extraImages = [];
 let extraImagesData = {};
 let showExtraImages = false;
 let isExtraImagesLoaded = false;
-const imageNames = ["coterie"];
+const imageNames = ["coterie", "img (1)", "img (2)"];
 let extraVideos = [];
 let extraVideosData = {};
+
 /*function fileSelected(event, p) {
   const newImage = p.loadImage(URL.createObjectURL(event.target.files[0]), () => {
     imageLoaded(newImage, p);
@@ -110,8 +111,8 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
 
   let video = p.createVideo([`./images/extra_videos/${videoPath}.mp4`], () => {
     video.size(video.width / scaleFactor, video.height / scaleFactor);
-    let randomX = p.random(0, p.windowWidth - video.width / scaleFactor);
-    let randomY = p.random(0, p.windowHeight - video.height / scaleFactor);
+    let randomX = p.random(0, p.windowWidth - video.width);
+    let randomY = p.random(0, p.windowHeight - video.height);
     video.position(randomX, randomY);
     video.loop();
     video.hide();
@@ -124,6 +125,7 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
     });
   });
 }
+
 
 
 function processImage(imgData, p) {
@@ -150,86 +152,89 @@ function duplicateImage(imgData, p) {
 }
 
 function mousePressed(p) {  
- // Check for images
- for (let i = 0; i < extraImages.length; i++) {
-  const imgData = extraImages[i];
-  const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
-    p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
-  if (imageClicked) {
-    imgData.isDragging = true;
-    imgData.dragOffsetX = p.mouseX - imgData.x;
-    imgData.dragOffsetY = p.mouseY - imgData.y;
-  }
+  // Check for images
+if (extraImages) {
+  for (let i = 0; i < extraImages.length; i++) {
+   const imgData = extraImages[i];
+   const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
+     p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
+   if (imageClicked) {
+     imgData.isDragging = true;
+     imgData.dragOffsetX = p.mouseX - imgData.x;
+     imgData.dragOffsetY = p.mouseY - imgData.y;
+   }
+ }
 }
-
-// Check for videos
-for (let i = 0; i < extraVideos.length; i++) {
-  const vidData = extraVideos[i];
-  const videoClicked = p.mouseX >= vidData.x && p.mouseX <= vidData.x + vidData.video.width &&
-    p.mouseY >= vidData.y && p.mouseY <= vidData.y + vidData.video.height;
-  if (videoClicked) {
-    vidData.isDragging = true;
-    vidData.dragOffsetX = p.mouseX - vidData.x;
-    vidData.dragOffsetY = p.mouseY - vidData.y;
-  }
+ // Check for videos
+ if (extraVideos) {
+ for (let i = 0; i < extraVideos.length; i++) {
+   const vidData = extraVideos[i];
+   const videoClicked = p.mouseX >= vidData.x && p.mouseX <= vidData.x + vidData.video.width &&
+     p.mouseY >= vidData.y && p.mouseY <= vidData.y + vidData.video.height;
+   if (videoClicked) {
+     vidData.isDragging = true;
+     vidData.dragOffsetX = p.mouseX - vidData.x;
+     vidData.dragOffsetY = p.mouseY - vidData.y;
+   }
+ }
 }
-
-  if (isMousePressedOn3D) {
-    // If the 3D object is being interacted with, do nothing in this function.
-    return;
-  }
-  if (showFullScreenImage) {
-    const closeClicked = p.mouseX >= iconX && p.mouseX <= iconX + closingIconSize &&
-      p.mouseY >= iconY && p.mouseY <= iconY + closingIconSize;
-    if (closeClicked) {
-      // Show elements
-      document.getElementById('textContainer').style.display = '';
-      showFullScreenImage = false;
-      window.set3DObjectVisibility(true);
-      return;
-    }
-  }
-  for (let i = images.length - 1; i >= 0; i--) {
-    const imgData = images[i];
-    const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
-      p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
-
-    if (imageClicked && !isBlurApplied) {//IMAGE CLICKED
-      showExtraImages = true;
-
-      // Hide elements
-      document.getElementById('textContainer').style.display = 'none';
-
-      // Find the associated extra images for the clicked image
-      const associatedExtraImages = extraImagesData[imgData.filename];
-      extraImagesData[imgData.filename] = [];
-
-      // Only load the associated extra images
-      for (let i = 0; i < associatedExtraImages.length; i++) {
-        const extraImageName = associatedExtraImages[i];
-        p.loadImage(`./images/extra/${extraImageName}.png`, (img) => {
-          extraImageLoaded(img, p, extraImageName, imgData);
-        });
+ 
+   if (isMousePressedOn3D) {
+     // If the 3D object is being interacted with, do nothing in this function.
+     return;
+   }
+   
+   for (let i = images.length - 1; i >= 0; i--) {
+     const imgData = images[i];
+     const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
+       p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
+ 
+       if (imageClicked) { //IMAGE CLICKED
+        // Show close icon
+        document.getElementById('close-icon-image').style.display = 'block';
+        
+        // Hide elements
+        document.getElementById('canvasContainer2').style.display = 'none';
+        document.getElementById('textContainer').style.display = 'none';
+        document.getElementById('header').style.display = 'none';
+      
+        // Find the associated extra images for the clicked image
+        const associatedExtraImages = extraImagesData[imgData.filename];
+        extraImagesData[imgData.filename] = [];
+      
+        // Reset the extraImages and extraVideos arrays
+        extraImages = [];
+        extraVideos = [];
+      
+        // Only load the associated extra images
+        for (let i = 0; i < associatedExtraImages.length; i++) {
+          const extraImageName = associatedExtraImages[i];
+          p.loadImage(`./images/extra/${extraImageName}.png`, (img) => {
+            extraImageLoaded(img, p, extraImageName, imgData);
+          });
+        }
+      
+        //EXTRA VIDEOS:
+        const associatedExtraVideos = extraVideosData[imgData.filename];
+        extraVideosData[imageNames] = [];
+        for (let i = 0; i < associatedExtraVideos.length; i++) {
+          const extraVideoName = associatedExtraVideos[i];
+          extraVideoLoaded(extraVideoName, p, extraVideoName, imgData);
+        }
+      
+        showFullScreenImage = true;
+      
+        showExtraImages = true;
+        fullScreenImage = imgData.img;
+        fullScreenImageText = imgData.text || '';
+        clickedImageData = imgData;  // Store the entire imgData object
+        clickedImageData.clickY = p.mouseY;  // Store the y-position of the click
+        window.set3DObjectVisibility(false);
+        break;
       }
-
-      //EXTRA VIDEOS:
-      const associatedExtraVideos = extraVideosData[imageNames];
-      extraVideosData[imageNames] = [];
-      for (let i = 0; i < associatedExtraVideos.length; i++) {
-        const extraVideoName = associatedExtraVideos[i];
-        extraVideoLoaded(extraVideoName, p, extraVideoName, imgData);
-      }
-
-      showFullScreenImage = true;
-      fullScreenImage = imgData.img;
-      fullScreenImageText = imgData.text || '';
-      clickedImageData = imgData;  // Store the entire imgData object
-      clickedImageData.clickY = p.mouseY;  // Store the y-position of the click
-      window.set3DObjectVisibility(false);
-      break;
-    }
-  }
-};
+      
+   }
+ };
 
 
 function mouseReleased(p) {

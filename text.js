@@ -1,3 +1,5 @@
+let tl;
+
 window.onload = function() {
   let possibleTexts = ['THE THOUGHT OF YOU LOADING THIS PAGE FOR THE FIRST TIME AND SEEING THIS MESSAGE INSTEAD OF THE OTHERS KEEPS ME UP AT NIGHT', 'TRUST THE PROCESS', 'TAKE A CHANCE ON ME'];
 
@@ -16,11 +18,11 @@ window.onload = function() {
 
   let letters = document.querySelectorAll('.letter');
 
-  let tl = gsap.timeline({paused: true});
+  tl = gsap.timeline({paused: true});
 
   let randomNumber = Math.floor(Math.random() * 100);
 
-  if(randomNumber >= 0 && randomNumber <= 100) {
+  if(randomNumber >= 0 && randomNumber <= 0) {
 
     letters.forEach((letter, i) => {
 
@@ -50,7 +52,7 @@ window.onload = function() {
 
   var randomNumber2 = Math.floor(Math.random() * 100);
 
-  if(randomNumber2 >= 0 && randomNumber2 <= 50) {
+  if(randomNumber2 >= 0 && randomNumber2 <= 0) {
 
     // Select a random letter as the "center"
     let centerIndex = Math.floor(Math.random() * letters.length);
@@ -87,6 +89,45 @@ window.onload = function() {
 
     });
   }
+
+  var randomNumber3 = Math.floor(Math.random() * 100);
+
+  if(randomNumber3 >= 0 && randomNumber3 <= 100) {
+    gsap.registerPlugin(MotionPathPlugin); //register the MotionPathPlugin
+  
+    let motionPath = {
+      path: "#path",
+      align: "#path",
+      alignOrigin: [0, 0],
+      autoRotate: true,
+    };
+    let staggerAmount = 0.25; // Adjust this value to fit your desired speed and spacing between letters
+  
+    tl.to('.letter', {
+      motionPath: motionPath,
+      duration: 8,
+      repeat: -1,
+      yoyo: true,
+      stagger: {
+        each: staggerAmount,
+        repeat: -1,
+        yoyo: true,
+        // This will wrap the stagger index to create a continuous sequence
+        wrap: (i, target, targets) => gsap.utils.wrap(0, targets.length, i)
+      }
+    });
+  }
+
+  setTimeout(() => {
+    tl.play().then(() => {
+      let textElement = document.getElementById("textContainer");
+      // GSAP animation is finished, show the original element
+      textElement.style.display = 'block';
+  
+    });
+  }, 5000);
+
+
 /*
   // Define the array of word pairs
 const wordPairs = [
@@ -180,12 +221,5 @@ balanceTl.to("#ball", {
 
  
   
-    setTimeout(() => {
-      tl.play().then(() => {
-        let textElement = document.getElementById("textContainer");
-        // GSAP animation is finished, show the original element
-        textElement.style.display = 'block';
-    
-      });
-    }, 20000);
+
 }
