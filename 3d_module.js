@@ -109,6 +109,7 @@ document.addEventListener("mousemove", (event) => {
   }
 
   if (isDragging3DModel) {
+    console.log("You can zoom into the 3d object by using a mouse wheel");
     const deltaX = (event.clientX - lastMousePosition.x) * 0.01;
     const deltaY = (event.clientY - lastMousePosition.y) * 0.01;
 

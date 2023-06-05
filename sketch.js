@@ -63,6 +63,7 @@ let lastLogTime = 0;
 let logDisplayDuration = 10;
 let logCreationInterval = 5000; 
 let logQueue = [];
+let lastMessage = null;
 let imageX, imageY; 
 let showAboutSection = false;
 let showContactSection = false;
@@ -95,27 +96,37 @@ LogData.prototype.randomFramesBetweenTrail = function() {
 
 let sketch2D = new p5((p) => {
  window.p = p;
-  console.log("sketch created");
     // Store original console.log function
     const originalLog = console.log;
-    // Overwrite the console.log
-    console.log = function(...messages) {
-      originalLog(...messages);
-      let stopMovingAfterOptions = [5000, 10000, 15000];
-      let stopMovingAfter = stopMovingAfterOptions[Math.floor(Math.random() * stopMovingAfterOptions.length)];
-  
-      let messageObject = new LogData(
-        messages.join(' '),
-        Math.random() * (window.innerWidth - 50), 
-        Math.random() * (window.innerHeight - 50),
-        Math.random() < 1,
-        Math.random() * 5,
-        Math.random() * Math.PI * 2,
-        stopMovingAfter,
-        p.millis() 
-      );
-      logQueue.push(messageObject); 
-    }
+// Overwrite the console.log
+console.log = function(...messages) {
+  // Join messages to form a single string
+  let currentMessage = messages.join(' ');
+
+  // If current message is the same as last message, return without pushing to logQueue
+  if (currentMessage === lastMessage) {
+    return;
+  }
+
+  // Update lastMessage to current message
+  lastMessage = currentMessage;
+
+  originalLog(...messages);
+  let stopMovingAfterOptions = [5000, 10000, 15000];
+  let stopMovingAfter = stopMovingAfterOptions[Math.floor(Math.random() * stopMovingAfterOptions.length)];
+
+  let messageObject = new LogData(
+    currentMessage,
+    Math.random() * (window.innerWidth - 50), 
+    Math.random() * (window.innerHeight - 50),
+    Math.random() < 1,
+    Math.random() * 5,
+    Math.random() * Math.PI * 2,
+    stopMovingAfter,
+    p.millis() 
+  );
+  logQueue.push(messageObject); 
+}
 
     p.updateMessage = function(log) {
       if (log.move && p.millis() - log.timestamp < log.stopMovingAfter) {

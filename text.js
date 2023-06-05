@@ -1,4 +1,12 @@
 let tl;
+function generatePath() {
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+
+  let pathData = `M 0,0 L ${width},0 L ${width},${height} L 0,${height} Z`;
+
+  return pathData;
+}
 
 window.onload = function() {
   let possibleTexts = ['THE THOUGHT OF YOU LOADING THIS PAGE FOR THE FIRST TIME AND SEEING THIS MESSAGE INSTEAD OF THE OTHERS KEEPS ME UP AT NIGHT', 'TRUST THE PROCESS', 'TAKE A CHANCE ON ME'];
@@ -22,7 +30,7 @@ window.onload = function() {
 
   let randomNumber = Math.floor(Math.random() * 100);
 
-  if(randomNumber >= 0 && randomNumber <= 0) {
+  if(randomNumber >= 0 && randomNumber <= 40) {
 
     letters.forEach((letter, i) => {
 
@@ -50,10 +58,10 @@ window.onload = function() {
     });
   }
 
-  var randomNumber2 = Math.floor(Math.random() * 100);
+  //var randomNumber2 = Math.floor(Math.random() * 100);
 
-  if(randomNumber2 >= 0 && randomNumber2 <= 0) {
-
+  if(randomNumber >= 41 && randomNumber <= 60) {
+ 
     // Select a random letter as the "center"
     let centerIndex = Math.floor(Math.random() * letters.length);
 
@@ -67,17 +75,7 @@ window.onload = function() {
       let direction = i < centerIndex ? -1 : 1; // Determine direction based on whether the letter is before or after the center
       let rotation = (Math.random() - 0.5) * 2 * 120;
 
-      // Calculate the new bounds of the letter after rotation
-  let letterDiagonal = Math.sqrt(2) * letter.offsetWidth / 2;
 
-  // Calculate the distance to fall for each letter individually, based on its own vertical position
-  let distanceToFallLetter = document.getElementById('canvasGlobalContainer').clientHeight - letter.getBoundingClientRect().top - letterHeight + 20;
-  
-  // Make sure the letter doesn't go beyond the container
-  let maxDistance = document.getElementById('canvasGlobalContainer').clientHeight - letterDiagonal;
-  if (distanceToFallLetter > maxDistance) {
-    distanceToFallLetter = maxDistance;
-  }
       tl.to(letter, {
         scale: Math.random() * maxSizeMultiplier, // add random scaling up to 10x original size
         
@@ -90,30 +88,91 @@ window.onload = function() {
     });
   }
 
-  var randomNumber3 = Math.floor(Math.random() * 100);
+  let pathElement = document.querySelector('#path');
+  let svgElement = pathElement.parentElement;
 
-  if(randomNumber3 >= 0 && randomNumber3 <= 100) {
+  let pathData = generatePath();
+  pathElement.setAttribute('d', pathData);
+  
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  
+  window.onresize = function() {
+    let pathData = generatePath();
+    pathElement.setAttribute('d', pathData);
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  };
+  
+  let pathString = "M50,150 ";
+
+  // Determine the maximum letter size
+let maxWidth = 0;
+let maxHeight = 0;
+letters.forEach(letter => {
+  if (letter.offsetWidth > maxWidth) {
+    maxWidth = letter.offsetWidth;
+  }
+  if (letter.offsetHeight > maxHeight) {
+    maxHeight = letter.offsetHeight;
+  }
+});
+
+
+
+  let numberOfCurves = 5;
+  for (let i = 0; i < numberOfCurves; i++) {
+    let x1 = Math.random() * (width - maxWidth);
+    let y1 = Math.random() * (height - maxHeight);
+    let x2 = Math.random() * (width - maxWidth);
+    let y2 = Math.random() * (height - maxHeight);
+    let x = Math.random() * (width - maxWidth);
+    let y = Math.random() * (height - maxHeight);
+
+    pathString += `C${x1},${y1} ${x2},${y2} ${x},${y} `;
+  }
+
+  document.getElementById('path').setAttribute('d', pathString);
+
+  //var randomNumber3 = Math.floor(Math.random() * 100);
+
+  if(randomNumber >= 61 && randomNumber <= 100) {
+    console.log( x1, y1, x2, y2, x, y)    
+  
     gsap.registerPlugin(MotionPathPlugin); //register the MotionPathPlugin
   
     let motionPath = {
       path: "#path",
       align: "#path",
       alignOrigin: [0, 0],
-      autoRotate: true,
+      autoRotate: false,
     };
-    let staggerAmount = 0.25; // Adjust this value to fit your desired speed and spacing between letters
+    let staggerAmount = 0.15; // Adjust this value to fit your desired speed and spacing between letters
   
+    let repeatTimes = 1; // number of repeats
+
     tl.to('.letter', {
       motionPath: motionPath,
-      duration: 8,
-      repeat: -1,
+      duration: 20,
+      repeat: repeatTimes,
       yoyo: true,
       stagger: {
         each: staggerAmount,
-        repeat: -1,
+        repeat: 0,
         yoyo: true,
-        // This will wrap the stagger index to create a continuous sequence
         wrap: (i, target, targets) => gsap.utils.wrap(0, targets.length, i)
+      },
+      onComplete: function() {
+        // This function is called when the animation finishes
+        gsap.set('.letter', {
+          scale: 1,
+          rotation: 0,
+          x: 0,
+          y: 0
+        });
       }
     });
   }
