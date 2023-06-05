@@ -343,12 +343,13 @@ p.preload = () => {
         p.text(fullScreenImageText, textStart, imageY, textWidth);
 
         // Draw closing icon
-        iconX = p.windowWidth / 2; // make this a global variable
-        iconY = 30;  
         p.push();
         p.textFont(mainFont);
         p.textSize(closingIconSize);
         p.fill(255, 0, 0);
+        p.textAlign(p.LEFT, p.TOP); 
+        iconX = p.windowWidth / 2 - p.textWidth("X") / 2; // make this a global variable
+        iconY = 30;
         p.text("X", iconX, iconY);
         p.pop();
 
