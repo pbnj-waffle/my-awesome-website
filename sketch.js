@@ -333,18 +333,18 @@ p.preload = () => {
 
     
         // Draw the associated text on the right half of the screen
-        const textStart = p.windowWidth / 2 + 100; 
+        const textStart = p.windowWidth / 2 - 300; 
         const textWidth = p.windowWidth / 1.5 ; 
         p.textLeading(50);
         p.textFont(mainFont); 
         p.textSize(45);
-        p.textAlign(p.CENTER, p.TOP); 
+        p.textAlign(p.RIGHT, p.TOP); 
         p.fill(255);
         p.text(fullScreenImageText, textStart, imageY, textWidth);
 
         // Draw closing icon
-        iconX = ( p.windowWidth - 20 ) - closingIconSize; // make this a global variable
-        iconY = 60;  
+        iconX = p.windowWidth / 2; // make this a global variable
+        iconY = 30;  
         p.push();
         p.textFont(mainFont);
         p.textSize(closingIconSize);
