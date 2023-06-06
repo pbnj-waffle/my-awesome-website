@@ -49,7 +49,7 @@ document.getElementById('close-icon-image').addEventListener('click', function(e
   fullScreenImage = null;
 
   document.getElementById('canvasContainer2').style.display = 'block';
-  document.getElementById('textContainer').style.display = 'block';
+  document.getElementById('textContainer').style.display = '';
   document.getElementById('header').style.display = 'block';
   window.set3DObjectVisibility(true);
   

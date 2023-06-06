@@ -4,9 +4,11 @@ let extraImages = [];
 let extraImagesData = {};
 let showExtraImages = false;
 let isExtraImagesLoaded = false;
-const imageNames = ["coterie", "img (1)", "img (2)"];
+const imageNames = ["coterie", "shape", "urgent", "scientific_poster"];
 let extraVideos = [];
 let extraVideosData = {};
+let textTimeoutId;
+
 
 /*function fileSelected(event, p) {
   const newImage = p.loadImage(URL.createObjectURL(event.target.files[0]), () => {
@@ -91,10 +93,19 @@ function wrapText(p, text, maxWidth) {
 }
 
 function extraImageLoaded(image, p, imageName, parentImage) {
-  const scaleFactor = 8;
+  let scaleFactor;
+  if (scaleFactors && scaleFactors[parentImage.filename]) {
+    scaleFactor = p.random(scaleFactors[parentImage.filename][0], scaleFactors[parentImage.filename][1]);
+  } else {
+    scaleFactor = p.random(3, 8);  // default value
+  }
 
-  let randomX = p.random(0, p.windowWidth - image.width / scaleFactor);
-  let randomY = p.random(0, p.windowHeight - image.height / scaleFactor);
+  let randomX;
+  let randomY;
+  do {
+    randomX = p.random(0, p.windowWidth - image.width / scaleFactor);
+    randomY = p.random(0, p.windowHeight - image.height / scaleFactor);
+  } while (isOverlappingMainImage(randomX, randomY, image.width / scaleFactor, image.height / scaleFactor));
   extraImages.push({
     img: image,
     width: image.width / scaleFactor,
@@ -107,26 +118,55 @@ function extraImageLoaded(image, p, imageName, parentImage) {
 }
 
 function extraVideoLoaded(videoPath, p, videoName, parentImage) {
-  const scaleFactor = 6;
+  const scaleFactor = 1.5;
 
   let video = p.createVideo([`./images/extra_videos/${videoPath}.mp4`], () => {
     video.size(video.width / scaleFactor, video.height / scaleFactor);
-    let randomX = p.random(0, p.windowWidth - video.width);
-    let randomY = p.random(0, p.windowHeight - video.height);
+    let randomX;
+    let randomY;
+
+    video.size(video.width / scaleFactor, video.height / scaleFactor);
+    do {
+      randomX = p.random(0, p.windowWidth - video.width);
+      randomY = p.random(0, p.windowHeight - video.height);
+    } while (isOverlappingMainImage(randomX, randomY, video.width / scaleFactor, video.height / scaleFactor));
     video.position(randomX, randomY);
     video.loop();
     video.hide();
 
-    extraVideos.push({
+    let videoData = {
       video: video,
+      width: video.width,
+      height: video.height,
       x: randomX,  
       y: randomY,  
       isDragging: false,
-    });
+    };
+    extraVideos.push(videoData);
+    
+    // Update width and height after metadata is loaded
+    video.elt.onloadedmetadata = function() {
+      videoData.width = video.elt.videoWidth / scaleFactor;
+      videoData.height = video.elt.videoHeight / scaleFactor;
+    };
   });
 }
 
 
+function isOverlappingMainImage(x, y, width, height) {
+  // Assumes clickedImageData.x, clickedImageData.y, clickedImageData.width, and clickedImageData.height are the coordinates and dimensions of the main image.
+  const left = clickedImageData.x;
+  const right = clickedImageData.x + clickedImageData.width;
+  const top = clickedImageData.y;
+  const bottom = clickedImageData.y + clickedImageData.height;
+
+  // Check whether the new element overlaps with the main image
+  if (x < right && x + width > left && y < bottom && y + height > top) {
+    return true; // It overlaps
+  }
+
+  return false; // It doesn't overlap
+}
 
 function processImage(imgData, p) {
   if (imgData.timeElapsed < 300) {
@@ -152,37 +192,44 @@ function duplicateImage(imgData, p) {
 }
 
 function mousePressed(p) {  
-  // Check for images
-if (extraImages) {
-  for (let i = 0; i < extraImages.length; i++) {
-   const imgData = extraImages[i];
-   const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
-     p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
-   if (imageClicked) {
-     imgData.isDragging = true;
-     imgData.dragOffsetX = p.mouseX - imgData.x;
-     imgData.dragOffsetY = p.mouseY - imgData.y;
-   }
- }
-}
- // Check for videos
- if (extraVideos) {
- for (let i = 0; i < extraVideos.length; i++) {
-   const vidData = extraVideos[i];
-   const videoClicked = p.mouseX >= vidData.x && p.mouseX <= vidData.x + vidData.video.width &&
-     p.mouseY >= vidData.y && p.mouseY <= vidData.y + vidData.video.height;
-   if (videoClicked) {
-     vidData.isDragging = true;
-     vidData.dragOffsetX = p.mouseX - vidData.x;
-     vidData.dragOffsetY = p.mouseY - vidData.y;
-   }
- }
-}
- 
-   if (isMousePressedOn3D) {
-     // If the 3D object is being interacted with, do nothing in this function.
-     return;
-   }
+
+    // Don't process the click if fullscreen image is shown
+    if (showFullScreenImage) {
+      return;
+    }
+      // Check for images
+    if (extraImages) {
+      for (let i = 0; i < extraImages.length; i++) {
+      const imgData = extraImages[i];
+      const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
+        p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
+      if (imageClicked) {
+        console.log("image is clicked")
+        imgData.isDragging = true;
+        imgData.dragOffsetX = p.mouseX - imgData.x;
+        imgData.dragOffsetY = p.mouseY - imgData.y;
+      }
+    }
+    }
+    // Check for videos
+    if (extraVideos) {
+    for (let i = 0; i < extraVideos.length; i++) {
+      const vidData = extraVideos[i];
+      const videoClicked = p.mouseX >= vidData.x && p.mouseX <= vidData.x + vidData.video.width &&
+        p.mouseY >= vidData.y && p.mouseY <= vidData.y + vidData.video.height;
+      if (videoClicked) {
+        console.log("video is clicked")
+        vidData.isDragging = true;
+        vidData.dragOffsetX = p.mouseX - vidData.x;
+        vidData.dragOffsetY = p.mouseY - vidData.y;
+      }
+    }
+    }
+    
+      if (isMousePressedOn3D) {
+        // If the 3D object is being interacted with, do nothing in this function.
+        return;
+      }
    
    for (let i = images.length - 1; i >= 0; i--) {
      const imgData = images[i];
@@ -200,23 +247,23 @@ if (extraImages) {
       
         // Find the associated extra images for the clicked image
         const associatedExtraImages = extraImagesData[imgData.filename];
-        extraImagesData[imgData.filename] = [];
+        
       
         // Reset the extraImages and extraVideos arrays
         extraImages = [];
         extraVideos = [];
       
-        // Only load the associated extra images
+       // Only load the associated extra images
         for (let i = 0; i < associatedExtraImages.length; i++) {
-          const extraImageName = associatedExtraImages[i];
-          p.loadImage(`./images/extra/${extraImageName}.png`, (img) => {
+          const extraImageName = associatedExtraImages[i].name;
+          const extraImageExt = associatedExtraImages[i].ext;
+          p.loadImage(`./images/extra/${extraImageName}${extraImageExt}`, (img) => {
             extraImageLoaded(img, p, extraImageName, imgData);
           });
         }
       
         //EXTRA VIDEOS:
         const associatedExtraVideos = extraVideosData[imgData.filename];
-        extraVideosData[imageNames] = [];
         for (let i = 0; i < associatedExtraVideos.length; i++) {
           const extraVideoName = associatedExtraVideos[i];
           extraVideoLoaded(extraVideoName, p, extraVideoName, imgData);
@@ -226,6 +273,7 @@ if (extraImages) {
       
         showExtraImages = true;
         fullScreenImage = imgData.img;
+
         fullScreenImageText = imgData.text || '';
         clickedImageData = imgData;  // Store the entire imgData object
         clickedImageData.clickY = p.mouseY;  // Store the y-position of the click
@@ -270,6 +318,7 @@ function mouseDragged(p) {
     if (imgData.isDragging) {
       imgData.x = p.mouseX - imgData.dragOffsetX;
       imgData.y = p.mouseY - imgData.dragOffsetY;
+      console.log("image is dragging")
     }
   }
 
@@ -280,6 +329,7 @@ function mouseDragged(p) {
       vidData.x = p.mouseX - vidData.dragOffsetX;
       vidData.y = p.mouseY - vidData.dragOffsetY;
       vidData.video.position(vidData.x, vidData.y);
+      console.log("video is dragging")
     }
   }
 }

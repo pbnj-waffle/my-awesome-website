@@ -1,5 +1,6 @@
 {
-    "coterie": ["coterie_test", "coterie_test2"],
-    "img (1)": ["coterie_test", "coterie_test2"],
-    "img (2)": ["coterie_test", "coterie_test2"]
+    "coterie": ["coterie_video_landscape"],
+    "shape": [],
+    "urgent": ["urgent_fromgif"],
+    "scientific_poster": []
   }

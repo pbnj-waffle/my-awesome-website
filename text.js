@@ -140,7 +140,7 @@ letters.forEach(letter => {
   //var randomNumber3 = Math.floor(Math.random() * 100);
 
   if(randomNumber >= 61 && randomNumber <= 100) {
-    console.log( x1, y1, x2, y2, x, y)    
+  
   
     gsap.registerPlugin(MotionPathPlugin); //register the MotionPathPlugin
   
@@ -148,7 +148,7 @@ letters.forEach(letter => {
       path: "#path",
       align: "#path",
       alignOrigin: [0, 0],
-      autoRotate: false,
+      autoRotate: true,
     };
     let staggerAmount = 0.15; // Adjust this value to fit your desired speed and spacing between letters
   
@@ -184,7 +184,7 @@ letters.forEach(letter => {
       textElement.style.display = 'block';
   
     });
-  }, 5000);
+  }, 0);
 
 
 /*

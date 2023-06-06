@@ -16,6 +16,7 @@ let logBuffer;
 let bgBuffer;
 let textBuffer;
 let textTrailBuffer;
+let offScreenBuffer;
 let square;
 let squareTrail = [];
 let sketchInstance;
@@ -67,7 +68,8 @@ let lastMessage = null;
 let imageX, imageY; 
 let showAboutSection = false;
 let showContactSection = false;
-
+let scaleFactors;
+let magnifierSize = 150; 
 
 function LogData(message, x, y, move, speed, angle, stopMovingAfter, timestamp) {
   this.message = message;
@@ -95,7 +97,27 @@ LogData.prototype.randomFramesBetweenTrail = function() {
 
 
 let sketch2D = new p5((p) => {
+
+
  window.p = p;
+ function magnifyImage(image, imageData) {
+  let magnifyPower = 100;
+
+  let scaleX = imageData.width / (image instanceof p5.Image ? image.width : image.elt.videoWidth);
+  let scaleY = imageData.height / (image instanceof p5.Image ? image.height : image.elt.videoHeight);
+  
+  let sourceX = (p.mouseX - imageData.x) / scaleX - magnifyPower / 2;
+  let sourceY = (p.mouseY - imageData.y) / scaleY - magnifyPower / 2;
+
+  sourceX = p.constrain(sourceX, 0, (image instanceof p5.Image ? image.width : image.elt.videoWidth) - magnifyPower);
+  sourceY = p.constrain(sourceY, 0, (image instanceof p5.Image ? image.height : image.elt.videoHeight) - magnifyPower);
+
+  // Draw the magnified portion of the image at the mouse position
+  p.image(image, p.mouseX - magnifyPower / 2, p.mouseY - magnifyPower / 2, magnifyPower, magnifyPower, sourceX, sourceY, magnifyPower, magnifyPower);
+}
+
+
+
     // Store original console.log function
     const originalLog = console.log;
 // Overwrite the console.log
@@ -216,16 +238,18 @@ p.preload = () => {
   imageTexts = p.loadJSON('imageTexts.json');
   extraImagesData = p.loadJSON('extraImages.json');
   extraVideosData = p.loadJSON('extraVideos.json');
+  
   mainFont = p.loadFont('00BusinessHistory-Regular.otf');
   secondaryFont = p.loadFont('SourceCodePro-Regular.ttf');
   }
   
   
   p.setup = () => {    
+    p.loadJSON('scaleFactors.json', result => scaleFactors = result);
     bgColor = p.color(236,245,230);
     transitionBeginColor = bgColor;
     targetColor = p.color(0);
-    const canvas2D = p.createCanvas(p.windowWidth, p.windowHeight); // Store the canvas
+    let canvas2D = p.createCanvas(p.windowWidth, p.windowHeight); // Store the canvas
     canvas2D.parent('canvasContainer');
     buffer = p.createGraphics(p.windowWidth, p.windowHeight);
     squareTrailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
@@ -235,6 +259,11 @@ p.preload = () => {
     textBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     textTrailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     logBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
+    offScreenBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
+
+
+
+
     /*for(let angle = 0; angle < 2 * p.PI; angle += 0.3){ //BUBBLE
       bubblePoints.push({angle: angle, r: bubbleSize/2});
     }*/
@@ -316,10 +345,8 @@ p.preload = () => {
     
   }
 
-  
 
-  
-    p.draw = () => {
+      p.draw = () => {
       p.clear()
       if (showAboutSection || showContactSection) {
          // show only the background and the header
@@ -333,39 +360,79 @@ p.preload = () => {
 
         p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
 
-        // Draw the main image
-        const aspectRatio = fullScreenImage.width / fullScreenImage.height;
-        const imageWidth = Math.min(p.windowWidth / 1.5, aspectRatio * p.windowHeight / 1.5);
-        const imageHeight = imageWidth / aspectRatio;
-        imageX = 45;
-        imageY = (p.windowHeight - imageHeight) / 2;
-        p.image(fullScreenImage, imageX, imageY, imageWidth, imageHeight);
-
-        if (showExtraImages) {
-          const validExtraImages = extraImages.filter(imgData => imgData != null);
         
-          for (const imgData of validExtraImages) {
-            // Draw each image
-            p.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
-          }
-        }
 
-        for (let i = 0; i < extraVideos.length; i++) {
-          let vid = extraVideos[i].video;
-          let x = extraVideos[i].x;
-          let y = extraVideos[i].y;
-          p.image(vid, x, y); // Assumes p is your p5 instance
-        }
+      
+let isOverMedia = false;
+let imagesToMagnify = [];
+
+// Always check videos, but only magnify if the mouse isn't over an image
+for (let i = 0; i < extraVideos.length; i++) {
+  let vid = extraVideos[i].video;
+  let x = extraVideos[i].x;
+  let y = extraVideos[i].y;
+  p.image(vid, x, y);
+
+  if (!isOverMedia && p.mouseX > x && p.mouseX < x + vid.width &&
+      p.mouseY > y && p.mouseY < y + vid.height) {
+    magnifyImage(vid, extraVideos[i]);
+    isOverMedia = true;
+  }
+}
+// Check images first, as they are drawn on top of the videos
+if (showExtraImages) {
+  const validExtraImages = extraImages.filter(imgData => imgData != null);
+
+  for (const imgData of validExtraImages) {
+    p.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
+
+    if (p.mouseX > imgData.x && p.mouseX < imgData.x + imgData.width &&
+        p.mouseY > imgData.y && p.mouseY < imgData.y + imgData.height) {
+      imagesToMagnify.push(imgData);
+      isOverMedia = true;
+    }
+  }
+}
+
+
+
+// Now magnify all images that are under the mouse
+for (const imgData of imagesToMagnify) {
+  magnifyImage(imgData.img, imgData);
+}
+        
+/// Draw the main image using its original properties
+p.image(fullScreenImage, clickedImageData.x, clickedImageData.y, clickedImageData.width, clickedImageData.height);
+
+// Check if the mouse is over the fullScreenImage
+if (p.mouseX >= clickedImageData.x && p.mouseX <= clickedImageData.x + clickedImageData.width &&
+    p.mouseY >= clickedImageData.y && p.mouseY <= clickedImageData.y + clickedImageData.height) {
+
+  let magnifyPower = 100;
+  let scaleX = clickedImageData.width / fullScreenImage.width;
+  let scaleY = clickedImageData.height / fullScreenImage.height;
+  let sourceX = (p.mouseX - clickedImageData.x) / scaleX - magnifyPower / 2;
+let sourceY = (p.mouseY - clickedImageData.y) / scaleY - magnifyPower / 2;
+
+  sourceX = p.constrain(sourceX, 0, fullScreenImage.width - magnifyPower);
+  sourceY = p.constrain(sourceY, 0, fullScreenImage.height - magnifyPower);
+
+  // Draw the magnified portion of the image at the mouse position
+  p.image(fullScreenImage, p.mouseX - magnifyPower / 2, p.mouseY - magnifyPower / 2, magnifyPower, magnifyPower, sourceX, sourceY, magnifyPower, magnifyPower);
+}
+
+
+        
 
         // Draw the associated text on the right half of the screen
-        const textStart = p.windowWidth / 2 - 300; 
+        const textStart = p.windowWidth / 2 -400 ; 
         const textWidth = p.windowWidth / 1.5 ; 
         p.textLeading(50);
         p.textFont(mainFont); 
         p.textSize(45);
-        p.textAlign(p.RIGHT, p.TOP); 
-        p.fill(255);
-        p.text(fullScreenImageText, textStart, imageY, textWidth);
+        p.textAlign(p.CENTER, p.TOP); 
+        p.fill(255, 0, 0);
+        p.text(fullScreenImageText, textStart, p.windowHeight/6, textWidth);
 
       } else {
 
