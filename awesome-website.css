@@ -483,6 +483,17 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   color: red;
 }
 
+#close-icon-text {
+  font-size: 2em;
+  z-index:100;
+  display: none;
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  cursor: url('./midfinger.cur'), auto;
+  color: red;
+}
+
 svg{
   position:absolute;
   width:150vw;

@@ -59,6 +59,18 @@ document.getElementById('close-icon-image').addEventListener('click', function(e
   return;
 });
 
+document.getElementById('close-icon-text').addEventListener('click', function(event) {
+  event.preventDefault();
+  
+  // Hide the HTML closing icon for text
+  this.style.display = 'none';
+  
+  // Hide the full screen image text and related elements
+  showFullScreenImageText = false;
+
+  return;
+});
+
 
 const initTransitionIfNeeded = () => {
   if (transitionBeginning == null)

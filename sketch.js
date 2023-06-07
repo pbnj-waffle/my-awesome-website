@@ -70,6 +70,7 @@ let showAboutSection = false;
 let showContactSection = false;
 let scaleFactors;
 let magnifierSize = 150; 
+let showFullScreenImageText = true;
 
 function LogData(message, x, y, move, speed, angle, stopMovingAfter, timestamp) {
   this.message = message;
@@ -400,39 +401,52 @@ if (showExtraImages) {
 for (const imgData of imagesToMagnify) {
   magnifyImage(imgData.img, imgData);
 }
-        
-/// Draw the main image using its original properties
-p.image(fullScreenImage, clickedImageData.x, clickedImageData.y, clickedImageData.width, clickedImageData.height);
+ // Draw the main image using the scaled properties
+ let scaledWidth = clickedImageData.width * clickedImageData.scale;
+ let scaledHeight = clickedImageData.height * clickedImageData.scale;
+ let scaledX = clickedImageData.x - (scaledWidth - clickedImageData.width) / 2;
+ let scaledY = clickedImageData.y - (scaledHeight - clickedImageData.height) / 2;
+ p.image(fullScreenImage, scaledX, scaledY, scaledWidth, scaledHeight);
 
-// Check if the mouse is over the fullScreenImage
-if (p.mouseX >= clickedImageData.x && p.mouseX <= clickedImageData.x + clickedImageData.width &&
-    p.mouseY >= clickedImageData.y && p.mouseY <= clickedImageData.y + clickedImageData.height) {
+// Check if the mouse is over the scaled image
+if (p.mouseX >= scaledX && p.mouseX <= scaledX + scaledWidth &&
+  p.mouseY >= scaledY && p.mouseY <= scaledY + scaledHeight) {
 
-  let magnifyPower = 100;
-  let scaleX = clickedImageData.width / fullScreenImage.width;
-  let scaleY = clickedImageData.height / fullScreenImage.height;
-  let sourceX = (p.mouseX - clickedImageData.x) / scaleX - magnifyPower / 2;
-let sourceY = (p.mouseY - clickedImageData.y) / scaleY - magnifyPower / 2;
+let magnifyPower = 100;
+let scaleX = scaledWidth / fullScreenImage.width;
+let scaleY = scaledHeight / fullScreenImage.height;
+let sourceX = (p.mouseX - scaledX) / scaleX - magnifyPower / 2;
+let sourceY = (p.mouseY - scaledY) / scaleY - magnifyPower / 2;
 
-  sourceX = p.constrain(sourceX, 0, fullScreenImage.width - magnifyPower);
-  sourceY = p.constrain(sourceY, 0, fullScreenImage.height - magnifyPower);
+sourceX = p.constrain(sourceX, 0, fullScreenImage.width - magnifyPower);
+sourceY = p.constrain(sourceY, 0, fullScreenImage.height - magnifyPower);
 
-  // Draw the magnified portion of the image at the mouse position
-  p.image(fullScreenImage, p.mouseX - magnifyPower / 2, p.mouseY - magnifyPower / 2, magnifyPower, magnifyPower, sourceX, sourceY, magnifyPower, magnifyPower);
+// Draw the magnified portion of the image at the mouse position
+p.image(fullScreenImage, p.mouseX - magnifyPower / 2, p.mouseY - magnifyPower / 2, magnifyPower, magnifyPower, sourceX, sourceY, magnifyPower, magnifyPower);
 }
+if (showFullScreenImageText) {
+  // Draw the associated text on the right half of the screen
+  const textStart = p.windowWidth / 2 -400; 
+  const textWidth = p.windowWidth / 1.5; 
 
+  // Set up the text properties
+  p.textLeading(50);
+  p.textFont(mainFont); 
+  p.textSize(45);
+  p.textAlign(p.CENTER, p.TOP); 
 
-        
+  // Set the rectangle's properties
+  const rectColor = [0, 150]; // RGBA, A=100 for semi-transparency
 
-        // Draw the associated text on the right half of the screen
-        const textStart = p.windowWidth / 2 -400 ; 
-        const textWidth = p.windowWidth / 1.5 ; 
-        p.textLeading(50);
-        p.textFont(mainFont); 
-        p.textSize(45);
-        p.textAlign(p.CENTER, p.TOP); 
-        p.fill(255, 0, 0);
-        p.text(fullScreenImageText, textStart, p.windowHeight/6, textWidth);
+  // Draw a semi-transparent rectangle under the text
+  p.noStroke(); // Remove border
+  p.fill(rectColor); // Set color
+  p.rect(0, 0, p.windowWidth, p.windowHeight);
+
+  // Draw the text
+  p.fill(255, 0, 0); // Set text color
+  p.text(fullScreenImageText, textStart, p.windowHeight/6, textWidth);
+}
 
       } else {
 

@@ -22,7 +22,6 @@
   {"name": "shape15", "ext": ".png"},
   {"name": "shape16", "ext": ".png"},
   {"name": "shape17", "ext": ".png"},
-  {"name": "shape18", "ext": ".png"},
   {"name": "shape19", "ext": ".png"},
   {"name": "shape20", "ext": ".png"},
   {"name": "shape21", "ext": ".png"},
@@ -46,6 +45,12 @@
   {"name": "shape39", "ext": ".png"},
   {"name": "shape40", "ext": ".png"}
   ],
-  "urgent": [],
-  "scientific_poster": []
+  "urgent": [
+    {"name": "urgent2", "ext": ".png"}
+  ],
+  "scientific_poster": [ 
+    {"name": "scientific_poster1", "ext": ".png"},
+    {"name": "scientific_poster2", "ext": ".png"},
+    {"name": "scientific_poster3", "ext": ".png"}
+  ]
 }

@@ -96,9 +96,9 @@ function extraImageLoaded(image, p, imageName, parentImage) {
   let scaleFactor;
   if (scaleFactors && scaleFactors[parentImage.filename]) {
     scaleFactor = p.random(scaleFactors[parentImage.filename][0], scaleFactors[parentImage.filename][1]);
-  } else {
-    scaleFactor = p.random(3, 8);  // default value
-  }
+  } /* else {
+    scaleFactor = p.random(3, 4);  // default value
+  }*/
 
   let randomX;
   let randomY;
@@ -118,7 +118,7 @@ function extraImageLoaded(image, p, imageName, parentImage) {
 }
 
 function extraVideoLoaded(videoPath, p, videoName, parentImage) {
-  const scaleFactor = 1.5;
+  const scaleFactor = 2;
 
   let video = p.createVideo([`./images/extra_videos/${videoPath}.mp4`], () => {
     video.size(video.width / scaleFactor, video.height / scaleFactor);
@@ -237,8 +237,11 @@ function mousePressed(p) {
        p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
  
        if (imageClicked) { //IMAGE CLICKED
+        imgData.scale = 2;
         // Show close icon
-        document.getElementById('close-icon-image').style.display = 'block';
+        document.getElementById('close-icon-image').style.display = 'block';         
+        // Show close icon for text
+        document.getElementById('close-icon-text').style.display = 'block';
         
         // Hide elements
         document.getElementById('canvasContainer2').style.display = 'none';
@@ -270,7 +273,7 @@ function mousePressed(p) {
         }
       
         showFullScreenImage = true;
-      
+        showFullScreenImageText = true;
         showExtraImages = true;
         fullScreenImage = imgData.img;
 

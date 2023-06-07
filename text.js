@@ -139,7 +139,7 @@ letters.forEach(letter => {
 
   //var randomNumber3 = Math.floor(Math.random() * 100);
 
-  if(randomNumber >= 61 && randomNumber <= 100) {
+  if(randomNumber >= 99 && randomNumber <= 100) {
   
   
     gsap.registerPlugin(MotionPathPlugin); //register the MotionPathPlugin
@@ -184,7 +184,7 @@ letters.forEach(letter => {
       textElement.style.display = 'block';
   
     });
-  }, 0);
+  }, 2000);
 
 
 /*
