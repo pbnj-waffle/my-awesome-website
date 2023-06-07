@@ -14,10 +14,11 @@ window.onload = function() {
   function getRandomText(array) {
     let randomIndex = Math.floor(Math.random() * array.length);
     let text = array[randomIndex];
-
-    let characters = Array.from(text).map(c => c !== ' ' ? `<span class="letter">${c}</span>` : '&nbsp;');
-
-    return characters.join("");
+    let words = text.split(' ');
+    for (let i = 0; i < words.length; i++) {
+      words[i] = Array.from(words[i]).map(c => `<span class="letter">${c}</span>`).join("");
+    }
+    return '<div class="uncut-word">' + words.join('</div>&nbsp;<div class="uncut-word">') + '</div>';
   }
 
   let textContainer = document.getElementById('textContainer');

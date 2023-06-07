@@ -8,7 +8,7 @@ let targetColor;
 let images = [];
 let handleSize = 10;
 let activeImage;
-let buffer; //IMPORTANT to use to keep browser from crashing
+let trailBuffer; //IMPORTANT to use to keep browser from crashing
 let squareTrailBuffer;
 let squareBuffer;
 let blurredBgBuffer = null;
@@ -71,6 +71,9 @@ let showContactSection = false;
 let scaleFactors;
 let magnifierSize = 150; 
 let showFullScreenImageText = true;
+    // Store original console.log function
+    const originalLog = console.log;
+
 
 function LogData(message, x, y, move, speed, angle, stopMovingAfter, timestamp) {
   this.message = message;
@@ -118,9 +121,6 @@ let sketch2D = new p5((p) => {
 }
 
 
-
-    // Store original console.log function
-    const originalLog = console.log;
 // Overwrite the console.log
 console.log = function(...messages) {
   // Join messages to form a single string
@@ -252,7 +252,7 @@ p.preload = () => {
     targetColor = p.color(0);
     let canvas2D = p.createCanvas(p.windowWidth, p.windowHeight); // Store the canvas
     canvas2D.parent('canvasContainer');
-    buffer = p.createGraphics(p.windowWidth, p.windowHeight);
+    trailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     squareTrailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     squareBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     bgBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
@@ -421,8 +421,8 @@ p.draw = () => {
     }
     if (showFullScreenImageText) {
       // Draw the associated text on the right half of the screen
-      const textStart = p.windowWidth / 2 -400; 
       const textWidth = p.windowWidth / 1.5; 
+      const textStart = p.windowWidth / 2 - textWidth / 2;
 
       // Set up the text properties
       p.textLeading(50);
@@ -483,8 +483,7 @@ p.draw = () => {
     //IMAGES
     //const framesBetweenTrail = 25;   
     
-    for (const imgData of images) {    
-      
+    for (const imgData of images) {
       if (hoveredImage === imgData) {
         // Save the hovered image data to be processed later
         hoveredImgData = imgData;
@@ -502,7 +501,9 @@ p.draw = () => {
         imgData.framesSinceLastTrail++;
       
         if (imgData.framesSinceLastTrail >= imgData.framesBetweenTrail) {
-          imgData.trail.push({ x: imgData.x, y: imgData.y });
+          //imgData.trail.push({ x: imgData.x, y: imgData.y });
+          const imgToDraw = imgData.processedImg || imgData.img;
+          trailBuffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
           imgData.framesSinceLastTrail = 0;
         }
   
@@ -514,21 +515,20 @@ p.draw = () => {
         const noiseY = p.map(p.noise(imgData.noiseSeedY + imgData.noiseOffset), 0, 1, -1, 1);
         imgData.x += noiseX;
         imgData.y += noiseY;
-
         // Make sure the image doesn't go off the screen
         imgData.x = p.constrain(imgData.x, 0, p.windowWidth - imgData.width);
         imgData.y = p.constrain(imgData.y, 10 + lines.length * 12, p.windowHeight - imgData.height);
       }
   
       // Define imgToDraw inside the loop
-      const imgToDraw = imgData.processedImg || imgData.img;
+      //const imgToDraw = imgData.processedImg || imgData.img;
   
       // Trail
-      for (const trailPosition of imgData.trail) {
-        buffer.image(imgToDraw, trailPosition.x, trailPosition.y, imgData.width, imgData.height);
-      }
+      /*for (const trailPosition of imgData.trail) {
+        trailBuffer.image(imgToDraw, trailPosition.x, trailPosition.y, imgData.width, imgData.height);
+      }*/
       // Main image
-      buffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
+      //trailBuffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
 
     /*// Draw the image filename to the textBuffer
     textBuffer.textSize(10);
@@ -543,7 +543,12 @@ p.draw = () => {
     
     }
   }
-
+  // Display the buffer
+  p.image(trailBuffer, 0, 0);
+  for (const imgData of images) {
+    const imgToDraw = imgData.processedImg || imgData.img;
+    p.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
+  }
 // After processing all other images, process the hovered image
 if (hoveredImgData) {
   processImage(hoveredImgData, p);
@@ -555,11 +560,9 @@ if (hoveredImgData) {
 
   // Draw the image onto the buffer
   const imgToDrawHovered = hoveredImgData.processedImg || hoveredImgData.img;
-  buffer.image(imgToDrawHovered, hoveredImgData.x, hoveredImgData.y, hoveredImgData.width, hoveredImgData.height);
+  trailBuffer.image(imgToDrawHovered, hoveredImgData.x, hoveredImgData.y, hoveredImgData.width, hoveredImgData.height);
 }
 
-// Display the buffer
-p.image(buffer, 0, 0);
 // Display the textBuffer
 p.image(textBuffer, 0, 0);
 
@@ -593,7 +596,8 @@ if (hoveredImgData && mouseOverHoveredImage) {
 
     //BLENDING
     if (isBgAnimationEnabled) {
-      p.image(buffer, 0, 0); // Draw the buffer onto the main canvas
+      //p.image(trailBuffer, 0, 0); // Draw the buffer onto the main canvas
+      //p.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
 
       /*// Draw images with the BLEND mode
       p.blendMode(p.BLEND);
