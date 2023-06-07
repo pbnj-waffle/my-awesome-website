@@ -181,7 +181,6 @@ letters.forEach(letter => {
     tl.play().then(() => {
       let textElement = document.getElementById("textContainer");
       // GSAP animation is finished, show the original element
-      textElement.style.display = 'block';
   
     });
   }, 2000);

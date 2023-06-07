@@ -45,7 +45,7 @@
   {"name": "shape39", "ext": ".png"},
   {"name": "shape40", "ext": ".png"}
   ],
-  "urgent": [
+  "urgent_mockuped": [
     {"name": "urgent2", "ext": ".png"}
   ],
   "scientific_poster": [ 

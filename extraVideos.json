@@ -1,6 +1,6 @@
 {
     "coterie": ["coterie_video_landscape_big"],
     "shape": [],
-    "urgent": ["urgent_fromgif_vid"],
+    "urgent_mockuped": ["urgent_fromgif_vid"],
     "scientific_poster": ["scientific_poster_vid"]
   }

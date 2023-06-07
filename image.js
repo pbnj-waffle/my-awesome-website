@@ -4,7 +4,7 @@ let extraImages = [];
 let extraImagesData = {};
 let showExtraImages = false;
 let isExtraImagesLoaded = false;
-const imageNames = ["coterie", "shape", "urgent", "scientific_poster"];
+const imageNames = ["coterie", "shape", "urgent_mockuped", "scientific_poster"];
 let extraVideos = [];
 let extraVideosData = {};
 let textTimeoutId;
@@ -50,7 +50,7 @@ function imageLoaded(image, p, imageName) {
     framesSinceLastTrail: 0,
     framesBetweenTrail: null,
     initFramesBetweenTrail: function() {
-      const trailFrames = [10, 25, 100];
+      const trailFrames = [100, 200];
       this.framesBetweenTrail = trailFrames[Math.floor(Math.random() * trailFrames.length)];
       return this;
     },

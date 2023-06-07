@@ -347,106 +347,101 @@ p.preload = () => {
   }
 
 
-      p.draw = () => {
-      p.clear()
-      if (showAboutSection || showContactSection) {
-         // show only the background and the header
-       p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
-       } else {      
-      // p.background(0);
-      p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
-      textBuffer.clear();
- 
-      if (showFullScreenImage) {
+p.draw = () => {
+  p.clear()
+  if (showAboutSection || showContactSection) {
+   // show only the background and the header
+   p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
+  } else {      
+  // p.background(0);
+  p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
+  textBuffer.clear(); 
+  
+  if (showFullScreenImage) {
+    p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);  
+    let isOverMedia = false;
+    let imagesToMagnify = [];
 
-        p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
+    // Always check videos, but only magnify if the mouse isn't over an image
+    for (let i = 0; i < extraVideos.length; i++) {
+      let vid = extraVideos[i].video;
+      let x = extraVideos[i].x;
+      let y = extraVideos[i].y;
+      p.image(vid, x, y);
 
-        
-
-      
-let isOverMedia = false;
-let imagesToMagnify = [];
-
-// Always check videos, but only magnify if the mouse isn't over an image
-for (let i = 0; i < extraVideos.length; i++) {
-  let vid = extraVideos[i].video;
-  let x = extraVideos[i].x;
-  let y = extraVideos[i].y;
-  p.image(vid, x, y);
-
-  if (!isOverMedia && p.mouseX > x && p.mouseX < x + vid.width &&
-      p.mouseY > y && p.mouseY < y + vid.height) {
-    magnifyImage(vid, extraVideos[i]);
-    isOverMedia = true;
-  }
-}
-// Check images first, as they are drawn on top of the videos
-if (showExtraImages) {
-  const validExtraImages = extraImages.filter(imgData => imgData != null);
-
-  for (const imgData of validExtraImages) {
-    p.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
-
-    if (p.mouseX > imgData.x && p.mouseX < imgData.x + imgData.width &&
-        p.mouseY > imgData.y && p.mouseY < imgData.y + imgData.height) {
-      imagesToMagnify.push(imgData);
-      isOverMedia = true;
+      if (!isOverMedia && p.mouseX > x && p.mouseX < x + vid.width &&
+          p.mouseY > y && p.mouseY < y + vid.height) {
+        magnifyImage(vid, extraVideos[i]);
+        isOverMedia = true;
+      }
     }
-  }
-}
+    // Check images first, as they are drawn on top of the videos
+    if (showExtraImages) {
+      const validExtraImages = extraImages.filter(imgData => imgData != null);
+
+      for (const imgData of validExtraImages) {
+        p.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
+
+        if (p.mouseX > imgData.x && p.mouseX < imgData.x + imgData.width &&
+            p.mouseY > imgData.y && p.mouseY < imgData.y + imgData.height) {
+          imagesToMagnify.push(imgData);
+          isOverMedia = true;
+        }
+      }
+    }
 
 
 
-// Now magnify all images that are under the mouse
-for (const imgData of imagesToMagnify) {
-  magnifyImage(imgData.img, imgData);
-}
- // Draw the main image using the scaled properties
- let scaledWidth = clickedImageData.width * clickedImageData.scale;
- let scaledHeight = clickedImageData.height * clickedImageData.scale;
- let scaledX = clickedImageData.x - (scaledWidth - clickedImageData.width) / 2;
- let scaledY = clickedImageData.y - (scaledHeight - clickedImageData.height) / 2;
- p.image(fullScreenImage, scaledX, scaledY, scaledWidth, scaledHeight);
+    // Now magnify all images that are under the mouse
+    for (const imgData of imagesToMagnify) {
+      magnifyImage(imgData.img, imgData);
+    }
+    // Draw the main image using the scaled properties
+    let scaledWidth = clickedImageData.width * clickedImageData.scale;
+    let scaledHeight = clickedImageData.height * clickedImageData.scale;
+    let scaledX = clickedImageData.x - (scaledWidth - clickedImageData.width) / 2;
+    let scaledY = clickedImageData.y - (scaledHeight - clickedImageData.height) / 2;
+    p.image(fullScreenImage, scaledX, scaledY, scaledWidth, scaledHeight);
 
-// Check if the mouse is over the scaled image
-if (p.mouseX >= scaledX && p.mouseX <= scaledX + scaledWidth &&
-  p.mouseY >= scaledY && p.mouseY <= scaledY + scaledHeight) {
+    // Check if the mouse is over the scaled image
+    if (p.mouseX >= scaledX && p.mouseX <= scaledX + scaledWidth &&
+      p.mouseY >= scaledY && p.mouseY <= scaledY + scaledHeight) {
 
-let magnifyPower = 100;
-let scaleX = scaledWidth / fullScreenImage.width;
-let scaleY = scaledHeight / fullScreenImage.height;
-let sourceX = (p.mouseX - scaledX) / scaleX - magnifyPower / 2;
-let sourceY = (p.mouseY - scaledY) / scaleY - magnifyPower / 2;
+    let magnifyPower = 100;
+    let scaleX = scaledWidth / fullScreenImage.width;
+    let scaleY = scaledHeight / fullScreenImage.height;
+    let sourceX = (p.mouseX - scaledX) / scaleX - magnifyPower / 2;
+    let sourceY = (p.mouseY - scaledY) / scaleY - magnifyPower / 2;
 
-sourceX = p.constrain(sourceX, 0, fullScreenImage.width - magnifyPower);
-sourceY = p.constrain(sourceY, 0, fullScreenImage.height - magnifyPower);
+    sourceX = p.constrain(sourceX, 0, fullScreenImage.width - magnifyPower);
+    sourceY = p.constrain(sourceY, 0, fullScreenImage.height - magnifyPower);
 
-// Draw the magnified portion of the image at the mouse position
-p.image(fullScreenImage, p.mouseX - magnifyPower / 2, p.mouseY - magnifyPower / 2, magnifyPower, magnifyPower, sourceX, sourceY, magnifyPower, magnifyPower);
-}
-if (showFullScreenImageText) {
-  // Draw the associated text on the right half of the screen
-  const textStart = p.windowWidth / 2 -400; 
-  const textWidth = p.windowWidth / 1.5; 
+    // Draw the magnified portion of the image at the mouse position
+    p.image(fullScreenImage, p.mouseX - magnifyPower / 2, p.mouseY - magnifyPower / 2, magnifyPower, magnifyPower, sourceX, sourceY, magnifyPower, magnifyPower);
+    }
+    if (showFullScreenImageText) {
+      // Draw the associated text on the right half of the screen
+      const textStart = p.windowWidth / 2 -400; 
+      const textWidth = p.windowWidth / 1.5; 
 
-  // Set up the text properties
-  p.textLeading(50);
-  p.textFont(mainFont); 
-  p.textSize(45);
-  p.textAlign(p.CENTER, p.TOP); 
+      // Set up the text properties
+      p.textLeading(50);
+      p.textFont(mainFont); 
+      p.textSize(45);
+      p.textAlign(p.CENTER, p.TOP); 
 
-  // Set the rectangle's properties
-  const rectColor = [0, 150]; // RGBA, A=100 for semi-transparency
+      // Set the rectangle's properties
+      const rectColor = [0, 150]; // RGBA, A=100 for semi-transparency
 
-  // Draw a semi-transparent rectangle under the text
-  p.noStroke(); // Remove border
-  p.fill(rectColor); // Set color
-  p.rect(0, 0, p.windowWidth, p.windowHeight);
+      // Draw a semi-transparent rectangle under the text
+      p.noStroke(); // Remove border
+      p.fill(rectColor); // Set color
+      p.rect(0, 0, p.windowWidth, p.windowHeight);
 
-  // Draw the text
-  p.fill(255, 0, 0); // Set text color
-  p.text(fullScreenImageText, textStart, p.windowHeight/6, textWidth);
-}
+      // Draw the text
+      p.fill(255, 0, 0); // Set text color
+      p.text(fullScreenImageText, textStart, p.windowHeight/6, textWidth);
+    }
 
       } else {
 
@@ -588,16 +583,7 @@ if (hoveredImgData && mouseOverHoveredImage) {
     p.drawingContext.shadowColor = 'rgba(0,0,0,0)';
 }
 
-let currentTime = p.millis();
-if (currentTime - lastLogTime >= logCreationInterval && logQueue.length > 0) {
-  storedLogs.push(logQueue.shift());
-  lastLogTime = currentTime;
-}
 
-for (let i = 0; i < storedLogs.length; i++) {
-  let log = storedLogs[i];
-  p.updateMessage(log);
-}
 
     updateCursor(p)
  
@@ -642,6 +628,17 @@ for (let i = 0; i < storedLogs.length; i++) {
     p.endShape(p.CLOSE);
     p.blendMode(p.BLEND);
     p.pop();*/
+
+    let currentTime = p.millis();//CONSOLE LOG DRAWING
+    if (currentTime - lastLogTime >= logCreationInterval && logQueue.length > 0) {
+      storedLogs.push(logQueue.shift());
+      lastLogTime = currentTime;
+    }
+
+    for (let i = 0; i < storedLogs.length; i++) {
+      let log = storedLogs[i];
+      p.updateMessage(log);
+    }
 
     p.push(); // Create a separate context for square drawing
     p.blendMode(p.BLEND); // Reset the blend mode to BLEND
