@@ -1,23 +1,13 @@
 @font-face {
-    font-family: 'spratcondensed_thin';
-    src: url('sprat-condensedthin-webfont.woff2') format('woff2'),
-         url('sprat-condensedthin-webfont.woff') format('woff');
-    font-weight: thin;
-    font-style: normal;
-
-}
-
-@font-face {
-  font-family: 'spratextended_bold';
-  src: url('sprat-extendedbold-webfont.woff2') format('woff2'),
-       url('sprat-extendedbold-webfont.woff') format('woff');
-  font-weight: thin;
+  font-family: '00BusinessHistory-Regular';
+  src: url(' 00BusinessHistory-Regular.woff') format('woff');
+  font-weight: normal;
   font-style: normal;
-
 }
+
 
 body {
-  font-family: 'spratcondensed_thin'!important;
+  font-family: '00BusinessHistory-Regular'!important;
   background-color: #000000;
   margin: 0;
   padding: 0;
@@ -43,7 +33,7 @@ button {
 }
 
 #buttonsContainer {
-  font-family: 'spratcondensed_thin'!important;
+  font-family: '00BusinessHistory-Regular'!important;
   position: absolute;
   top: 150px;
   left: 45px;
@@ -63,7 +53,7 @@ button {
   background-color: #00000000;
   border-radius: 80px;
   color: #ffffff;
-  font-family: 'spratcondensed_thin';
+  font-family: '00BusinessHistory-Regular';
   transition: all 20s linear;
 }
 
@@ -72,7 +62,7 @@ button {
   border: 1px solid #ffffff00;
   background-color: #ff00d0; /* Change color to red */
   border-radius: 0px; /* Less round edges */
-  font-family: 'spratextended_bold'; /* Different font */
+  font-family: '00BusinessHistory-Regular'; /* Different font */
 }
 
 #buttonsContainer button:hover {
@@ -103,7 +93,7 @@ button {
 }
 
 .marquee-top {
-  font-family: 'spratcondensed_thin';
+  font-family: '00BusinessHistory-Regular';
   top: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -115,12 +105,12 @@ button {
 }
 
 .marquee-top.alt {
-  font-family: 'spratextended_bold';
+  font-family: '00BusinessHistory-Regular';
   background-color: #ff0000;
 }
 
 .marquee-bottom {
-  font-family: 'spratcondensed_thin';
+  font-family: '00BusinessHistory-Regular';
   bottom: 0;
   overflow: hidden;
   position: fixed;
@@ -132,7 +122,7 @@ button {
 }
 
 .marquee-bottom.alt {
-  font-family: 'spratextended_bold';
+  font-family: '00BusinessHistory-Regular';
   background-color: #ff0000;
 }
 

@@ -1,6 +1,8 @@
 {
-    "coterie": ["coterie_video_landscape_big"],
-    "shape": [],
-    "urgent_mockuped": ["urgent_fromgif_vid"],
-    "scientific_poster": ["scientific_poster_vid"]
+    "coterie.png": ["coterie_video_landscape_big", "coterie_video2"],
+    "shape.png": [],
+    "urgent_mockuped.png": ["urgent_fromgif_vid"],
+    "scientific_poster_mockuped2.png": ["scientific_poster_vid"],
+    "laptop.gif": [],
+    "balmont.gif":[]
   }

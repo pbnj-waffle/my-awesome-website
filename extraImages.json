@@ -1,10 +1,10 @@
 {
-  "coterie": [     
+  "coterie.png": [     
   {"name": "coterie1", "ext": ".png"},
   {"name": "coterie2", "ext": ".png"}
 
   ],
-  "shape": [    
+  "shape.png": [    
   {"name": "shape1", "ext": ".png"},
   {"name": "shape2", "ext": ".png"},
   {"name": "shape3", "ext": ".png"},
@@ -45,12 +45,16 @@
   {"name": "shape39", "ext": ".png"},
   {"name": "shape40", "ext": ".png"}
   ],
-  "urgent_mockuped": [
-    {"name": "urgent2", "ext": ".png"}
+  "urgent_mockuped.png": [
+    {"name": "urgent_red", "ext": ".png"}
   ],
-  "scientific_poster": [ 
+  "scientific_poster_mockuped2.png": [ 
     {"name": "scientific_poster1", "ext": ".png"},
     {"name": "scientific_poster2", "ext": ".png"},
     {"name": "scientific_poster3", "ext": ".png"}
-  ]
+  ],
+  "laptop.gif": [
+    {"name": "laptop2", "ext": ".png"}
+  ],
+  "balmont.gif":[]
 }

@@ -4,7 +4,7 @@ let extraImages = [];
 let extraImagesData = {};
 let showExtraImages = false;
 let isExtraImagesLoaded = false;
-const imageNames = ["coterie", "shape", "urgent_mockuped", "scientific_poster"];
+const imageNames = ["coterie.png", "shape.png", "urgent_mockuped.png", "scientific_poster_mockuped2.png", "laptop.gif", "camera.png", "dejavuwhite.png"];
 let extraVideos = [];
 let extraVideosData = {};
 let textTimeoutId;
@@ -17,13 +17,13 @@ let textTimeoutId;
 }*/
 
 function imageLoaded(image, p, imageName) {
-  const scaleFactor = p.random(6, 8);
+  const scaleFactor = p.random(4, 7);
   const effectRandom = p.floor(p.random(1, 101));
   console.log('Random number generated:', effectRandom);
   const shouldMove = 0 < effectRandom && effectRandom <= 100;
   //const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
   const shouldTrail = p.random() < 0.3; // NOT WORKING
-  const noBlending = p.random() < 0.5;
+  
 
 
   images.push({
@@ -40,7 +40,7 @@ function imageLoaded(image, p, imageName) {
     isResizingTop: false,
     isResizingBottom: false,
     resizeMargin: 10,
-    shouldMove: !noBlending && shouldMove,
+    shouldMove: shouldMove,
     startTime: p.millis() + 5000,
     stopAfter: p.random([10, 30, 60, 300, Infinity]) * 1000,
     trail: [],
@@ -50,8 +50,9 @@ function imageLoaded(image, p, imageName) {
     framesSinceLastTrail: 0,
     framesBetweenTrail: null,
     initFramesBetweenTrail: function() {
-      const trailFrames = [100, 200];
+      const trailFrames = [10, 25, 50];
       this.framesBetweenTrail = trailFrames[Math.floor(Math.random() * trailFrames.length)];
+      console.log(this.framesBetweenTrail);
       return this;
     },
     processedImg: null,
@@ -61,7 +62,6 @@ function imageLoaded(image, p, imageName) {
     lastDuplicateTime: p.millis(),
     glitchImg: null,
     shouldTrail: shouldTrail,
-    noBlending: noBlending,
     text: imageTexts[imageName] || '',
     filename: imageName,
     init: function() {
@@ -91,7 +91,6 @@ function wrapText(p, text, maxWidth) {
   lines.push(currentLine);
   return lines;
 }
-
 function extraImageLoaded(image, p, imageName, parentImage) {
   let scaleFactor;
   if (scaleFactors && scaleFactors[parentImage.filename]) {
@@ -133,6 +132,7 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
     video.position(randomX, randomY);
     video.loop();
     video.hide();
+    video.volume(0);
 
     let videoData = {
       video: video,
@@ -151,6 +151,31 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
     };
   });
 }
+
+/*function isOverlappingOtherMedia(x, y, width, height, overlapThreshold = 0.6) {
+  // Iterate through all extraImages
+  for (let img of extraImages) {
+    if (x < img.x + img.width * (1 - overlapThreshold) &&
+       x + width * (1 - overlapThreshold) > img.x &&
+       y < img.y + img.height * (1 - overlapThreshold) &&
+       y + height * (1 - overlapThreshold) > img.y) {
+      return true;
+    }
+  }
+
+  // Iterate through all extraVideos
+  for (let vid of extraVideos) {
+    if (x < vid.x + vid.width * (1 - overlapThreshold) &&
+       x + width * (1 - overlapThreshold) > vid.x &&
+       y < vid.y + vid.height * (1 - overlapThreshold) &&
+       y + height * (1 - overlapThreshold) > vid.y) {
+      return true;
+    }
+  }
+
+  return false;
+}*/
+
 
 
 function isOverlappingMainImage(x, y, width, height) {
@@ -256,14 +281,7 @@ function mousePressed(p) {
         extraImages = [];
         extraVideos = [];
       
-       // Only load the associated extra images
-        for (let i = 0; i < associatedExtraImages.length; i++) {
-          const extraImageName = associatedExtraImages[i].name;
-          const extraImageExt = associatedExtraImages[i].ext;
-          p.loadImage(`./images/extra/${extraImageName}${extraImageExt}`, (img) => {
-            extraImageLoaded(img, p, extraImageName, imgData);
-          });
-        }
+
       
         //EXTRA VIDEOS:
         const associatedExtraVideos = extraVideosData[imgData.filename];
@@ -271,6 +289,15 @@ function mousePressed(p) {
           const extraVideoName = associatedExtraVideos[i];
           extraVideoLoaded(extraVideoName, p, extraVideoName, imgData);
         }
+
+       // Only load the associated extra images
+       for (let i = 0; i < associatedExtraImages.length; i++) {
+        const extraImageName = associatedExtraImages[i].name;
+        const extraImageExt = associatedExtraImages[i].ext;
+        p.loadImage(`./images/extra/${extraImageName}${extraImageExt}`, (img) => {
+          extraImageLoaded(img, p, extraImageName, imgData);
+        });
+      }        
       
         showFullScreenImage = true;
         showFullScreenImageText = true;

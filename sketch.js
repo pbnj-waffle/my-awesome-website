@@ -225,11 +225,12 @@ p.preload = () => {
     overlayImages.push(overlayImg);
   }
     
-    for (let i = 0; i < imageNames.length; i++) { // MAIN IMAGES
-      const img = p.loadImage(`./images/${imageNames[i]}.png`, () => {
-          imageLoaded(img, p, imageNames[i]);
-      });
-    }
+  for (let i = 0; i < imageNames.length; i++) { 
+    // Assume imageNames[i] now includes the extension (e.g., "image1.png", "image2.gif")
+    const img = p.loadImage(`./images/${imageNames[i]}`, () => {
+        imageLoaded(img, p, imageNames[i]);
+    });
+  }
     /*for (let i = 1; i <= 3; i++) { //EXTRA IMAGES
       const img = p.loadImage(`./images/extra/extra_img (${i}).jpg`, () => {
           extraImageLoaded(img, p, `extra_img (${i})`);
@@ -358,7 +359,8 @@ p.draw = () => {
   textBuffer.clear(); 
   
   if (showFullScreenImage) {
-    p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);  
+    p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
+    p.background (0, 0, 0, 150);  
     let isOverMedia = false;
     let imagesToMagnify = [];
 
