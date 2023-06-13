@@ -8,7 +8,8 @@ const imageNames = ["coterie.png", "shape.png", "urgent_mockuped.png", "scientif
 let extraVideos = [];
 let extraVideosData = {};
 let textTimeoutId;
-
+const consoleRandom = p.floor(p.random(1, 101));
+console.log('Random number generated:', consoleRandom);
 
 /*function fileSelected(event, p) {
   const newImage = p.loadImage(URL.createObjectURL(event.target.files[0]), () => {
@@ -19,8 +20,11 @@ let textTimeoutId;
 function imageLoaded(image, p, imageName) {
   const scaleFactor = p.random(4, 7);
   const effectRandom = p.floor(p.random(1, 101));
-  console.log('Random number generated:', effectRandom);
-  const shouldMove = 0 < effectRandom && effectRandom <= 100;
+
+  const shouldMove = 0 < effectRandom && effectRandom <= 60;
+  if (shouldMove){
+    console.log('move initiated')
+  }
   //const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
   const shouldTrail = p.random() < 0.3; // NOT WORKING
   
@@ -41,7 +45,7 @@ function imageLoaded(image, p, imageName) {
     isResizingBottom: false,
     resizeMargin: 10,
     shouldMove: shouldMove,
-    startTime: p.millis() + 5000,
+    startTime: p.millis() + 10000,
     stopAfter: p.random([10, 30, 60, 300, Infinity]) * 1000,
     trail: [],
     noiseSeedX: p.random(1000),
@@ -52,7 +56,6 @@ function imageLoaded(image, p, imageName) {
     initFramesBetweenTrail: function() {
       const trailFrames = [10, 25, 50];
       this.framesBetweenTrail = trailFrames[Math.floor(Math.random() * trailFrames.length)];
-      console.log(this.framesBetweenTrail);
       return this;
     },
     processedImg: null,
@@ -262,6 +265,7 @@ function mousePressed(p) {
        p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
  
        if (imageClicked) { //IMAGE CLICKED
+        console.log('image clicked')
         imgData.scale = 2;
         // Show close icon
         document.getElementById('close-icon-image').style.display = 'block';         
@@ -272,6 +276,7 @@ function mousePressed(p) {
         document.getElementById('canvasContainer2').style.display = 'none';
         document.getElementById('textContainer').style.display = 'none';
         document.getElementById('header').style.display = 'none';
+        document.getElementById('otherTextContainer').style.display = 'none';
       
         // Find the associated extra images for the clicked image
         const associatedExtraImages = extraImagesData[imgData.filename];

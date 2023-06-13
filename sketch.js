@@ -37,9 +37,9 @@ let isMousePressedOn3D = false;
 let clickedImageData = null;
 //let isBlurApplied = false;
 //let canvasHeight;
-let bgImagesNames = ["cat_tv.png", "no_fun_tv.png", "armchair_tv.png"];
+let bgImagesNames = [/*"cat_tv.jpg", "armchair_tv.jpg",*/"no_fun_tv.jpg"];
 let bgImages = [];
-let overlayImagesNames = ["loading_screen_cat_tv.png", "loading_screen_no_fun_tv.png", "loading_screen_armchair_tv.png"];
+let overlayImagesNames = ["loading_screen_cat_tv.jpg", "loading_screen_no_fun_tv.jpg", "loading_screen_armchair_tv.jpg"];
 let overlayImages = [];
 let chosenBgImage, chosenOverlayImageName;
 let videoNames = ["bg.mp4"];
@@ -70,6 +70,8 @@ let showAboutSection = false;
 let showContactSection = false;
 let scaleFactors;
 let magnifierSize = 150; 
+let points = []; // This array will store the mouse positions
+const trailLength = 200; // This is the maximum length of the trail
 let showFullScreenImageText = true;
     // Store original console.log function
     const originalLog = console.log;
@@ -101,8 +103,6 @@ LogData.prototype.randomFramesBetweenTrail = function() {
 
 
 let sketch2D = new p5((p) => {
-
-
  window.p = p;
  function magnifyImage(image, imageData) {
   let magnifyPower = 100;
@@ -202,13 +202,13 @@ for (const trailPosition of log.trail) {
 });*/
 
   //canvasHeight = document.getElementById('canvasGlobalContainer').offsetHeight;
-p.mousePressed = () => {
-  mousePressed(p);
-};
-  
-p.mouseReleased = () => {
-  mouseReleased(p);
-};
+  document.getElementById('canvasGlobalContainer').addEventListener('mousedown', () => {
+    mousePressed(p);
+  });
+    
+  document.getElementById('canvasGlobalContainer').addEventListener('mouseup', () => {
+    mouseReleased(p);
+  });
 
 p.preload = () => {
     //gif = p.loadImage('./test.gif');//GIF
@@ -217,25 +217,27 @@ p.preload = () => {
       chosenVideo.elt.muted = true;
       chosenVideo.play();
   });*/
-  for (let i = 0; i < bgImagesNames.length; i++) { //BACKGROUND AND LOADING SCREEN IMAGES
-    let bgImg = p.loadImage(bgImagesNames[i]);
-    let overlayImg = p.loadImage(`loading_screen_${bgImagesNames[i]}`); // Load corresponding overlay image
 
-    bgImages.push(bgImg);
-    overlayImages.push(overlayImg);
-  }
-    
-  for (let i = 0; i < imageNames.length; i++) { 
-    // Assume imageNames[i] now includes the extension (e.g., "image1.png", "image2.gif")
-    const img = p.loadImage(`./images/${imageNames[i]}`, () => {
-        imageLoaded(img, p, imageNames[i]);
-    });
-  }
     /*for (let i = 1; i <= 3; i++) { //EXTRA IMAGES
       const img = p.loadImage(`./images/extra/extra_img (${i}).jpg`, () => {
           extraImageLoaded(img, p, `extra_img (${i})`);
       });
     }*/
+
+    for (let i = 0; i < bgImagesNames.length; i++) { //BACKGROUND AND LOADING SCREEN IMAGES
+      let bgImg = p.loadImage(bgImagesNames[i]);
+      let overlayImg = p.loadImage(`loading_screen_${bgImagesNames[i]}`); // Load corresponding overlay image
+  
+      bgImages.push(bgImg);
+      overlayImages.push(overlayImg);
+    }
+      
+    for (let i = 0; i < imageNames.length; i++) { 
+      // Assume imageNames[i] now includes the extension (e.g., "image1.png", "image2.gif")
+      const img = p.loadImage(`./images/${imageNames[i]}`, () => {
+          imageLoaded(img, p, imageNames[i]);
+      });
+    }
 
   imageTexts = p.loadJSON('imageTexts.json');
   extraImagesData = p.loadJSON('extraImages.json');
@@ -263,8 +265,7 @@ p.preload = () => {
     logBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     offScreenBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
 
-
-
+    p.stroke(255, 0, 0);
 
     /*for(let angle = 0; angle < 2 * p.PI; angle += 0.3){ //BUBBLE
       bubblePoints.push({angle: angle, r: bubbleSize/2});
@@ -274,10 +275,11 @@ p.preload = () => {
     chosenVideo.hide();
     chosenVideo.volume(0);*/
 
-    const randomIndex = Math.floor(p.random(bgImages.length));
+   const randomIndex = Math.floor(p.random(bgImages.length));
     chosenBgImage = bgImages[randomIndex];
-     /*chosenOverlayImageName = `loading_screen_${bgImagesNames[randomIndex]}`;
-  
+
+    //OVERLAY
+    chosenOverlayImageName = `loading_screen_${bgImagesNames[randomIndex]}`;  
     document.getElementById('overlay').style.backgroundImage = `url(${chosenOverlayImageName})`;
  
     // Fade out the mask after a delay
@@ -326,7 +328,7 @@ p.preload = () => {
       square = {
         x: p.random(p.windowWidth - 50),
         y: p.random(p.windowHeight - 50),
-        size: 20,
+        size: 30,
         vx: p.random(-3, 3),
         vy: p.random(-3, 3),
         color: [p.random(255), p.random(255), p.random(255)],
@@ -350,6 +352,7 @@ p.preload = () => {
 
 p.draw = () => {
   p.clear()
+  
   if (showAboutSection || showContactSection) {
    // show only the background and the header
    p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
@@ -451,6 +454,21 @@ p.draw = () => {
         
         p.image(bgBuffer, 0, 0, p.windowWidth, p.windowHeight);
 
+        points.push({ x: p.mouseX, y: p.mouseY }); // adds the current mouse position to the array
+
+        // If there are more than trailLength points, remove the oldest one
+        if (points.length > trailLength) {
+          points.shift();
+        }
+      
+        // Start from the second point (if it exists) because we need two points to draw a line
+        for (let i = 1; i < points.length; i++) {
+          p.line(points[i - 1].x, points[i - 1].y, points[i].x, points[i].y);
+        }
+      
+       
+      
+
       //currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
      // bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, canvasHeight);
 
@@ -503,7 +521,6 @@ p.draw = () => {
         imgData.framesSinceLastTrail++;
       
         if (imgData.framesSinceLastTrail >= imgData.framesBetweenTrail) {
-          //imgData.trail.push({ x: imgData.x, y: imgData.y });
           const imgToDraw = imgData.processedImg || imgData.img;
           trailBuffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
           imgData.framesSinceLastTrail = 0;
@@ -522,16 +539,7 @@ p.draw = () => {
         imgData.y = p.constrain(imgData.y, 10 + lines.length * 12, p.windowHeight - imgData.height);
       }
   
-      // Define imgToDraw inside the loop
-      //const imgToDraw = imgData.processedImg || imgData.img;
-  
-      // Trail
-      /*for (const trailPosition of imgData.trail) {
-        trailBuffer.image(imgToDraw, trailPosition.x, trailPosition.y, imgData.width, imgData.height);
-      }*/
-      // Main image
-      //trailBuffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
-
+      
     /*// Draw the image filename to the textBuffer
     textBuffer.textSize(10);
     textBuffer.textFont(secondaryFont);
@@ -635,16 +643,6 @@ if (hoveredImgData && mouseOverHoveredImage) {
     p.blendMode(p.BLEND);
     p.pop();*/
 
-    let currentTime = p.millis();//CONSOLE LOG DRAWING
-    if (currentTime - lastLogTime >= logCreationInterval && logQueue.length > 0) {
-      storedLogs.push(logQueue.shift());
-      lastLogTime = currentTime;
-    }
-
-    for (let i = 0; i < storedLogs.length; i++) {
-      let log = storedLogs[i];
-      p.updateMessage(log);
-    }
 
     p.push(); // Create a separate context for square drawing
     p.blendMode(p.BLEND); // Reset the blend mode to BLEND
@@ -656,6 +654,18 @@ if (hoveredImgData && mouseOverHoveredImage) {
     }
     p.image(logBuffer, 0, 0);
     p.pop(); // Restore the previous context
+
+        let currentTime = p.millis();//CONSOLE LOG DRAWING
+    if (currentTime - lastLogTime >= logCreationInterval && logQueue.length > 0) {
+      storedLogs.push(logQueue.shift());
+      lastLogTime = currentTime;
+    }
+
+    for (let i = 0; i < storedLogs.length; i++) {
+      let log = storedLogs[i];
+      p.updateMessage(log);
+    }
+
     
   };
 };

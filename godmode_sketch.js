@@ -144,14 +144,14 @@ const sketch2D = (p) => {
       }
     });
 
-    if (Math.random() > 0.8) {
+    if (Math.random() > 0.1) {
       square = {
         x: p.random(p.windowWidth - 50),
         y: p.random(p.windowHeight - 50),
         size: 50,
         vx: p.random(-3, 3),
         vy: p.random(-3, 3),
-        color: [p.random(255), p.random(255), p.random(255)],
+        color: [0, 0, 0],
         lastTrailSquarePosition: null,
         lastTrailSquareTime: 0,
         direction: p.createVector(p.random(-1, 1), p.random(-1, 1)).normalize(),
@@ -208,7 +208,7 @@ const sketch2D = (p) => {
       }
       if (imgData.shouldDuplicate) duplicateImage(imgData, p);// DUPLICATE
   
-      if (imgData.isDragging) { // DRAGGING
+      /*if (imgData.isDragging) { // DRAGGING
         imgData.x = p.mouseX - imgData.offsetX;
         imgData.y = p.mouseY - imgData.offsetY;
       } 
@@ -269,7 +269,7 @@ const sketch2D = (p) => {
           const currentAspectRatio = imgData.width / imgData.height;
           imgData.height = imgData.width / currentAspectRatio;
         }
-      }
+      }*/
   
        if (imgData.shouldMove) { // MOVE
         imgData.framesSinceLastTrail++;
@@ -304,9 +304,9 @@ const sketch2D = (p) => {
       }
     }
  
-    if (activeImage) {
+    /*if (activeImage) {
       drawFrame(activeImage);
-    }
+    }*/
 
     //BLENDING
     if (isBgAnimationEnabled) {

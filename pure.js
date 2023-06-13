@@ -1,10 +1,12 @@
 
+
 document.getElementById('about').addEventListener('click', function (event) { //HIDE THE ELEMENTS
   event.preventDefault();
   document.getElementById('about-section').style.display = 'flex';
   document.getElementById('textContainer').style.display = 'none';
   document.getElementById('canvasContainer2').style.display = 'none';
   document.getElementById('contact-section').style.display = 'none';
+  document.getElementById('otherTextContainer').style.display = 'none';
   document.body.classList.add('hide-letters');
   showAboutSection = true;
   showContactSection = false; 
@@ -14,6 +16,7 @@ document.getElementById('close-icon-about').addEventListener('click', function (
   document.getElementById('about-section').style.display = 'none';
   document.getElementById('textContainer').style.display = 'block';
   document.getElementById('canvasContainer2').style.display = 'block';
+  document.getElementById('otherTextContainer').style.display = 'block';
   document.body.classList.remove('hide-letters'); 
   showAboutSection = false;
 });
@@ -25,6 +28,7 @@ document.getElementById('contact').addEventListener('click', function (event) { 
   document.getElementById('textContainer').style.display = 'none';
   document.getElementById('canvasContainer2').style.display = 'none';
   document.getElementById('about-section').style.display = 'none';
+  document.getElementById('otherTextContainer').style.display = 'none';
   document.body.classList.add('hide-letters');
   showContactSection = true;
   showAboutSection = false;
@@ -34,6 +38,7 @@ document.getElementById('close-icon-contact').addEventListener('click', function
   document.getElementById('contact-section').style.display = 'none';
   document.getElementById('textContainer').style.display = 'block';
   document.getElementById('canvasContainer2').style.display = 'block';
+  document.getElementById('otherTextContainer').style.display = 'block';
   document.body.classList.remove('hide-letters');
   showContactSection = false; 
 });
@@ -51,6 +56,7 @@ document.getElementById('close-icon-image').addEventListener('click', function(e
   document.getElementById('canvasContainer2').style.display = 'block';
   document.getElementById('textContainer').style.display = '';
   document.getElementById('header').style.display = 'block';
+  document.getElementById('otherTextContainer').style.display = 'block';
   window.set3DObjectVisibility(true);
   
   // Reset fullscreen mode flag

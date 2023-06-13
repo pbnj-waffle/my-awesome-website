@@ -287,7 +287,7 @@ const loadModel = (url) => {
     my3DModel.position.y = 1;
     
     // Scale 
-    const scale = Math.random() * (0.25 - 0.05) + 0.03;
+    const scale = Math.random() * (0.25 - 0.05) + 0.05;
     my3DModel.scale.set(scale, scale, scale);
 
     // Create a new bounding box

@@ -36,7 +36,7 @@ function drawMovingSquare(p) {
         p.dist(square.x, square.y, square.lastEdgeHitPosition.x, square.lastEdgeHitPosition.y) > edgeHitCooldownDistance
       ) {
         square.edgeHits++; // Increment the edge hit counter
-
+        console.log("Edge hit")
         square.lastEdgeHitPosition = { x: square.x, y: square.y }; // Update the last edge hit position
       }
     }
@@ -53,7 +53,7 @@ function drawMovingSquare(p) {
   // Trail drawing logic
   const currentTime = p.millis();
   const timeSinceLastTrailSquare = currentTime - square.lastTrailSquareTime;
-  const trailInterval = 200; // Adjust this value to control the spacing
+  const trailInterval = 150; // spacing
 
   if (timeSinceLastTrailSquare >= trailInterval) {
     squareTrailBuffer.noStroke();

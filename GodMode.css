@@ -14,6 +14,10 @@ body {
   text-align: center;
 }
 
+body::-webkit-scrollbar {
+  display: none;
+  }
+
 #canvasContainer {
   position: absolute;
   top: 0;
@@ -60,7 +64,7 @@ button {
 #buttonsContainer button.alt {
   /* alternate styles */
   border: 1px solid #ffffff00;
-  background-color: #ff00d0; /* Change color to red */
+  background-color: #ff0000; /* Change color to red */
   border-radius: 0px; /* Less round edges */
   font-family: '00BusinessHistory-Regular'; /* Different font */
 }

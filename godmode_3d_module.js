@@ -1,5 +1,5 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
-import { OBJLoader } from './OBJLoader.js';
+import { FBXLoader } from './FBXLoader.js';
 
 let lastMousePosition = new THREE.Vector2();
 let my3DModel;
@@ -81,14 +81,15 @@ document.addEventListener("mousedown", (event) => {
     }
   
     if (isDragging3DModel && isMouseOver3DObject(event)) {
-      const deltaX = (event.clientX - lastMousePosition.x) * 0.01;
-      const deltaY = (event.clientY - lastMousePosition.y) * 0.01;
-  
+      const deltaX = (event.clientX - lastMousePosition.x) * (camera.position.z / 500);
+      const deltaY = (event.clientY - lastMousePosition.y) * (camera.position.z / 500);
+    
       my3DModel.position.x += deltaX;
       my3DModel.position.y -= deltaY;
-  
+    
       lastMousePosition = { x: event.clientX, y: event.clientY };
     }
+    
   });
   
  
@@ -125,9 +126,10 @@ document.addEventListener("mousedown", (event) => {
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 5;
 
-  loader = new OBJLoader();
+  camera.position.z = 500;
+
+  loader = new FBXLoader();
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
@@ -135,6 +137,7 @@ document.addEventListener("mousedown", (event) => {
   const pointLight = new THREE.PointLight(0xffffff, 0.5);
   camera.add(pointLight);
   scene.add(camera);
+ 
 
   animate3D();
 };
@@ -171,16 +174,43 @@ const animate3D = () => {
 
 const loadModel = (url) => {
   loader.load(url, (model) => {
+    
     if (my3DModel) scene.remove(my3DModel);
     my3DModel = model;
+    my3DModel.position.set(0,0,0);
+
+    // Compute the bounding box of the loaded model
+    const boundingBox = new THREE.Box3().setFromObject(my3DModel);
+
+    // Compute the model's width, height and depth
+    let modelWidth = boundingBox.max.x - boundingBox.min.x;
+    let modelHeight = boundingBox.max.y - boundingBox.min.y;
+    let modelDepth = boundingBox.max.z - boundingBox.min.z;
+
+    // Compute the model's largest dimension
+    let maxModelDim = Math.max(modelWidth, modelHeight, modelDepth);
+
+    // Compute the screen's smallest dimension
+    let minScreenDim = Math.min(window.innerWidth, window.innerHeight);
+
+    // Compute the scale factor
+    let scale = minScreenDim / maxModelDim;
+
+    // Scale the model
+    my3DModel.scale.set(scale, scale, scale);
+
+    // If you need to access the bounding box later, you can attach it to the model
+    my3DModel.userData.boundingBox = boundingBox;
+
     scene.add(my3DModel);
   });
 };
 
+
 document.getElementById('upload3DObject').addEventListener('click', () => {
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.obj';
+  input.accept = '.fbx';
   input.onchange = (event) => {
     const file = event.target.files[0];
     const objectURL = URL.createObjectURL(file);

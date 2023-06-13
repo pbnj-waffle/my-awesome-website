@@ -9,7 +9,7 @@ function generatePath() {
 }
 
 window.onload = function() {
-  let possibleTexts = ['THE THOUGHT OF YOU LOADING THIS PAGE FOR THE FIRST TIME AND SEEING THIS MESSAGE INSTEAD OF THE OTHERS KEEPS ME UP AT NIGHT', 'TRUST THE PROCESS', 'TAKE A CHANCE ON ME'];
+  let possibleTexts = [/*'THE THOUGHT OF YOU LOADING THIS PAGE FOR THE FIRST TIME AND SEEING THIS MESSAGE INSTEAD OF THE OTHERS KEEPS ME UP AT NIGHT',*/ 'TRUST THE PROCESS'];
 
   function getRandomText(array) {
     let randomIndex = Math.floor(Math.random() * array.length);
@@ -184,17 +184,17 @@ letters.forEach(letter => {
       // GSAP animation is finished, show the original element
   
     });
-  }, 2000);
+  }, 20000);
 
 
-/*
+
   // Define the array of word pairs
 const wordPairs = [
   ["experience", "message"],
-  ["conform", "stand out"],
+  //["conform", "stand out"],
   ["planning", "discovery"],
-  ["details", "big picture"],
-  ["meet expectations", "surprise"]
+  ["details", "big picture"]
+
 ];
 
 // Choose a random pair of words
@@ -276,8 +276,7 @@ balanceTl.to("#ball", {
     // Set the xPercent to 0 to avoid the initial "jump"
     gsap.set("#ball2", { xPercent: 0 });
   }
-}, 5);*/
-
+}, 5);
  
   
 
