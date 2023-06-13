@@ -74,7 +74,7 @@ let points = []; // This array will store the mouse positions
 const trailLength = 200; // This is the maximum length of the trail
 let showFullScreenImageText = true;
     // Store original console.log function
-    const originalLog = console.log;
+const originalLog = console.log;
 
 
 function LogData(message, x, y, move, speed, angle, stopMovingAfter, timestamp) {
@@ -94,6 +94,20 @@ function LogData(message, x, y, move, speed, angle, stopMovingAfter, timestamp) 
   this.timestamp = timestamp;
 }
 
+function drawMouseLine(p) {
+  points.push({ x: p.mouseX, y: p.mouseY }); // adds the current mouse position to the array
+
+  // If there are more than trailLength points, remove the oldest one
+  if (points.length > trailLength) {
+    points.shift();
+  }
+  p.stroke(255, 0, 0);      
+  // Start from the second point (if it exists) because we need two points to draw a line
+  for (let i = 1; i < points.length; i++) {
+    p.line(points[i - 1].x, points[i - 1].y, points[i].x, points[i].y);
+  }
+  p.noStroke();
+}
 
 LogData.prototype.randomFramesBetweenTrail = function() {
   const minFrames = 10; // Minimum frames between trail
@@ -147,37 +161,37 @@ console.log = function(...messages) {
     Math.random() * Math.PI * 2,
     stopMovingAfter,
     p.millis() 
-  );
+    );
   logQueue.push(messageObject); 
 }
 
-    p.updateMessage = function(log) {
-      if (log.move && p.millis() - log.timestamp < log.stopMovingAfter) {
-        
-        log.noiseOffset += 0.01;
-        
+p.updateMessage = function(log) {
+  if (log.move && p.millis() - log.timestamp < log.stopMovingAfter) {
+
+    log.noiseOffset += 0.01;
+
         // Perlin noise for moving
-        const noiseX = p.map(p.noise(log.noiseSeedX + log.noiseOffset), 0, 1, -1, 1);
-        const noiseY = p.map(p.noise(log.noiseSeedY + log.noiseOffset), 0, 1, -1, 1);
-        log.x += noiseX;
-        log.y += noiseY;
+    const noiseX = p.map(p.noise(log.noiseSeedX + log.noiseOffset), 0, 1, -1, 1);
+    const noiseY = p.map(p.noise(log.noiseSeedY + log.noiseOffset), 0, 1, -1, 1);
+    log.x += noiseX;
+    log.y += noiseY;
     
         // Make sure the message doesn't go off the screen
-        log.x = p.constrain(log.x, 0, p.windowWidth);
-        log.y = p.constrain(log.y, 0, p.windowHeight);
-      }
-      
+    log.x = p.constrain(log.x, 0, p.windowWidth);
+    log.y = p.constrain(log.y, 0, p.windowHeight);
+  }
+
       // Always add a trail point, even if the text is not moving
-      log.framesSinceLastTrail++;
-      if (log.framesSinceLastTrail >= log.framesBetweenTrail) {
-        let textWidth = p.textWidth(log.message);
-        let adjustedX = p.constrain(log.x, 0, p.windowWidth - textWidth);
-        log.trail.push({ x: adjustedX, y: log.y });
-        log.framesSinceLastTrail = 0;
-      }
-      
-      p.fill(255);
-      p.textSize(10);
+  log.framesSinceLastTrail++;
+  if (log.framesSinceLastTrail >= log.framesBetweenTrail) {
+    let textWidth = p.textWidth(log.message);
+    let adjustedX = p.constrain(log.x, 0, p.windowWidth - textWidth);
+    log.trail.push({ x: adjustedX, y: log.y });
+    log.framesSinceLastTrail = 0;
+  }
+
+  p.fill(255);
+  p.textSize(10);
        // Calculate text width
   let textWidth = p.textWidth(log.message);
   
@@ -185,9 +199,9 @@ console.log = function(...messages) {
   let adjustedX = p.constrain(log.x, 0, p.windowWidth - textWidth);
 
 // Draw the message trail
-for (const trailPosition of log.trail) {
-  p.text(log.message, trailPosition.x, trailPosition.y);
-}
+  for (const trailPosition of log.trail) {
+    p.text(log.message, trailPosition.x, trailPosition.y);
+  }
   
   // Draw the message
   p.text(log.message, adjustedX, log.y);
@@ -202,13 +216,13 @@ for (const trailPosition of log.trail) {
 });*/
 
   //canvasHeight = document.getElementById('canvasGlobalContainer').offsetHeight;
-  document.getElementById('canvasGlobalContainer').addEventListener('mousedown', () => {
-    mousePressed(p);
-  });
-    
-  document.getElementById('canvasGlobalContainer').addEventListener('mouseup', () => {
-    mouseReleased(p);
-  });
+document.getElementById('canvasGlobalContainer').addEventListener('mousedown', () => {
+  mousePressed(p);
+});
+
+document.getElementById('canvasGlobalContainer').addEventListener('mouseup', () => {
+  mouseReleased(p);
+});
 
 p.preload = () => {
     //gif = p.loadImage('./test.gif');//GIF
@@ -227,24 +241,24 @@ p.preload = () => {
     for (let i = 0; i < bgImagesNames.length; i++) { //BACKGROUND AND LOADING SCREEN IMAGES
       let bgImg = p.loadImage(bgImagesNames[i]);
       let overlayImg = p.loadImage(`loading_screen_${bgImagesNames[i]}`); // Load corresponding overlay image
-  
+
       bgImages.push(bgImg);
       overlayImages.push(overlayImg);
     }
-      
+
     for (let i = 0; i < imageNames.length; i++) { 
       // Assume imageNames[i] now includes the extension (e.g., "image1.png", "image2.gif")
       const img = p.loadImage(`./images/${imageNames[i]}`, () => {
-          imageLoaded(img, p, imageNames[i]);
+        imageLoaded(img, p, imageNames[i]);
       });
     }
 
-  imageTexts = p.loadJSON('imageTexts.json');
-  extraImagesData = p.loadJSON('extraImages.json');
-  extraVideosData = p.loadJSON('extraVideos.json');
-  
-  mainFont = p.loadFont('00BusinessHistory-Regular.otf');
-  secondaryFont = p.loadFont('SourceCodePro-Regular.ttf');
+    imageTexts = p.loadJSON('imageTexts.json');
+    extraImagesData = p.loadJSON('extraImages.json');
+    extraVideosData = p.loadJSON('extraVideos.json');
+
+    mainFont = p.loadFont('00BusinessHistory-Regular.otf');
+    secondaryFont = p.loadFont('SourceCodePro-Regular.ttf');
   }
   
   
@@ -265,8 +279,6 @@ p.preload = () => {
     logBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
     offScreenBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
 
-    p.stroke(255, 0, 0);
-
     /*for(let angle = 0; angle < 2 * p.PI; angle += 0.3){ //BUBBLE
       bubblePoints.push({angle: angle, r: bubbleSize/2});
     }*/
@@ -275,25 +287,25 @@ p.preload = () => {
     chosenVideo.hide();
     chosenVideo.volume(0);*/
 
-   const randomIndex = Math.floor(p.random(bgImages.length));
+    const randomIndex = Math.floor(p.random(bgImages.length));
     chosenBgImage = bgImages[randomIndex];
 
     //OVERLAY
     chosenOverlayImageName = `loading_screen_${bgImagesNames[randomIndex]}`;  
     document.getElementById('overlay').style.backgroundImage = `url(${chosenOverlayImageName})`;
- 
+
     // Fade out the mask after a delay
     setTimeout(() => {
       const mask = document.getElementById('mask');
       mask.style.transition = 'opacity 1s ease-out';
       mask.style.opacity = 0;
-  
+
       // remove the mask from the DOM completely after the fade-out animation
       setTimeout(() => {
         mask.parentNode.removeChild(mask);
       }, 200); //match the transition duration above
     }, 200); // delay in milliseconds*/
-    
+
   /*let randomNumber3 = Math.floor(Math.random() * 100);
 
   let textElement = document.querySelector("#textContainer");
@@ -324,72 +336,72 @@ p.preload = () => {
   } */
 
 
-    if (Math.random() > 0.1) {
-      square = {
-        x: p.random(p.windowWidth - 50),
-        y: p.random(p.windowHeight - 50),
-        size: 30,
-        vx: p.random(-3, 3),
-        vy: p.random(-3, 3),
-        color: [p.random(255), p.random(255), p.random(255)],
-        lastTrailSquarePosition: null,
-        lastTrailSquareTime: 0,
-        direction: p.createVector(p.random(-1, 1), p.random(-1, 1)).normalize(),
-        stopped: false,
-        edgeHits: 0,
-        edgeHitsToStop: 0,
-        lastEdgeHitPosition: null,
-      };
-       
-      square.edgeHitsToStop = p.random([15, 30, 45, 60, 75]);
-    }
+      if (Math.random() > 0.1) {
+        square = {
+          x: p.random(p.windowWidth - 50),
+          y: p.random(p.windowHeight - 50),
+          size: 30,
+          vx: p.random(-3, 3),
+          vy: p.random(-3, 3),
+          color: [p.random(255), p.random(255), p.random(255)],
+          lastTrailSquarePosition: null,
+          lastTrailSquareTime: 0,
+          direction: p.createVector(p.random(-1, 1), p.random(-1, 1)).normalize(),
+          stopped: false,
+          edgeHits: 0,
+          edgeHitsToStop: 0,
+          lastEdgeHitPosition: null,
+        };
+
+        square.edgeHitsToStop = p.random([15, 30, 45, 60, 75]);
+      }
       squareTrailBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
       squareTrailBufferBlend = p.createGraphics(p.windowWidth, p.windowHeight);
       squareBuffer = p.createGraphics(p.windowWidth, p.windowHeight);
-    
-  }
+
+    }
 
 
-p.draw = () => {
-  p.clear()
-  
-  if (showAboutSection || showContactSection) {
+    p.draw = () => {
+      p.clear()
+
+      if (showAboutSection || showContactSection) {
    // show only the background and the header
-   p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
-  } else {      
+       p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
+     } else {      
   // p.background(0);
-  p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
-  textBuffer.clear(); 
-  
-  if (showFullScreenImage) {
-    p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
-    p.background (0, 0, 0, 150);  
-    let isOverMedia = false;
-    let imagesToMagnify = [];
+      p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
+      textBuffer.clear(); 
+
+      if (showFullScreenImage) {
+        p.image(chosenBgImage, 0, 0,  p.windowWidth, p.windowHeight);
+        p.background (0, 0, 0, 150);  
+        let isOverMedia = false;
+        let imagesToMagnify = [];
 
     // Always check videos, but only magnify if the mouse isn't over an image
-    for (let i = 0; i < extraVideos.length; i++) {
-      let vid = extraVideos[i].video;
-      let x = extraVideos[i].x;
-      let y = extraVideos[i].y;
-      p.image(vid, x, y);
+        for (let i = 0; i < extraVideos.length; i++) {
+          let vid = extraVideos[i].video;
+          let x = extraVideos[i].x;
+          let y = extraVideos[i].y;
+          p.image(vid, x, y);
 
-      if (!isOverMedia && p.mouseX > x && p.mouseX < x + vid.width &&
-          p.mouseY > y && p.mouseY < y + vid.height) {
-        magnifyImage(vid, extraVideos[i]);
-        isOverMedia = true;
+          if (!isOverMedia && p.mouseX > x && p.mouseX < x + vid.width &&
+            p.mouseY > y && p.mouseY < y + vid.height) {
+            magnifyImage(vid, extraVideos[i]);
+          isOverMedia = true;
+        }
       }
-    }
     // Check images first, as they are drawn on top of the videos
-    if (showExtraImages) {
-      const validExtraImages = extraImages.filter(imgData => imgData != null);
+      if (showExtraImages) {
+        const validExtraImages = extraImages.filter(imgData => imgData != null);
 
-      for (const imgData of validExtraImages) {
-        p.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
+        for (const imgData of validExtraImages) {
+          p.image(imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
 
-        if (p.mouseX > imgData.x && p.mouseX < imgData.x + imgData.width &&
+          if (p.mouseX > imgData.x && p.mouseX < imgData.x + imgData.width &&
             p.mouseY > imgData.y && p.mouseY < imgData.y + imgData.height) {
-          imagesToMagnify.push(imgData);
+            imagesToMagnify.push(imgData);
           isOverMedia = true;
         }
       }
@@ -412,7 +424,7 @@ p.draw = () => {
     if (p.mouseX >= scaledX && p.mouseX <= scaledX + scaledWidth &&
       p.mouseY >= scaledY && p.mouseY <= scaledY + scaledHeight) {
 
-    let magnifyPower = 100;
+      let magnifyPower = 100;
     let scaleX = scaledWidth / fullScreenImage.width;
     let scaleY = scaledHeight / fullScreenImage.height;
     let sourceX = (p.mouseX - scaledX) / scaleX - magnifyPower / 2;
@@ -423,17 +435,17 @@ p.draw = () => {
 
     // Draw the magnified portion of the image at the mouse position
     p.image(fullScreenImage, p.mouseX - magnifyPower / 2, p.mouseY - magnifyPower / 2, magnifyPower, magnifyPower, sourceX, sourceY, magnifyPower, magnifyPower);
-    }
-    if (showFullScreenImageText) {
+  }
+  if (showFullScreenImageText) {
       // Draw the associated text on the right half of the screen
-      const textWidth = p.windowWidth / 1.5; 
-      const textStart = p.windowWidth / 2 - textWidth / 2;
+    const textWidth = p.windowWidth / 1.5; 
+    const textStart = p.windowWidth / 2 - textWidth / 2;
 
       // Set up the text properties
-      p.textLeading(50);
-      p.textFont(mainFont); 
-      p.textSize(45);
-      p.textAlign(p.CENTER, p.TOP); 
+    p.textLeading(50);
+    p.textFont(mainFont); 
+    p.textSize(45);
+    p.textAlign(p.CENTER, p.TOP); 
 
       // Set the rectangle's properties
       const rectColor = [0, 150]; // RGBA, A=100 for semi-transparency
@@ -448,31 +460,19 @@ p.draw = () => {
       p.text(fullScreenImageText, textStart, p.windowHeight/6, textWidth);
     }
 
-      } else {
+  } else {
 
         bgBuffer.clear(); // Clear bgBuffer here, after checking showFullScreenImage
         
         p.image(bgBuffer, 0, 0, p.windowWidth, p.windowHeight);
 
-        points.push({ x: p.mouseX, y: p.mouseY }); // adds the current mouse position to the array
 
-        // If there are more than trailLength points, remove the oldest one
-        if (points.length > trailLength) {
-          points.shift();
-        }
-      
-        // Start from the second point (if it exists) because we need two points to draw a line
-        for (let i = 1; i < points.length; i++) {
-          p.line(points[i - 1].x, points[i - 1].y, points[i].x, points[i].y);
-        }
-      
-       
-      
+
 
       //currentBgFrame = (currentBgFrame + 1) % maskedBgs.length;
      // bgBuffer.image(maskedBgs[currentBgFrame], 0, 0, p.windowWidth, canvasHeight);
 
-     
+
 
 
 
@@ -499,36 +499,36 @@ p.draw = () => {
       
       xOff += 0.001;
       yOff += 0.001;*/
-      
+
     //IMAGES
     //const framesBetweenTrail = 25;   
-    
-    for (const imgData of images) {
-      if (hoveredImage === imgData) {
+
+        for (const imgData of images) {
+          if (hoveredImage === imgData) {
         // Save the hovered image data to be processed later
-        hoveredImgData = imgData;
-      } else {
-      processImage(imgData, p);
-  
-      if (activeImage === imgData) {
-        drawFrame(imgData, p);
-      }
+            hoveredImgData = imgData;
+          } else {
+            processImage(imgData, p);
+
+            if (activeImage === imgData) {
+              drawFrame(imgData, p);
+            }
 
       if (imgData.shouldDuplicate) duplicateImage(imgData, p);// DUPLICATE
-  
+
       let lines = wrapText(p, imgData.filename, imgData.width);
       if (imgData.shouldMove && p.millis() > imgData.startTime && (p.millis() - imgData.startTime) < imgData.stopAfter) {
         imgData.framesSinceLastTrail++;
-      
+
         if (imgData.framesSinceLastTrail >= imgData.framesBetweenTrail) {
           const imgToDraw = imgData.processedImg || imgData.img;
           trailBuffer.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
           imgData.framesSinceLastTrail = 0;
         }
-  
+
         const speed = 0.001;
         imgData.noiseOffset += speed;
-  
+
         // Perlin noise for moving
         const noiseX = p.map(p.noise(imgData.noiseSeedX + imgData.noiseOffset), 0, 1, -1, 1);
         const noiseY = p.map(p.noise(imgData.noiseSeedY + imgData.noiseOffset), 0, 1, -1, 1);
@@ -538,7 +538,7 @@ p.draw = () => {
         imgData.x = p.constrain(imgData.x, 0, p.windowWidth - imgData.width);
         imgData.y = p.constrain(imgData.y, 10 + lines.length * 12, p.windowHeight - imgData.height);
       }
-  
+
       
     /*// Draw the image filename to the textBuffer
     textBuffer.textSize(10);
@@ -550,7 +550,7 @@ p.draw = () => {
       let textY = imgData.y - 10 - (lines.length - 1 - i) * 12; //TEXT GOING OFF SCREEN NOT WORKING
       textY = p.constrain(textY, 0, p.windowHeight - 10); 
     } */
-    
+
     }
   }
   // Display the buffer
@@ -560,31 +560,31 @@ p.draw = () => {
     p.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
   }
 // After processing all other images, process the hovered image
-if (hoveredImgData) {
-  processImage(hoveredImgData, p);
+  if (hoveredImgData) {
+    processImage(hoveredImgData, p);
 
-  if (activeImage === hoveredImgData) {
-    drawFrame(hoveredImgData, p);
-  }
-  if (hoveredImgData.shouldDuplicate) duplicateImage(hoveredImgData, p);
+    if (activeImage === hoveredImgData) {
+      drawFrame(hoveredImgData, p);
+    }
+    if (hoveredImgData.shouldDuplicate) duplicateImage(hoveredImgData, p);
 
   // Draw the image onto the buffer
-  const imgToDrawHovered = hoveredImgData.processedImg || hoveredImgData.img;
-  trailBuffer.image(imgToDrawHovered, hoveredImgData.x, hoveredImgData.y, hoveredImgData.width, hoveredImgData.height);
-}
+    const imgToDrawHovered = hoveredImgData.processedImg || hoveredImgData.img;
+    trailBuffer.image(imgToDrawHovered, hoveredImgData.x, hoveredImgData.y, hoveredImgData.width, hoveredImgData.height);
+  }
 
 // Display the textBuffer
-p.image(textBuffer, 0, 0);
+  p.image(textBuffer, 0, 0);
 
 // Check if the mouse is still over the hovered image
-let mouseOverHoveredImage = false;
-if (hoveredImgData) {
+  let mouseOverHoveredImage = false;
+  if (hoveredImgData) {
     mouseOverHoveredImage = p.mouseX >= hoveredImgData.x && p.mouseX <= hoveredImgData.x + hoveredImgData.width && 
     p.mouseY >= hoveredImgData.y && p.mouseY <= hoveredImgData.y + hoveredImgData.height;
-}
+  }
 
 // Apply the glow effect and draw the hovered image onto the main canvas only if the mouse is still over it
-if (hoveredImgData && mouseOverHoveredImage) {
+  if (hoveredImgData && mouseOverHoveredImage) {
     p.drawingContext.shadowBlur = 20; // Set the amount of blur. Adjust as needed.
     p.drawingContext.shadowColor = "white"; // Set the color of the glow. Adjust as needed.
 
@@ -594,18 +594,18 @@ if (hoveredImgData && mouseOverHoveredImage) {
     // Reset the shadow properties to their default values
     p.drawingContext.shadowBlur = 0;
     p.drawingContext.shadowColor = 'rgba(0,0,0,0)';
-}
+  }
 
 
 
-    updateCursor(p)
- 
-    if (activeImage) {
-      drawFrame(activeImage);
-    }
+  updateCursor(p)
+
+  if (activeImage) {
+    drawFrame(activeImage);
+  }
 
     //BLENDING
-    if (isBgAnimationEnabled) {
+  if (isBgAnimationEnabled) {
       //p.image(trailBuffer, 0, 0); // Draw the buffer onto the main canvas
       //p.image(imgToDraw, imgData.x, imgData.y, imgData.width, imgData.height);
 
@@ -614,7 +614,7 @@ if (hoveredImgData && mouseOverHoveredImage) {
       for (const imgData of images) {
         p.image(imgData.processedImg || imgData.img, imgData.x, imgData.y, imgData.width, imgData.height);
       }*/
-    } 
+  } 
     /*p.push();//gif
     p.blendMode(p.DARKEST);
     p.image(gif, 0, 0, p.width, p.height);  
@@ -656,22 +656,23 @@ if (hoveredImgData && mouseOverHoveredImage) {
     p.pop(); // Restore the previous context
 
         let currentTime = p.millis();//CONSOLE LOG DRAWING
-    if (currentTime - lastLogTime >= logCreationInterval && logQueue.length > 0) {
-      storedLogs.push(logQueue.shift());
-      lastLogTime = currentTime;
-    }
+        if (currentTime - lastLogTime >= logCreationInterval && logQueue.length > 0) {
+          storedLogs.push(logQueue.shift());
+          lastLogTime = currentTime;
+        }
 
-    for (let i = 0; i < storedLogs.length; i++) {
-      let log = storedLogs[i];
-      p.updateMessage(log);
-    }
+        for (let i = 0; i < storedLogs.length; i++) {
+          let log = storedLogs[i];
+          p.updateMessage(log);
+        }
 
-    
+
+      };
+    };
+    drawMouseLine(p);
   };
-};
-};
 // Smoothing function
-function smoothingFunction(x) {
+  function smoothingFunction(x) {
   let y = 0.5 * p.sin(x * p.PI - p.HALF_PI) + 0.5; // map to sine wave for smooth oscillation
   return y * bubbleSize / 20;
 }
@@ -712,11 +713,11 @@ function processText(textData, p) {
     textData.img.style.top = textData.y + "px";
 
     //Draw the current position of the text to the trail buffer
-  if (textData.imgSnapshot) {
-    textTrailBuffer.image(textData.imgSnapshot, textData.x, textData.y);
-  } else {
+    if (textData.imgSnapshot) {
+      textTrailBuffer.image(textData.imgSnapshot, textData.x, textData.y);
+    } else {
     textTrailBuffer.fill(255); // Set the text color
     textTrailBuffer.text(textData.img.textContent, textData.x, textData.y);
   }
-  }
+}
 }
