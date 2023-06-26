@@ -121,15 +121,16 @@ display: inline-block;
   }
   
 #otherTextContainer {
-position: absolute;
-z-index: 19;
-font-size: 1em;
-color: rgb(255, 0, 0);
-padding: 20px;
-text-align: center; 
-bottom: 20px; 
-left: 30%;
-right: 30%;
+  position: absolute;
+  z-index: 2;
+  font-size: 1em;
+  color: rgb(255, 0, 0);
+  padding: 20px;
+  text-align: center; 
+  bottom: 20px; 
+  left: 50%;
+  -ms-transform: translate(-50%);
+  transform: translate(-50%);
 }
 
 #myVideo {
@@ -444,13 +445,16 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   cursor:  url('./midfinger.cur'), auto;;
 }
 
-#close-icon-about {
+#close-icon-about, #close-icon-contact, #close-icon-image, #close-icon-text {
+  z-index:100;
   font-size: 2rem;
   position: absolute;
   top: 0px;
   left: 50%;
   cursor: url('./midfinger.cur'), auto;
   color: red;
+  -ms-transform: translate(-50%);
+  transform: translate(-50%);
 }
 
 #contact-section {
@@ -468,35 +472,8 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   flex-direction: column;
 }
 
-#close-icon-contact {
-  font-size: 2rem;
-  position: absolute;
-  top: 0px;
-  left: 50%;
-  cursor: url('./midfinger.cur'), auto;
-  color: red;
-}
-
-#close-icon-image {
-  font-size: 2rem;
-  z-index:100;
+#close-icon-image, #close-icon-text {
   display: none;
-  position: absolute;
-  top: 0px;
-  left: 50%;
-  cursor: url('./midfinger.cur'), auto;
-  color: red;
-}
-
-#close-icon-text {
-  font-size: 2rem;
-  z-index:100;
-  display: none;
-  position: absolute;
-  top: 0px;
-  left: 50%;
-  cursor: url('./midfinger.cur'), auto;
-  color: red;
 }
 
 svg{
