@@ -138,7 +138,7 @@ min-width: 100%;
 min-height: 100%;
 }
 #header {
-    font-size: 1.3em;
+    font-size: 1.3rem;
     z-index: 50;
     position: fixed;
     height: 30px;
@@ -171,6 +171,7 @@ background: rgb(2, 255, 2);
 
 
 #links {
+  font-size: 1.3rem;
   position: absolute;
   z-index: 50;
   top: 32px;
@@ -351,7 +352,7 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
 }
 
 #leftWord, #rightWord {
-  color: #ffffff;
+  color: #ff0000;
   /*left: 30px;*/
   font-size: 2em;
   white-space: nowrap;
@@ -374,7 +375,7 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   position: absolute;
   width: 20px;
   height: 20px;
-  background: rgb(255, 255, 255);
+  background: rgb(255, 0, 0);
   border-radius: 50%;
   top: 10px;  /* in the middle of text */
   left: calc(50% - 10px);
@@ -411,7 +412,7 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   color: #ffffff;
   display: none; 
   z-index: 49; 
-  font-size: 2em;
+  font-size: 1.3rem;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -444,6 +445,7 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
 }
 
 #close-icon-about {
+  font-size: 2rem;
   position: absolute;
   top: 0px;
   left: 50%;
@@ -460,13 +462,14 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   color: #ffffff;
   display: none; 
   z-index: 49; 
-  font-size: 2em;
+  font-size: 1.3em;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
 
 #close-icon-contact {
+  font-size: 2rem;
   position: absolute;
   top: 0px;
   left: 50%;
@@ -475,7 +478,7 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
 }
 
 #close-icon-image {
-  font-size: 2em;
+  font-size: 2rem;
   z-index:100;
   display: none;
   position: absolute;
@@ -486,7 +489,7 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
 }
 
 #close-icon-text {
-  font-size: 2em;
+  font-size: 2rem;
   z-index:100;
   display: none;
   position: absolute;

@@ -37,9 +37,9 @@ let isMousePressedOn3D = false;
 let clickedImageData = null;
 //let isBlurApplied = false;
 //let canvasHeight;
-let bgImagesNames = [/*"cat_tv.jpg", "armchair_tv.jpg",*/"no_fun_tv.jpg"];
+let bgImagesNames = ["cat_tv.jpg", "armchair_tv.jpg","no_fun_tv.jpg", "racoon_tv.jpg", "squirrel_tv.jpg", "fish_tv.jpg", "duck_tv.jpg"];
 let bgImages = [];
-let overlayImagesNames = ["loading_screen_cat_tv.jpg", "loading_screen_no_fun_tv.jpg", "loading_screen_armchair_tv.jpg"];
+let overlayImagesNames = ["loading_screen_cat_tv.jpg", "loading_screen_no_fun_tv.jpg", "loading_screen_armchair_tv.jpg", "loading_screen_racoon_tv.jpg",  "loading_screen_squirrel_tv.jpg", "loading_screen_fish_tv.jpg", "loading_screen_duck_tv.jpg"];
 let overlayImages = [];
 let chosenBgImage, chosenOverlayImageName;
 let videoNames = ["bg.mp4"];
@@ -71,7 +71,7 @@ let showContactSection = false;
 let scaleFactors;
 let magnifierSize = 150; 
 let points = []; // This array will store the mouse positions
-const trailLength = 200; // This is the maximum length of the trail
+const trailLength = 100; // This is the maximum length of the trail
 let showFullScreenImageText = true;
     // Store original console.log function
 const originalLog = console.log;
@@ -258,7 +258,7 @@ p.preload = () => {
     extraVideosData = p.loadJSON('extraVideos.json');
 
     mainFont = p.loadFont('00BusinessHistory-Regular.otf');
-    secondaryFont = p.loadFont('SourceCodePro-Regular.ttf');
+    secondaryFont = p.loadFont('Tabular-Light.otf');
   }
   
   
@@ -437,14 +437,14 @@ p.preload = () => {
     p.image(fullScreenImage, p.mouseX - magnifyPower / 2, p.mouseY - magnifyPower / 2, magnifyPower, magnifyPower, sourceX, sourceY, magnifyPower, magnifyPower);
   }
   if (showFullScreenImageText) {
-      // Draw the associated text on the right half of the screen
+     //DESCRIPTION TEXT
     const textWidth = p.windowWidth / 1.5; 
     const textStart = p.windowWidth / 2 - textWidth / 2;
 
       // Set up the text properties
-    p.textLeading(50);
+    p.textLeading(28);
     p.textFont(mainFont); 
-    p.textSize(45);
+    p.textSize(21);
     p.textAlign(p.CENTER, p.TOP); 
 
       // Set the rectangle's properties

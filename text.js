@@ -31,7 +31,7 @@ window.onload = function() {
 
   let randomNumber = Math.floor(Math.random() * 100);
 
-  if(randomNumber >= 0 && randomNumber <= 40) {
+  if(randomNumber >= 0 && randomNumber <= 41) {
 
     letters.forEach((letter, i) => {
 
@@ -61,7 +61,7 @@ window.onload = function() {
 
   //var randomNumber2 = Math.floor(Math.random() * 100);
 
-  if(randomNumber >= 41 && randomNumber <= 60) {
+  if(randomNumber >= 42 && randomNumber <= 60) {
  
     // Select a random letter as the "center"
     let centerIndex = Math.floor(Math.random() * letters.length);

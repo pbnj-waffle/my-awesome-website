@@ -56,7 +56,7 @@ function saveText(p) {
 function createLetters(p, text, x, y) {
   x = parseFloat(x);
   y = parseFloat(y);
-  const shouldAllFall = Math.random() < 0.5;
+  const shouldAllFall = Math.random() < 0.9;
   const textSize = parseFloat(inputField.elt.style.fontSize);
   p.textSize(textSize);
 

@@ -151,7 +151,7 @@ const sketch2D = (p) => {
         size: 50,
         vx: p.random(-3, 3),
         vy: p.random(-3, 3),
-        color: [0, 0, 0],
+        color: [p.random(255),p.random(255),p.random(255)],
         lastTrailSquarePosition: null,
         lastTrailSquareTime: 0,
         direction: p.createVector(p.random(-1, 1), p.random(-1, 1)).normalize(),
@@ -203,9 +203,7 @@ const sketch2D = (p) => {
     for (const imgData of images) {
       processImage(imgData, p);
   
-      if (activeImage === imgData) {
-        drawFrame(imgData, p);
-      }
+
       if (imgData.shouldDuplicate) duplicateImage(imgData, p);// DUPLICATE
   
       /*if (imgData.isDragging) { // DRAGGING

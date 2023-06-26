@@ -94,6 +94,7 @@ function wrapText(p, text, maxWidth) {
   lines.push(currentLine);
   return lines;
 }
+
 function extraImageLoaded(image, p, imageName, parentImage) {
   let scaleFactor;
   if (scaleFactors && scaleFactors[parentImage.filename]) {
@@ -232,7 +233,6 @@ function mousePressed(p) {
       const imageClicked = p.mouseX >= imgData.x && p.mouseX <= imgData.x + imgData.width &&
         p.mouseY >= imgData.y && p.mouseY <= imgData.y + imgData.height;
       if (imageClicked) {
-        console.log("image is clicked")
         imgData.isDragging = true;
         imgData.dragOffsetX = p.mouseX - imgData.x;
         imgData.dragOffsetY = p.mouseY - imgData.y;
@@ -246,7 +246,6 @@ function mousePressed(p) {
       const videoClicked = p.mouseX >= vidData.x && p.mouseX <= vidData.x + vidData.video.width &&
         p.mouseY >= vidData.y && p.mouseY <= vidData.y + vidData.video.height;
       if (videoClicked) {
-        console.log("video is clicked")
         vidData.isDragging = true;
         vidData.dragOffsetX = p.mouseX - vidData.x;
         vidData.dragOffsetY = p.mouseY - vidData.y;

@@ -3,6 +3,8 @@
     "shape.png": [],
     "urgent_mockuped.png": ["urgent_fromgif_vid"],
     "scientific_poster_mockuped2.png": ["scientific_poster_vid"],
-    "laptop.gif": [],
-    "balmont.gif":[]
+    "laptop.gif": ["memoir"],
+    "balmont.gif":[],
+    "camera.png": [],
+    "dejavuwhite.png": []
   }

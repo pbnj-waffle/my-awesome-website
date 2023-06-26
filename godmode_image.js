@@ -132,13 +132,6 @@ function mousePressed(p) {
   }
   
   
-  function drawFrame(imgData, p) {
-  const frameThickness = 5;
-  topBuffer.noFill();
-  topBuffer.strokeWeight(frameThickness);
-  topBuffer.stroke(0,0,255);
-  topBuffer.rect(imgData.x + frameThickness / 2, imgData.y + frameThickness / 2, imgData.width - frameThickness, imgData.height - frameThickness);
-  }
   
   function drawHandle(imgData, p) {
   p.stroke(0,0,255);
