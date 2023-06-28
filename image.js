@@ -127,8 +127,6 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
     video.size(video.width / scaleFactor, video.height / scaleFactor);
     let randomX;
     let randomY;
-
-    video.size(video.width / scaleFactor, video.height / scaleFactor);
     do {
       randomX = p.random(0, p.windowWidth - video.width);
       randomY = p.random(0, p.windowHeight - video.height);
@@ -139,6 +137,7 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
     video.volume(0);
 
     let videoData = {
+      videoname: videoPath,
       video: video,
       width: video.width,
       height: video.height,
@@ -147,7 +146,13 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
       isDragging: false,
     };
     extraVideos.push(videoData);
-    
+    extraVideosDataInJson = extraVideosData[parentImage.filename];
+
+    extraVideos = extraVideos.sort((videoDataA, videoDataB) => {
+      const indexA = extraVideosDataInJson.indexOf(videoDataA.videoname);
+      const indexB = extraVideosDataInJson.indexOf(videoDataB.videoname);
+      return indexB - indexA;
+    })
     // Update width and height after metadata is loaded
     video.elt.onloadedmetadata = function() {
       videoData.width = video.elt.videoWidth / scaleFactor;

@@ -95,8 +95,9 @@ function LogData(message, x, y, move, speed, angle, stopMovingAfter, timestamp) 
 }
 
 function drawMouseLine(p) {
+  if (!points.length && !p.mouseX && !p.mouseY)
+    return;
   points.push({ x: p.mouseX, y: p.mouseY }); // adds the current mouse position to the array
-
   // If there are more than trailLength points, remove the oldest one
   if (points.length > trailLength) {
     points.shift();
