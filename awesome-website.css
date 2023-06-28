@@ -419,6 +419,57 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   flex-direction: column;
 }
 
+#contact-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  color: #ffffff;
+  display: none; 
+  z-index: 49; 
+  font-size: 1.3em;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#image-description {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  color: #ff0000;
+  display: flex;
+  z-index: 49;
+  font-size: 1.3em;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+
+}
+
+
+
+
+#close-icon-about, #close-icon-contact, #close-icon-image, #close-icon-text {
+  z-index:100;
+  font-size: 2rem;
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  cursor: url('./midfinger.cur'), auto;
+  color: red;
+  -ms-transform: translate(-50%);
+  transform: translate(-50%);
+}
+
+#close-icon-image, #close-icon-text {
+  display: none;
+}
+
 .btn {
   display: inline-block;
   padding: 15px 32px;
@@ -443,37 +494,6 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   border-width: 0; 
   box-shadow: 0 0 10px 2px white;
   cursor:  url('./midfinger.cur'), auto;;
-}
-
-#close-icon-about, #close-icon-contact, #close-icon-image, #close-icon-text {
-  z-index:100;
-  font-size: 2rem;
-  position: absolute;
-  top: 0px;
-  left: 50%;
-  cursor: url('./midfinger.cur'), auto;
-  color: red;
-  -ms-transform: translate(-50%);
-  transform: translate(-50%);
-}
-
-#contact-section {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  color: #ffffff;
-  display: none; 
-  z-index: 49; 
-  font-size: 1.3em;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-#close-icon-image, #close-icon-text {
-  display: none;
 }
 
 svg{

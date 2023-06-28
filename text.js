@@ -89,7 +89,7 @@ window.onload = function() {
     });
   }
 
-  let pathElement = document.querySelector('#path');
+ /* let pathElement = document.querySelector('#path');
   let svgElement = pathElement.parentElement;
 
   let pathData = generatePath();
@@ -279,5 +279,5 @@ balanceTl.to("#ball", {
 }, 5);
  
   
-
+*/
 }

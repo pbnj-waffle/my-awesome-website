@@ -46,7 +46,7 @@
   {"name": "shape40", "ext": ".png"}
   ],
   "urgent_mockuped.png": [
-    {"name": "urgent4", "ext": ".jpg"}
+   
   ],
   "scientific_poster_mockuped2.png": [ 
     {"name": "scientific_poster1", "ext": ".png"},
@@ -55,6 +55,7 @@
   ],
   "laptop.gif": [
     {"name": "laptop2", "ext": ".png"}
+    
   ],
   "balmont.gif":[],
   "camera.png": [],

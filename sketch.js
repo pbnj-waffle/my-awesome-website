@@ -224,39 +224,6 @@ document.getElementById('canvasGlobalContainer').addEventListener('mouseup', () 
   mouseReleased(p);
 });
 
-/*function calculateTextBlockHeight(p, text, textBlockWidth) {
-  const words = text.split(' ');
-  const lines = [];
-  let line = '';
-  words.forEach((word) => {
-    let space = line.length ? ' ' : '';
-    if (p.textWidth(line + space + word) > textBlockWidth) {
-      if (!line.length) {
-        console.error(word + ' is TOO LONG!!');
-        return;
-      }
-      else {
-        lines.push(line)
-        line = word;
-      }
-    }
-    else {
-      line += space + word
-    }
-  });
-  originalLog(lines)
-}*/
-
-function calculateTextBlockHeight(p, text, textBlockWidth) {
-  const lines = text.split("\n");
-  const emptyLines = lines.filter((line) => {
-    return !line.length;
-  });
-  const nonEmptyLines = lines.filter((line) => {
-    return line.length;
-  });
-  return (nonEmptyLines.length * (p.textAscent()  + p.textLeading()) + (emptyLines.length) * p.textLeading());
-}
 
 p.preload = () => {
     //gif = p.loadImage('./test.gif');//GIF
@@ -324,7 +291,7 @@ p.preload = () => {
     const randomIndex = Math.floor(p.random(bgImages.length));
     chosenBgImage = bgImages[randomIndex];
 
-    //OVERLAY
+    /*//OVERLAY
     chosenOverlayImageName = `loading_screen_${bgImagesNames[randomIndex]}`;  
     document.getElementById('overlay').style.backgroundImage = `url(${chosenOverlayImageName})`;
 
@@ -338,7 +305,7 @@ p.preload = () => {
       setTimeout(() => {
         mask.parentNode.removeChild(mask);
       }, 200); //match the transition duration above
-    }, 200); // delay in milliseconds*/
+    }, 200); // delay in milliseconds*/ //end here
 
   /*let randomNumber3 = Math.floor(Math.random() * 100);
 
@@ -470,18 +437,8 @@ p.preload = () => {
     // Draw the magnified portion of the image at the mouse position
     p.image(fullScreenImage, p.mouseX - magnifyPower / 2, p.mouseY - magnifyPower / 2, magnifyPower, magnifyPower, sourceX, sourceY, magnifyPower, magnifyPower);
   }
-  if (showFullScreenImageText) {
-    const rem = parseInt(window.getComputedStyle(document.querySelector('html'), null).getPropertyValue('font-size'));
-     //DESCRIPTION TEXT
-    const textWidth = p.windowWidth / 1.5; 
-    const textStart = p.windowWidth / 2 - textWidth / 2;
+ if (showFullScreenImageText) {
 
-      // Set up the text properties
-    //p.textLeading(28);
-    p.textFont(mainFont); 
-    p.textSize(rem * 2);
-    p.textAlign(p.CENTER, p.TOP); 
-    const textHeight = calculateTextBlockHeight(p, fullScreenImageText, textWidth);
 
       // Set the rectangle's properties
       const rectColor = [0, 150]; // RGBA, A=100 for semi-transparency
@@ -491,9 +448,6 @@ p.preload = () => {
       p.fill(rectColor); // Set color
       p.rect(0, 0, p.windowWidth, p.windowHeight);
 
-      // Draw the text
-      p.fill(255, 0, 0); // Set text color
-      p.text(fullScreenImageText, textStart, p.windowHeight / 2 - textHeight / 2 , textWidth);
     }
 
   } else {

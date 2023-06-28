@@ -67,10 +67,13 @@ document.getElementById('close-icon-image').addEventListener('click', function(e
 
 document.getElementById('close-icon-text').addEventListener('click', function(event) {
   event.preventDefault();
-  
+
   // Hide the HTML closing icon for text
   this.style.display = 'none';
-  
+
+  // Hide the image description
+  document.getElementById('image-description').style.display = 'none';
+
   // Hide the full screen image text and related elements
   showFullScreenImageText = false;
 

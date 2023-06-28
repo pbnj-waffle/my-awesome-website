@@ -266,6 +266,9 @@ function mousePressed(p) {
        if (imageClicked) { //IMAGE CLICKED
         console.log('image clicked')
         imgData.scale = 2;
+        // Display image's description
+         document.getElementById('image-description').innerText = imgData.text || '';
+         document.getElementById('image-description').style.display = 'flex';
         // Show close icon
         document.getElementById('close-icon-image').style.display = 'block';         
         // Show close icon for text
