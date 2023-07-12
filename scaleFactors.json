@@ -1,10 +1,9 @@
 {
-    "coterie.png": [2, 4],
-    "shape.png": [1.5, 2],
-    "urgent_mockuped.png": [4,5],
-    "scientific_poster_mockuped2.png": [4,6],
-    "laptop.gif": [3,4],
-    "balmont.gif":[],
-    "camera.png": [],
-    "dejavuwhite.png": []
-  }
+  "coterieweird2.png": [0.1, 0.2],
+  "shape.png": [0.1, 0.15],
+  "urgent_mockuped.png": [0.4, 0.5],
+  "scientific_poster_mockuped2.png": [0.13, 0.2],
+  "laptop.gif": [0.3, 0.4],
+  "balmont.gif":[0.2,0.3],
+  "dejavuweird.png": [0.2,0.3]
+}

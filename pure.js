@@ -1,4 +1,4 @@
-
+document.getElementById("image-description").innerHTML = fullScreenImageText;
 
 document.getElementById('about').addEventListener('click', function (event) { //HIDE THE ELEMENTS
   event.preventDefault();
@@ -59,6 +59,7 @@ document.getElementById('close-icon-image').addEventListener('click', function(e
   document.getElementById('otherTextContainer').style.display = 'block';
   window.set3DObjectVisibility(true);
   
+  window.tl.resume();
   // Reset fullscreen mode flag
   isFullScreenMode = false;
 
@@ -98,3 +99,7 @@ const getTransitionProgress = () => {
   }
   return progress;
 }
+
+document.getElementById('reloadImage').addEventListener('click', function() {
+  location.reload();
+});

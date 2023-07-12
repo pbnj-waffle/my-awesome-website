@@ -37,9 +37,9 @@ let isMousePressedOn3D = false;
 let clickedImageData = null;
 //let isBlurApplied = false;
 //let canvasHeight;
-let bgImagesNames = ["cat_tv.jpg", "armchair_tv.jpg","no_fun_tv.jpg", "racoon_tv.jpg", "squirrel_tv.jpg", "fish_tv.jpg", "duck_tv.jpg"];
+let bgImagesNames = ["cat_tv.jpg", "armchair_tv.jpg","no_fun_tv.jpg", "racoon_tv.jpg", "squirrel_tv.jpg", "fish_tv.jpg", "duck_tv.jpg", "shark_tv.jpg"];
 let bgImages = [];
-let overlayImagesNames = ["loading_screen_cat_tv.jpg", "loading_screen_no_fun_tv.jpg", "loading_screen_armchair_tv.jpg", "loading_screen_racoon_tv.jpg",  "loading_screen_squirrel_tv.jpg", "loading_screen_fish_tv.jpg", "loading_screen_duck_tv.jpg"];
+let overlayImagesNames = ["loading_screen_cat_tv.jpg", "loading_screen_no_fun_tv.jpg", "loading_screen_armchair_tv.jpg", "loading_screen_racoon_tv.jpg",  "loading_screen_squirrel_tv.jpg", "loading_screen_fish_tv.jpg", "loading_screen_duck_tv.jpg", "loading_screen_shark_tv.jpg"];
 let overlayImages = [];
 let chosenBgImage, chosenOverlayImageName;
 let videoNames = ["bg.mp4"];
@@ -256,6 +256,7 @@ p.preload = () => {
     }
 
     imageTexts = p.loadJSON('imageTexts.json');
+    console.log(imageTexts["balmontw.gif"]); 
     extraImagesData = p.loadJSON('extraImages.json');
     extraVideosData = p.loadJSON('extraVideos.json');
 
@@ -292,8 +293,18 @@ p.preload = () => {
     const randomIndex = Math.floor(p.random(bgImages.length));
     chosenBgImage = bgImages[randomIndex];
 
-    /*//OVERLAY
-    chosenOverlayImageName = `loading_screen_${bgImagesNames[randomIndex]}`;  
+    //OVERLAY
+    chosenOverlayImageName = `loading_screen_${bgImagesNames[randomIndex]}`;
+
+    // Fetch the image data
+    fetch(chosenOverlayImageName)
+      .then(response => response.blob())
+      .then(imageData => {
+        // Create a Blob URL for the image data
+        let imageURL = URL.createObjectURL(imageData);
+        document.getElementById('overlay').style.backgroundImage = `url(${imageURL})`;
+      })
+      .catch(error => console.error('Error:', error)); 
     document.getElementById('overlay').style.backgroundImage = `url(${chosenOverlayImageName})`;
 
     // Fade out the mask after a delay
@@ -306,7 +317,7 @@ p.preload = () => {
       setTimeout(() => {
         mask.parentNode.removeChild(mask);
       }, 200); //match the transition duration above
-    }, 200); // delay in milliseconds*/ //end here
+    }, 200); // delay in milliseconds //end here
 
   /*let randomNumber3 = Math.floor(Math.random() * 100);
 
@@ -416,11 +427,40 @@ p.preload = () => {
       magnifyImage(imgData.img, imgData);
     }
     // Draw the main image using the scaled properties
-    let scaledWidth = clickedImageData.width * clickedImageData.scale;
-    let scaledHeight = clickedImageData.height * clickedImageData.scale;
-    let scaledX = clickedImageData.x - (scaledWidth - clickedImageData.width) / 2;
-    let scaledY = clickedImageData.y - (scaledHeight - clickedImageData.height) / 2;
-    p.image(fullScreenImage, scaledX, scaledY, scaledWidth, scaledHeight);
+// desired scale-up factor
+let desiredScale = 1.5;
+// scale down factor when touching multiple edges
+let multipleEdgesScale = 1.2;
+
+// calculate how much the image can scale without going out of bounds
+let xScale = Math.min(desiredScale, (p.windowWidth - clickedImageData.x) / clickedImageData.width);
+let yScale = Math.min(desiredScale, (p.windowHeight - clickedImageData.y) / clickedImageData.height);
+
+// if the image is touching multiple edges, use the smaller scale
+if (xScale < desiredScale && yScale < desiredScale) {
+    clickedImageData.scale = multipleEdgesScale;
+} else {
+    // otherwise, use the larger of the two scales
+    clickedImageData.scale = Math.max(xScale, yScale);
+}
+
+// calculate the new image dimensions
+let scaledWidth = clickedImageData.width * clickedImageData.scale;
+let scaledHeight = clickedImageData.height * clickedImageData.scale;
+
+// calculate the new image position
+let scaledX = clickedImageData.x - (scaledWidth - clickedImageData.width) / 2;
+let scaledY = clickedImageData.y - (scaledHeight - clickedImageData.height) / 2;
+
+// adjust the position if the image is now going out of bounds
+if (scaledX < 0) scaledX = 0;
+if (scaledY < 0) scaledY = 0;
+if (scaledX + scaledWidth > p.windowWidth) scaledX = p.windowWidth - scaledWidth;
+if (scaledY + scaledHeight > p.windowHeight) scaledY = p.windowHeight - scaledHeight;
+
+// display the image
+p.image(fullScreenImage, scaledX, scaledY, scaledWidth, scaledHeight);
+
 
     // Check if the mouse is over the scaled image
     if (p.mouseX >= scaledX && p.mouseX <= scaledX + scaledWidth &&

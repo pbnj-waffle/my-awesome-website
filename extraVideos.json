@@ -1,10 +1,9 @@
 {
-    "coterie.png": ["coterie_video_landscape_big", "coterie_video2"],
+    "coterieweird2.png": ["coterie_video_landscape_big", "coterie_video2"],
     "shape.png": [],
-    "urgent_mockuped.png": ["urgent_fromgif_vid"],
-    "scientific_poster_mockuped2.png": ["scientific_poster_vid"],
+    "urgent_mockupedweird.png": ["urgent_fromgif_vid"],
+    "scientific_poster_mockuped2.png": ["scientific_poster_vid2"],
     "laptop.gif": ["memoirscan", "touchdesigner"],
-    "balmont.gif":[],
-    "camera.png": [],
-    "dejavuwhite.png": []
+    "balmont.gif":["balmont", "balmont_baseline"],
+    "dejavuweird.png": []
   }

@@ -1,5 +1,5 @@
 {
-  "coterie.png": [     
+  "coterieweird2.png": [     
   {"name": "coterie1", "ext": ".png"},
   {"name": "coterie2", "ext": ".png"}
 
@@ -45,19 +45,33 @@
   {"name": "shape39", "ext": ".png"},
   {"name": "shape40", "ext": ".png"}
   ],
-  "urgent_mockuped.png": [
+  "urgent_mockupedweird.png": [
    
   ],
   "scientific_poster_mockuped2.png": [ 
+    
     {"name": "scientific_poster1", "ext": ".png"},
     {"name": "scientific_poster2", "ext": ".png"},
-    {"name": "scientific_poster3", "ext": ".png"}
-  ],
-  "laptop.gif": [
-    {"name": "laptop2", "ext": ".png"}
+    {"name": "scientific_poster3", "ext": ".png"},
+    {"name": "scientific_poster5", "ext": ".png"},
+    {"name": "scientific_poster6", "ext": ".jpg"}
     
   ],
-  "balmont.gif":[],
-  "camera.png": [],
-  "dejavuwhite.png": []
+  "laptop.gif": [
+    {"name": "laptop2", "ext": ".png"}    
+  ],
+  "balmont.gif":[
+    
+    {"name": "balmont", "ext": ".gif"},
+    {"name": "balmont_baseline2", "ext": ".gif"}
+  ],
+  "dejavuweird.png": [
+    {"name": "dejavu1a", "ext": ".png"},
+    {"name": "dejavu2a", "ext": ".png"},
+    {"name": "dejavu3", "ext": ".png"},
+    {"name": "dejavu4", "ext": ".png"},
+    {"name": "dejavu5", "ext": ".png"},
+    {"name": "dejavu6", "ext": ".png"},
+    {"name": "dejavu7", "ext": ".png"}
+  ]
 }

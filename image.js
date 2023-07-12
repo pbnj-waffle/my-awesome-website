@@ -4,12 +4,13 @@ let extraImages = [];
 let extraImagesData = {};
 let showExtraImages = false;
 let isExtraImagesLoaded = false;
-const imageNames = ["coterie.png", "shape.png", "urgent_mockuped.png", "scientific_poster_mockuped2.png", "laptop.gif", "camera.png", "dejavuwhite.png"];
+const imageNames = ["coterieweird2.png", "shape.png", "urgent_mockupedweird.png", "scientific_poster_mockuped2.png",  "balmont.gif", "laptop.gif", "dejavuweird.png"];
 let extraVideos = [];
 let extraVideosData = {};
 let textTimeoutId;
 const consoleRandom = p.floor(p.random(1, 101));
 console.log('Random number generated:', consoleRandom);
+
 
 /*function fileSelected(event, p) {
   const newImage = p.loadImage(URL.createObjectURL(event.target.files[0]), () => {
@@ -18,7 +19,10 @@ console.log('Random number generated:', consoleRandom);
 }*/
 
 function imageLoaded(image, p, imageName) {
-  const scaleFactor = p.random(4, 7);
+  try {
+  const targetWidthPercentage = p.random(0.12, 0.2);
+  const targetWidth = targetWidthPercentage * p.windowWidth;
+  const scaleFactor = image.width / targetWidth;
   const effectRandom = p.floor(p.random(1, 101));
 
   const shouldMove = 0 < effectRandom && effectRandom <= 60;
@@ -27,8 +31,6 @@ function imageLoaded(image, p, imageName) {
   }
   //const shouldDuplicate = 20 < effectRandom && effectRandom <= 30;
   const shouldTrail = p.random() < 0.3; // NOT WORKING
-  
-
 
   images.push({
     img: image,
@@ -72,7 +74,13 @@ function imageLoaded(image, p, imageName) {
       return this;
     }
   }.init());
+}catch (error) {
+  console.log(`An error occurred while loading the image: ${imageName}`);
+  console.error(error);
 }
+
+}
+
 
 function wrapText(p, text, maxWidth) {
   p.textSize(12);
@@ -98,7 +106,11 @@ function wrapText(p, text, maxWidth) {
 function extraImageLoaded(image, p, imageName, parentImage) {
   let scaleFactor;
   if (scaleFactors && scaleFactors[parentImage.filename]) {
-    scaleFactor = p.random(scaleFactors[parentImage.filename][0], scaleFactors[parentImage.filename][1]);
+    const minTargetWidthPercentage = scaleFactors[parentImage.filename][0];
+    const maxTargetWidthPercentage = scaleFactors[parentImage.filename][1];
+    const targetWidthPercentage = p.random(minTargetWidthPercentage, maxTargetWidthPercentage);
+    const targetWidth = targetWidthPercentage * p.windowWidth;
+    scaleFactor = image.width / targetWidth;
   } /* else {
     scaleFactor = p.random(3, 4);  // default value
   }*/
@@ -120,17 +132,22 @@ function extraImageLoaded(image, p, imageName, parentImage) {
   });
 }
 
-function extraVideoLoaded(videoPath, p, videoName, parentImage) {
-  const scaleFactor = 2;
 
+function extraVideoLoaded(videoPath, p, videoName, parentImage) {
   let video = p.createVideo([`./images/extra_videos/${videoPath}.mp4`], () => {
-    video.size(video.width / scaleFactor, video.height / scaleFactor);
+    const targetWidthPercentage = p.random(0.2, 0.5);
+    const targetWidth = targetWidthPercentage * p.windowWidth;
+    const scaleFactor = video.elt.videoWidth / targetWidth;
+
+    video.size(video.elt.videoWidth / scaleFactor, video.elt.videoHeight / scaleFactor);
+
     let randomX;
     let randomY;
     do {
       randomX = p.random(0, p.windowWidth - video.width);
       randomY = p.random(0, p.windowHeight - video.height);
-    } while (isOverlappingMainImage(randomX, randomY, video.width / scaleFactor, video.height / scaleFactor));
+    } while (isOverlappingMainImage(randomX, randomY, video.width, video.height));
+
     video.position(randomX, randomY);
     video.loop();
     video.hide();
@@ -141,18 +158,20 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
       video: video,
       width: video.width,
       height: video.height,
-      x: randomX,  
-      y: randomY,  
+      x: randomX,
+      y: randomY,
       isDragging: false,
     };
+
     extraVideos.push(videoData);
-    extraVideosDataInJson = extraVideosData[parentImage.filename];
+    let extraVideosDataInJson = extraVideosData[parentImage.filename];
 
     extraVideos = extraVideos.sort((videoDataA, videoDataB) => {
       const indexA = extraVideosDataInJson.indexOf(videoDataA.videoname);
       const indexB = extraVideosDataInJson.indexOf(videoDataB.videoname);
       return indexB - indexA;
     })
+
     // Update width and height after metadata is loaded
     video.elt.onloadedmetadata = function() {
       videoData.width = video.elt.videoWidth / scaleFactor;
@@ -160,6 +179,7 @@ function extraVideoLoaded(videoPath, p, videoName, parentImage) {
     };
   });
 }
+
 
 /*function isOverlappingOtherMedia(x, y, width, height, overlapThreshold = 0.6) {
   // Iterate through all extraImages
@@ -270,6 +290,7 @@ function mousePressed(p) {
  
        if (imageClicked) { //IMAGE CLICKED
         console.log('image clicked')
+        window.tl.pause();
         imgData.scale = 2;
         // Display image's description
          document.getElementById('image-description').innerText = imgData.text || '';
@@ -391,6 +412,7 @@ function setCursor(cursor) {
   else{
     document.body.style.setProperty('cursor', 'default', 'important');
   }
+  
 }
 
 

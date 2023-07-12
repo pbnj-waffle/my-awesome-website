@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="awesome-website.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/MotionPathPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.3/html2canvas.min.js"></script>
+    <script src="sketch.js" defer></script>
+    <script src="pure.js" defer></script>
+    <script src="elements.js" defer></script>
+    <script src="text.js" defer></script>
+    <!--<script src="imageTexts.json" defer></script>-->
+    <script type="module" src="3d_module.js" defer></script>
+    <script src="image.js" defer></script>
+    <script src="balance.js" defer></script>
+  </head>
+  <body>
+
+    <svg viewBox="0 0 1100 700">
+      <path id="path"/>
+    </svg>
+    <div id="contact-section">
+      <p>
+        Wanna get in touch? <br><br> 
+        You should. I really don't bite. <br><br> 
+        (Unless you bite me first. <br>
+        But what are the chances of it happening online?)<br><br><br>
+        Instagram: <a href = "https://www.instagram.com/serifsans.variable/" style='color: red'>@serifsans.veriable</a><br>
+        Mail: <a href = "mailto: yevheniia.shevtsova@duperre.org" style='color: red'>yevheniia.shevtsova@duperre.org</a><br>
+        Pigeon post: I'm not sure it's still working, probably shouldn't use it
+      </p>
+      <p id="close-icon-contact">X</p>
+    </div>
+    <div id="about-section">
+      <p>
+        Hello, my name is Yevheniia, and I'm the creator <br>
+        <img id="gif-image" src="god2.gif" width="200" height="105"alt="my gif image"> <br>
+        of this website. <br> <br>
+        However, I’m not a developer, I’m a designer: <br> 
+        I can mockup, make logos bigger, look for fonts even though I have thousands, <br>
+        and do other things designers do. <br>
+        This portfolio was made as a part of my diploma project, <br>
+        resulting in the construction of a generative brutalist tool.<br><br> 
+        Try it here (work in progress):
+      </p>
+      <button class="btn btn-godmode" onclick="window.location.href = 'GodMode.html'">Just let it happen</button>
+      <p id="close-icon-about">X</p>
+    </div>
+    <div id="image-description" style="display: none;"></div>
+    <div id="header">
+      <!--<div class="rectangle-wrapper">
+        <div class="rectangle rectangle1"></div>
+        <div class="rectangle rectangle2"></div>
+      </div>-->
+      <div id="links">
+        <a href="awesome-website.html" id="name">Home</a>
+        <div id="links-2">
+          <a id="about">about whatever this is</a>
+          <a id="contact">contact</a>
+        </div>
+      </div>
+    </div>
+    <div id="memoirTextContainer">Establishing rules only makes sense if at the end we're still able to ask ourselves: "Where do we draw the line?"<br><br>Or "should we?"</div>
+    <div id="textContainer"></div>
+    <div id="otherTextContainer">
+      Ever wanted to see what endless variety looks like?
+      <div style="display: flex; align-items: center; justify-content: center;">
+          <span>Press this button &nbsp </span>
+          <img id="reloadImage" src="./f51.webp" style="height: 50px; width: 50px; align-self: center;">
+      </div>
+  </div>
+<div id="overlay">
+      <div id="balanceContainer">
+        <div id="balance-wrapper">
+          <div id="balance">
+            <span id="leftWord"></span>
+            <div id="ball-container">
+              <div id="ball"></div>
+              <div id="ball1" class="hidden"></div>
+              <div id="ball2" class="hidden"></div>
+            </div>
+            <span id="rightWord"></span>
+          </div>
+        </div>
+      </div>
+   </div>
+    <div id="mask" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: black; z-index: 99999; cursor:  url(./arrow.cur) 4 12, auto;"></div>
+    <div id="canvasGlobalContainer" style="overflow: hidden; width: 100%; height: 100%; position: absolute; top: 0">
+      <p id="close-icon-image">X</p>
+      <p id="close-icon-text">X</p>
+      <div id="canvasContainer2"></div>
+      <div id="canvasContainer"></div>
+      <div id="trailContainer"></div>
+    </div>
+    </body>
+</html>

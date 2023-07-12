@@ -100,9 +100,12 @@ renderer.domElement.addEventListener("wheel", (event) => {
 });
 
 document.addEventListener("mousemove", (event) => {
+  let aboutVisible = window.getComputedStyle(document.getElementById('about-section')).display !== 'none';
+  let contactVisible = window.getComputedStyle(document.getElementById('contact-section')).display !== 'none';
+
   if (isMouseOver3DObject(event)) {
     setCursor('grab');
-  } else if (isMouseOverImage(event)) {
+  } else if (isMouseOverImage(event) && !aboutVisible && !contactVisible) {
     setCursor('pointer'); 
   } else {
     setCursor('arrow');

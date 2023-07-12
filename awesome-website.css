@@ -120,18 +120,23 @@ display: inline-block;
   overflow: hidden;
   }
   
-#otherTextContainer {
-  position: absolute;
-  z-index: 2;
-  font-size: 1em;
-  color: rgb(255, 0, 0);
-  padding: 20px;
-  text-align: center; 
-  bottom: 20px; 
-  left: 50%;
-  -ms-transform: translate(-50%);
-  transform: translate(-50%);
+  #otherTextContainer {
+    position: absolute;
+    z-index: 20;
+    font-size: 1em;
+    color: rgb(255, 255, 255);
+    padding: 20px;
+    text-align: center; 
+    bottom: 20px; 
+    left: 50%;
+    -ms-transform: translate(-50%);
+    transform: translate(-50%);
+  }
+
+#reloadImage {
+  cursor:  url('./midfinger.cur'), auto;;
 }
+  
 
 #myVideo {
 position: absolute;
@@ -464,10 +469,12 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   color: red;
   -ms-transform: translate(-50%);
   transform: translate(-50%);
+  cursor:  url('./midfinger.cur'), auto;;
 }
 
 #close-icon-image, #close-icon-text {
   display: none;
+  cursor:  url('./midfinger.cur'), auto;;
 }
 
 .btn {
@@ -510,3 +517,4 @@ svg{
 .uncut-word {
   display: inline-block;
 }
+

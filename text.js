@@ -9,7 +9,7 @@ function generatePath() {
 }
 
 window.onload = function() {
-  let possibleTexts = [/*'THE THOUGHT OF YOU LOADING THIS PAGE FOR THE FIRST TIME AND SEEING THIS MESSAGE INSTEAD OF THE OTHERS KEEPS ME UP AT NIGHT',*/ 'TRUST THE PROCESS'];
+  let possibleTexts = ['THIS TEXT, JUST LIKE EVERYTHING ELSE HERE, IS SUBJECT TO CHANGE', 'TRUST THE PROCESS'];
 
   function getRandomText(array) {
     let randomIndex = Math.floor(Math.random() * array.length);
@@ -27,7 +27,7 @@ window.onload = function() {
 
   let letters = document.querySelectorAll('.letter');
 
-  tl = gsap.timeline({paused: true});
+  window.tl = gsap.timeline({paused: true});
 
   let randomNumber = Math.floor(Math.random() * 100);
 
@@ -48,7 +48,7 @@ window.onload = function() {
   if (distanceToFallLetter > maxDistance) {
     distanceToFallLetter = maxDistance;
   }
-      tl.to(letter, {
+  window.tl.to(letter, {
         y: distanceToFallLetter,
         x: "+=" + (Math.random() - 0.5) * 50,
         rotation: rotation,
@@ -77,7 +77,7 @@ window.onload = function() {
       let rotation = (Math.random() - 0.5) * 2 * 120;
 
 
-      tl.to(letter, {
+      window.tl.to(letter, {
         scale: Math.random() * maxSizeMultiplier, // add random scaling up to 10x original size
         
         x: "+=" + direction * (Math.random() * spreading), // add random horizontal motion
@@ -89,7 +89,7 @@ window.onload = function() {
     });
   }
 
- /* let pathElement = document.querySelector('#path');
+ let pathElement = document.querySelector('#path');
   let svgElement = pathElement.parentElement;
 
   let pathData = generatePath();
@@ -155,7 +155,7 @@ letters.forEach(letter => {
   
     let repeatTimes = 1; // number of repeats
 
-    tl.to('.letter', {
+    window.tl.to('.letter', {
       motionPath: motionPath,
       duration: 20,
       repeat: repeatTimes,
@@ -179,7 +179,7 @@ letters.forEach(letter => {
   }
 
   setTimeout(() => {
-    tl.play().then(() => {
+    window.tl.play().then(() => {
       let textElement = document.getElementById("textContainer");
       // GSAP animation is finished, show the original element
   
@@ -187,11 +187,16 @@ letters.forEach(letter => {
   }, 20000);
 
 
+  
+ 
+  
 
+}
+document.addEventListener('DOMContentLoaded', (event) => {
   // Define the array of word pairs
 const wordPairs = [
   ["experience", "message"],
-  //["conform", "stand out"],
+  ["tradition", "surprise"],
   ["planning", "discovery"],
   ["details", "big picture"]
 
@@ -277,7 +282,4 @@ balanceTl.to("#ball", {
     gsap.set("#ball2", { xPercent: 0 });
   }
 }, 5);
- 
-  
-*/
-}
+});
