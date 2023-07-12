@@ -1,3 +1,5 @@
+import { EventDispatcher } from './EventDispatcher.js';
+
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -192,6 +194,8 @@ const GLSL1 = '100';
 const GLSL3 = '300 es';
 
 const _SRGBAFormat = 1035; // fallback for WebGL 1
+
+
 
 /**
  * https://github.com/mrdoob/eventdispatcher.js/

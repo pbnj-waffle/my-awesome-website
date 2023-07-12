@@ -1,0 +1,29 @@
+<script type="module">
+
+	import { EventDispatcher } from '../src/EventDispatcher.js';
+
+	// Adding events to custom object
+
+	class Car extends EventDispatcher {
+
+		start () {
+
+			this.dispatchEvent( { type: 'start', message: 'vroom vroom!' } );
+
+		}
+
+	}
+
+	// Using events
+
+	var car = new Car();
+
+	car.addEventListener( 'start', function ( event ) {
+
+		alert( event.message );
+
+	} );
+
+	car.start();
+
+</script>
