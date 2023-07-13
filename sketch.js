@@ -75,6 +75,7 @@ const trailLength = 100; // This is the maximum length of the trail
 let showFullScreenImageText = true;
     // Store original console.log function
 const originalLog = console.log;
+const bunnyCDNHostname = 'https://regulartv.b-cdn.net';
 
 
 function LogData(message, x, y, move, speed, angle, stopMovingAfter, timestamp) {
@@ -248,11 +249,12 @@ p.preload = () => {
       overlayImages.push(overlayImg);
     }
 
-    for (let i = 0; i < imageNames.length; i++) { 
-      // Assume imageNames[i] now includes the extension (e.g., "image1.png", "image2.gif")
-      const img = p.loadImage(`./images/${imageNames[i]}`, () => {
+    for (let i = 0; i < imageNames.length; i++) {
+      const img = new Image();
+      img.onload = () => {
         imageLoaded(img, p, imageNames[i]);
-      });
+      };
+      img.src = `${bunnyCDNHostname}/images/${imageNames[i]}`;
     }
 
     imageTexts = p.loadJSON('imageTexts.json');
