@@ -402,7 +402,7 @@ padding-right: 50px; /* Give some space between the two identical pieces of text
   width: 100vw;
   height: 100vh;
   background-size: cover;
-  z-index: 9999;
+  z-index: 999991;
   display: flex;
   justify-content: center;
   align-items: center;
