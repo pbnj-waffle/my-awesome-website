@@ -31,7 +31,16 @@ let isBgAnimationEnabled = true;
 let showFullScreenImage = false;
 let fullScreenImage = null;
 const closingIconSize = 60;
-let imageTexts;
+let imageTexts = {
+    "coterieweird2.png": "coterie\n\na collaborative project\nbrought together at\nBiography Design\nin Toronto\n\nmerch design for Coterie -\na Cannabis Brand",
+    "shape.png" : "experimentation with\nautomatically generated shapes\nin Blender, using noise seed",
+    "urgent_mockupedweird.png" : "a poster design for a\ncurrently urgent matter\n\nexperimentation using\nGlyphDrawing.club tool",
+    "scientific_poster_mockuped2.png": "poster made as a visualization\nof my thought process\nwhile writing my bachelor thesis",
+    "laptop.gif": "DATA OVERDOSE:\ndesign in moderation?\n\nmy bachelor's degree thesis\nreflecting on the design process\nthrough the prism of\ncomputer programming",
+    "balmont.gif":"7 meters of\nKonstantin Balmont's Incipit\nprinted on termal paper\n\nFollowing experimentations\nchanging the text baseline\nusing javascript",
+    "dejavuweird.png": "a series of posters about nostalgia\nand the feeling of déjà vu"
+};
+
 let fullScreenImageText = '';
 let isMousePressedOn3D = false;
 let clickedImageData = null;
@@ -255,8 +264,6 @@ p.preload = () => {
       });
     }
 
-    imageTexts = p.loadJSON('imageTexts.json');
-    console.log(imageTexts["balmontw.gif"]); 
     extraImagesData = p.loadJSON('extraImages.json');
     extraVideosData = p.loadJSON('extraVideos.json');
 
